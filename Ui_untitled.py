@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.widget)
         self.pushButton.setGeometry(QtCore.QRect(70, 140, 75, 23))
         self.pushButton.setObjectName("pushButton")
-        #self.pushButton.clicked.connect(self.buttonClicked)
+        self.pushButton.clicked.connect(self.count_func)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
