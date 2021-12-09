@@ -15,6 +15,11 @@ class mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.my_thread = MyThread()
         self.test_thread=TestThread()
+        self.test1_thread=TestThread1()
+        self.test2_thread=TestThread2()
+        self.test3_thread=TestThread3()
+        self.test4_thread=TestThread4()
+        self.test5_thread=TestThread5()
         self.my_thread.my_signal.connect(self.set_label_func)  # 3
         self.my_thread.start()
         
@@ -35,26 +40,21 @@ class mywindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if key==Qt.Key_T:
             #tello.takeoff()
             self.test_thread.start()
-        # if Qt.Key_A <= key <= Qt.Key_Z:
-        #     if event.modifiers() & Qt.ShiftModifier:  # Shift 键被按下
-        #         self.statusBar().showMessage('"Shift+%s" pressed' % chr(key), 500)
-        #     elif event.modifiers() & Qt.ControlModifier:  # Ctrl 键被按下
-        #         self.statusBar().showMessage('"Control+%s" pressed' % chr(key), 500)
-        #     elif event.modifiers() & Qt.AltModifier:  # Alt 键被按下
-        #         self.statusBar().showMessage('"Alt+%s" pressed' % chr(key), 500)
-        #     else:
-        #         self.statusBar().showMessage('"%s" pressed' % chr(key), 500)
-
-        # elif key == Qt.Key_Home:
-        #     self.statusBar().showMessage('"Home" pressed', 500)
-        # elif key == Qt.Key_End:
-        #     self.statusBar().showMessage('"End" pressed', 500)
-        # elif key == Qt.Key_PageUp:
-        #     self.statusBar().showMessage('"PageUp" pressed', 500)
-        # elif key == Qt.Key_PageDown:
-        #     self.statusBar().showMessage('"PageDown" pressed', 500)
-        # # else:   #其它未设定的情况
-        #     # QWidget.keyPressEvent(self, event)  #留给基类处理
+        if key==Qt.Key_W:
+            #tello.takeoff()
+            self.test1_thread.start()
+        if key==Qt.Key_A:
+            #tello.takeoff()
+            self.test2_thread.start()
+        if key==Qt.Key_S:
+            #tello.takeoff()
+            self.test3_thread.start()
+        if key==Qt.Key_D:
+            #tello.takeoff()
+            self.test4_thread.start()
+        if key==Qt.Key_L:
+            #tello.takeoff()
+            self.test5_thread.start()
 
 
 class MyThread(QThread):
@@ -88,6 +88,52 @@ class TestThread(QThread):
 
     def run(self):
         tello.takeoff()
+
+class TestThread1(QThread):
+    #my_signal = Signal()     # 1
+
+    def __init__(self):
+        super(TestThread1, self).__init__()
+
+    def run(self):
+        tello.move_forward(30)
+
+class TestThread2(QThread):
+    #my_signal = Signal()     # 1
+
+    def __init__(self):
+        super(TestThread2, self).__init__()
+
+    def run(self):
+        tello.move_left(30)
+
+class TestThread3(QThread):
+    #my_signal = Signal()     # 1
+
+    def __init__(self):
+        super(TestThread3, self).__init__()
+
+    def run(self):
+        tello.move_back(30)
+
+class TestThread4(QThread):
+    #my_signal = Signal()     # 1
+
+    def __init__(self):
+        super(TestThread4, self).__init__()
+
+    def run(self):
+        tello.move_right(30)
+
+class TestThread5(QThread):
+    #my_signal = Signal()     # 1
+
+    def __init__(self):
+        super(TestThread5, self).__init__()
+
+    def run(self):
+        tello.land()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
