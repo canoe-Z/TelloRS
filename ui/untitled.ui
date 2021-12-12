@@ -89,7 +89,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>RadioButton</string>
+     <string>间歇控制</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rbtn_move_rc">
@@ -102,7 +102,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>RadioButton</string>
+     <string>连续控制</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="chk_autocap">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>440</y>
+      <width>79</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>自动拍照</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>490</y>
+      <width>91</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>加载图像匹配</string>
     </property>
    </widget>
   </widget>
@@ -115,6 +141,12 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>菜单</string>
+    </property>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

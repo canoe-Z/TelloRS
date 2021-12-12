@@ -28,7 +28,7 @@ class FrameThread(QThread):
 
 
 class ControlThread(QThread):
-    signal = Signal(int)
+    state_signal = Signal(int)
 
     def __init__(self, tello: Tello, queue: Queue):
         super(ControlThread, self).__init__()
@@ -52,7 +52,7 @@ class ControlThread(QThread):
                 if self.key == Qt.Key_L:
                     self.tello.land()
                     # self.signal_land(emit)
-                self.signal.emit(self.key)
+                self.state_signal.emit(self.key)
                 self.key = None
             sleep(0.1)
 

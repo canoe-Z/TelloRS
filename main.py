@@ -49,7 +49,7 @@ class mywindow(QMainWindow):
         self.ui.label_source.setPixmap(qImg)  # 设置图片显示
 
     def load_template(self):
-        self.cv2_template = cv2.imread('./data/target2.jpg')
+        self.cv2_template = cv2.imread('./data/target3.jpg')
         qImg = cv2toQImage(self.cv2_template)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_template.width(), self.ui.label_template.height())  # 设置图片大小
@@ -105,7 +105,7 @@ class mywindow(QMainWindow):
         self.my_thread.start()
         self.control_thread.start()
 
-        self.control_thread.signal.connect(self.show_state)
+        self.control_thread.state_signal.connect(self.show_state)
 
     def take_photo(self):
         cv2.imwrite("test.jpg", self.my_thread.img)

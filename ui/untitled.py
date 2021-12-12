@@ -11,13 +11,14 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QMenuBar,
-    QPushButton, QRadioButton, QSizePolicy, QStatusBar,
-    QWidget)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QLabel, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QRadioButton,
+    QSizePolicy, QStatusBar, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -47,14 +48,24 @@ class Ui_MainWindow(object):
         self.rbtn_move_rc = QRadioButton(self.centralwidget)
         self.rbtn_move_rc.setObjectName(u"rbtn_move_rc")
         self.rbtn_move_rc.setGeometry(QRect(610, 420, 95, 20))
+        self.chk_autocap = QCheckBox(self.centralwidget)
+        self.chk_autocap.setObjectName(u"chk_autocap")
+        self.chk_autocap.setGeometry(QRect(610, 440, 79, 20))
+        self.pushButton = QPushButton(self.centralwidget)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setGeometry(QRect(550, 490, 91, 24))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 800, 22))
+        self.menu = QMenu(self.menubar)
+        self.menu.setObjectName(u"menu")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
 
@@ -68,7 +79,10 @@ class Ui_MainWindow(object):
         self.btn_takephoto.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u7167", None))
         self.btn_record.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u5f55\u50cf", None))
         self.label_template.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
-        self.rbtn_move_rc.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
+        self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u6b47\u63a7\u5236", None))
+        self.rbtn_move_rc.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
+        self.chk_autocap.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u62cd\u7167", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u52a0\u8f7d\u56fe\u50cf\u5339\u914d", None))
+        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u83dc\u5355", None))
     # retranslateUi
 
