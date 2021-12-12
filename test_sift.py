@@ -26,7 +26,7 @@ def match(img1, img2):
     for m, n in matches:
         if m.distance < 0.9*n.distance:
             good.append(m)
-    print(len(good))
+    #print(len(good))
     if len(good) > MIN_MATCH_COUNT:
         src_pts = np.float32(
             [kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -56,7 +56,6 @@ def match(img1, img2):
         print("Not enough matches are found - %d/%d" %
               (len(good), MIN_MATCH_COUNT))
         matchesMask = None
-    print('1')
     draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
                        singlePointColor=None,
                        matchesMask=matchesMask,  # draw only inliers

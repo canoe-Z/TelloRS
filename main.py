@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from tello import ControlThread, FrameThread
 from test_sift import match
-from uic.untitled import Ui_MainWindow
+from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
 
