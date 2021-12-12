@@ -1,1 +1,1 @@
-# TelloRS
+# TelloRS——基于Tello与仿真沙盘的遥感信息智能处理平台

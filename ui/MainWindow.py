@@ -73,7 +73,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"TelloRS", None))
         self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.btn_connect.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u63a5Tello", None))
         self.btn_takephoto.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u7167", None))
