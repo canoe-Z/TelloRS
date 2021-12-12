@@ -1,16 +1,17 @@
 from time import sleep
 from djitellopy import Tello
+#from MyTello import MyTello
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal
 
 from queue import Queue
 
 
-class MyThread(QThread):
+class FrameThread(QThread):
     signal = Signal()
 
     def __init__(self, tello: Tello):
-        super(MyThread, self).__init__()
+        super(FrameThread, self).__init__()
 
         self.tello = tello
         self.tello.connect()
@@ -21,34 +22,39 @@ class MyThread(QThread):
         while True:
             # get a frame
             self.img = self.frame_read.frame
-            #print(self.img)
+            # print(self.img)
             a = self.img*2
             self.signal.emit()
 
 
-class TestThread(QThread):
-    signal = Signal()
+class ControlThread(QThread):
+    signal = Signal(int)
 
     def __init__(self, tello: Tello, queue: Queue):
-        super(TestThread, self).__init__()
+        super(ControlThread, self).__init__()
         self.tello = tello
         self.queue = queue
+        self.key = None
 
     def run(self):
         while True:
-            if self.queue.not_empty:
-                key = self.queue.get()
-                print(key)
-                if key == Qt.Key_T:
+            if self.key:
+                if self.key == Qt.Key_T:
                     self.tello.takeoff()
-                if key == Qt.Key_W:
+                if self.key == Qt.Key_W:
                     self.tello.move_forward(30)
-                if key == Qt.Key_A:
+                if self.key == Qt.Key_A:
                     self.tello.move_left(30)
-                if key == Qt.Key_S:
+                if self.key == Qt.Key_S:
                     self.tello.move_back(30)
-                if key == Qt.Key_D:
+                if self.key == Qt.Key_D:
                     self.tello.move_right(30)
-                if key == Qt.Key_L:
+                if self.key == Qt.Key_L:
                     self.tello.land()
+                    # self.signal_land(emit)
+                self.signal.emit(self.key)
+                self.key = None
             sleep(0.1)
+
+
+# def rc_control(tello: Tello, event: QtGui.QKeyEvent):

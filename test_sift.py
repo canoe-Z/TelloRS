@@ -1,11 +1,13 @@
 import cv2
 import numpy as np
+import time
 
 
 def match(img1, img2):
     # find the keypoints and descriptors with SIFT
     MIN_MATCH_COUNT = 5
     sift = cv2.SIFT_create()
+    # sift=cv2.ORB_create()
     kp1, des1 = sift.detectAndCompute(img1, None)
     kp2, des2 = sift.detectAndCompute(img2, None)
 
@@ -13,13 +15,16 @@ def match(img1, img2):
     index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=2)
     search_params = dict(checks=2)
 
-    flann = cv2.FlannBasedMatcher(index_params, search_params)
-    matches = flann.knnMatch(des1, des2, k=2)
+    #flann = cv2.FlannBasedMatcher(index_params, search_params)
+    #matches = flann.knnMatch(des1, des2, k=2)
+
+    matcher = cv2.BFMatcher()
+    matches = matcher.knnMatch(des1, des2, k=2)
 
     # store all the good matches as per Lowe's ratio test.
     good = []
     for m, n in matches:
-        if m.distance < 0.7*n.distance:
+        if m.distance < 0.9*n.distance:
             good.append(m)
     print(len(good))
     if len(good) > MIN_MATCH_COUNT:
@@ -28,7 +33,7 @@ def match(img1, img2):
         dst_pts = np.float32(
             [kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
 
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 3.0)
         matchesMask = mask.ravel().tolist()
 
         h, w = img1.shape[:2]
@@ -44,8 +49,8 @@ def match(img1, img2):
         cx = int(M['m10']/M['m00'])
         cy = int(M['m01']/M['m00'])
         img2 = cv2.circle(img2, (cx, cy), 4, (0, 255, 255), 10)
-        cv2.namedWindow("t", cv2.WINDOW_NORMAL)
-        cv2.imshow("t", img2)
+        #cv2.namedWindow("t", cv2.WINDOW_NORMAL)
+        #cv2.imshow("t", img2)
 
     else:
         print("Not enough matches are found - %d/%d" %
@@ -65,13 +70,18 @@ def match(img1, img2):
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
 
     #nigg = cv2.cvtColor(img3, cv2.COLOR_RGB2BGR)
-    cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-    cv2.imshow("Frame", img3)
-    cv2.waitKey()
+    # cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
+    # cv2.imshow("Frame", img3)
+    # cv2.waitKey()
+    return img2
     #key = cv2.waitKey(1) & 0xFF
 
 
 if __name__ == '__main__':
-    img1 = cv2.imread('./1.jpg')
-    img2 = cv2.imread('./2.jpg')
+    img1 = cv2.imread('./data/target3.jpg')
+    img2 = cv2.imread('./data/moban.jpg')
+    start = time.perf_counter()
     match(img1, img2)
+    end = time.perf_counter()
+    print(end-start)
+    np.hstack()
