@@ -6,6 +6,8 @@ from PySide6.QtCore import Qt, QThread, Signal
 
 from queue import Queue
 
+import cv2
+
 
 class FrameThread(QThread):
     signal = Signal()
@@ -21,14 +23,25 @@ class FrameThread(QThread):
     def run(self):
         while True:
             # get a frame
-            self.img = self.frame_read.frame
+            #import numpy as np
+            #self.img = np.ascontiguousarray(self.frame_read.frame[::-1])
+
+            # self.img=self.img[::-1]
+            # self.img=np.ascontiguousarray(self.img)
+            #self.img = cv2.flip(self.img, 0)
+            # self.img = cv2.rotate(cv2.flip(self.img, 1),
+            #                       rotateCode=cv2.ROTATE_180)
+            buffer = self.frame_read.frame
+            self.img = cv2.flip(buffer, 0)
+            #self.img = cv2.rotate(self.img, rotateCode=cv2.ROTATE_180)
+            #self.img = self.img[::-1]
             # print(self.img)
             a = self.img*2
             self.signal.emit()
 
 
 class ControlThread(QThread):
-    state_signal = Signal(int)
+    finish_signal = Signal(int)
 
     def __init__(self, tello: Tello, queue: Queue):
         super(ControlThread, self).__init__()
@@ -52,7 +65,7 @@ class ControlThread(QThread):
                 if self.key == Qt.Key_L:
                     self.tello.land()
                     # self.signal_land(emit)
-                self.state_signal.emit(self.key)
+                self.finish_signal.emit(self.key)
                 self.key = None
             sleep(0.1)
 
