@@ -7,7 +7,7 @@ def match(img1, img2):
     # find the keypoints and descriptors with SIFT
     MIN_MATCH_COUNT = 5
     sift = cv2.SIFT_create()
-    # sift=cv2.ORB_create()
+    #sift=cv2.SUR()
     kp1, des1 = sift.detectAndCompute(img1, None)
     kp2, des2 = sift.detectAndCompute(img2, None)
 

@@ -1,3 +1,4 @@
+from numpy import ndarray, source
 from time import sleep
 from djitellopy import Tello
 #from MyTello import MyTello
@@ -5,8 +6,17 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal
 
 from queue import Queue
-
+import numpy as np
 import cv2
+
+from enum import Enum
+from test_sift import match
+
+
+class ControlMode(Enum):
+    SINGLE_MODE = 0
+    RC_MODE = 1
+    FIXED_MODE = 2
 
 
 class FrameThread(QThread):
@@ -19,23 +29,13 @@ class FrameThread(QThread):
         self.tello.connect()
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
+        self.img = None
 
     def run(self):
         while True:
             # get a frame
-            #import numpy as np
-            #self.img = np.ascontiguousarray(self.frame_read.frame[::-1])
-
-            # self.img=self.img[::-1]
-            # self.img=np.ascontiguousarray(self.img)
-            #self.img = cv2.flip(self.img, 0)
-            # self.img = cv2.rotate(cv2.flip(self.img, 1),
-            #                       rotateCode=cv2.ROTATE_180)
             buffer = self.frame_read.frame
             self.img = cv2.flip(buffer, 0)
-            #self.img = cv2.rotate(self.img, rotateCode=cv2.ROTATE_180)
-            #self.img = self.img[::-1]
-            # print(self.img)
             a = self.img*2
             self.signal.emit()
 
@@ -67,6 +67,29 @@ class ControlThread(QThread):
                     # self.signal_land(emit)
                 self.finish_signal.emit(self.key)
                 self.key = None
+            sleep(0.1)
+
+
+class MatchingThread(QThread):
+    finish_signal = Signal()
+
+    def __init__(self, frameThread: FrameThread, source: ndarray):
+        super(MatchingThread, self).__init__()
+        self.source = source
+        self.frameThread = frameThread
+        self.result = None
+
+    def run(self):
+        while True:
+            if type(self.frameThread.img) == ndarray:
+                try:
+                    tmp = np.copy(self.source)
+                    self.result = match(self.frameThread.img, tmp)
+                    self.finish_signal.emit()
+                except:
+                    print('定位失败')
+                #self.result = self.source
+
             sleep(0.1)
 
 

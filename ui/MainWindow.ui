@@ -83,20 +83,20 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>420</y>
+      <y>400</y>
       <width>95</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>间歇控制</string>
+     <string>单次控制</string>
     </property>
    </widget>
    <widget class="QRadioButton" name="rbtn_move_rc">
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>400</y>
+      <y>420</y>
       <width>95</width>
       <height>20</height>
      </rect>
@@ -129,6 +129,19 @@
     </property>
     <property name="text">
      <string>加载图像匹配</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rbtn_move_fixed">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>380</y>
+      <width>95</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>间歇控制</string>
     </property>
    </widget>
   </widget>
