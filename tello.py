@@ -64,7 +64,6 @@ class ControlThread(QThread):
                     self.tello.move_right(30)
                 if self.key == Qt.Key_L:
                     self.tello.land()
-                    # self.signal_land(emit)
                 self.finish_signal.emit(self.key)
                 self.key = None
             sleep(0.1)
@@ -88,9 +87,5 @@ class MatchingThread(QThread):
                     self.finish_signal.emit()
                 except:
                     print('定位失败')
-                #self.result = self.source
 
             sleep(0.1)
-
-
-# def rc_control(tello: Tello, event: QtGui.QKeyEvent):

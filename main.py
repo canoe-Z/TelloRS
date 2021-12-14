@@ -2,7 +2,6 @@ import queue
 import sys
 
 import cv2
-from cv2 import imread
 from djitellopy import Tello
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, QDateTime
