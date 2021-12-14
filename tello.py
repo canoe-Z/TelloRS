@@ -12,6 +12,8 @@ import cv2
 from enum import Enum
 from test_sift import match
 
+#from icecream import ic
+
 
 class ControlMode(Enum):
     SINGLE_MODE = 0
@@ -27,6 +29,9 @@ class FrameThread(QThread):
 
         self.tello = tello
         self.tello.connect()
+        tello.set_video_bitrate(Tello.BITRATE_1MBPS)
+        tello.set_video_resolution(Tello.RESOLUTION_720P)
+        tello.set_video_fps(Tello.FPS_30)
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
         self.img = None
@@ -37,6 +42,8 @@ class FrameThread(QThread):
             buffer = self.frame_read.frame
             self.img = cv2.flip(buffer, 0)
             a = self.img*2
+            vx = self.tello.get_speed_x()
+            print(vx)
             self.signal.emit()
 
 
