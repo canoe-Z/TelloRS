@@ -1,18 +1,17 @@
-from numpy import ndarray, source
+import time
+from enum import Enum
+from queue import Queue
 from time import sleep
+
+import cv2
+import numpy as np
 from djitellopy import Tello
-#from MyTello import MyTello
+from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal
 
-from queue import Queue
-import numpy as np
-import cv2
-import time
-from enum import Enum
-from test_sift import match
-
-#from icecream import ic
+from map_matcher import SIFT_matcher
+from utils.control import HiddenPrints
 
 
 class ControlMode(Enum):
@@ -40,7 +39,6 @@ class FrameThread(QThread):
 
     def run(self):
         while True:
-            # get a frame
             buffer = self.frame_read.frame
             self.img = cv2.flip(buffer, 0)
             a = self.img*2
@@ -58,6 +56,8 @@ class ControlThread(QThread):
 
     def run(self):
         while True:
+            with HiddenPrints():
+                self.tello.send_command_without_return("keepalive")
             if self.key:
                 if self.key == Qt.Key_T:
                     self.tello.takeoff()
@@ -74,7 +74,8 @@ class ControlThread(QThread):
 
                 self.finish_signal.emit(self.key)
                 self.key = None
-            sleep(0.1)
+            else:
+                sleep(0.01)
 
 
 class MatchingThread(QThread):
@@ -82,8 +83,10 @@ class MatchingThread(QThread):
 
     def __init__(self, frameThread: FrameThread, source: ndarray):
         super(MatchingThread, self).__init__()
+        self.sift_matcher = SIFT_matcher(source)
         self.source = source
         self.frameThread = frameThread
+
         self.result = None
         self.cx = 0
         self.cy = 0
@@ -93,13 +96,11 @@ class MatchingThread(QThread):
             if type(self.frameThread.img) == ndarray:
                 try:
                     tmp = np.copy(self.source)
-                    self.cx, self.cy = match(self.frameThread.img, tmp)
+                    self.cx, self.cy = self.sift_matcher(self.frameThread.img)
                     # self.finish_signal.emit()
                 except:
                     pass
                     # print('定位失败')
-
-            sleep(0.1)
 
 
 class IMUThread(QThread):
@@ -109,10 +110,10 @@ class IMUThread(QThread):
         super(IMUThread, self).__init__()
         self.tello = tello
         self.source = source
+
         self.result = None
         self.last_time = time.time()
         self.pos = np.zeros(3, dtype=np.float32)
-        #self.pos = np.array([0, 0, 0], dtype=np.float32)
 
     def run(self):
         while True:
@@ -128,8 +129,7 @@ class IMUThread(QThread):
             ds = v*dt
             self.pos += ds*2.73*10
             print(self.pos[0], self.pos[1], self.pos[2])
-            
+
             self.result = cv2.circle(
                 self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
             self.imu_signal.emit()
-            sleep(0.1)
