@@ -1,86 +1,98 @@
 import cv2
 import numpy as np
-import time
+
+import cv2
+import numpy as np
 
 
-def match(img1, img2):
+def cal_rectangle_degree(img_ori, hull):
+
+    # 计算该坐标点组成的四边形的面积
+    im = np.zeros(img_ori.shape[:2], dtype="uint8")
+    filling_image = np.array(
+        [hull[0][0], hull[1][0], hull[2][0], hull[3][0]], np.int32)
+    polygon_mask = cv2.fillPoly(im, [filling_image], 255)
+    measure_polygon = np.sum(np.greater(polygon_mask, 0))
+
+    # 计算该坐标点组成的四边形的外接矩形面积
+    rect = cv2.minAreaRect(hull)  # 得到最小外接矩形的（中心(x,y), (宽,高), 旋转角度）
+    # 获取最小外接矩形的4个顶点坐标(ps: cv2.boxPoints(rect) for OpenCV 3.x)
+    box = cv2.boxPoints(rect)
+    box = np.int0(box)
+    box = cv2.convexHull(box, clockwise=True)
+    filling_image = np.array(
+        [box[0][0], box[1][0], box[2][0], box[3][0]], np.int32)
+    rectangle_mask = cv2.fillPoly(im, [filling_image], 255)
+    measure_rectangle = np.sum(np.greater(rectangle_mask, 0))
+
+    # 计算矩形度
+    Rectangle_degree = measure_polygon/measure_rectangle
+
+    return Rectangle_degree
+
+
+def match(template, source):
     # find the keypoints and descriptors with SIFT
-    MIN_MATCH_COUNT = 5
+    MIN_MATCH_COUNT = 10
     sift = cv2.SIFT_create()
-    #sift=cv2.SUR()
-    kp1, des1 = sift.detectAndCompute(img1, None)
-    kp2, des2 = sift.detectAndCompute(img2, None)
-
-    FLANN_INDEX_KDTREE = 0
-    index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=2)
-    search_params = dict(checks=2)
-
-    #flann = cv2.FlannBasedMatcher(index_params, search_params)
-    #matches = flann.knnMatch(des1, des2, k=2)
+    kp1, des1 = sift.detectAndCompute(template, None)
+    kp2, des2 = sift.detectAndCompute(source, None)
 
     matcher = cv2.BFMatcher()
     matches = matcher.knnMatch(des1, des2, k=2)
 
-    # store all the good matches as per Lowe's ratio test.
-    good = []
+    good_matches = []
     for m, n in matches:
-        if m.distance < 0.9*n.distance:
-            good.append(m)
-    #print(len(good))
-    if len(good) > MIN_MATCH_COUNT:
+        if m.distance < 0.85*n.distance:
+            good_matches.append(m)
+
+    # print(len(good_matches))
+    if len(good_matches) > MIN_MATCH_COUNT:
         src_pts = np.float32(
-            [kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+            [kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 2)
         dst_pts = np.float32(
-            [kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+            [kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
 
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 3.0)
-        matchesMask = mask.ravel().tolist()
-
-        h, w = img1.shape[:2]
+        H, _ = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 3.0)
+        h, w = template.shape[:2]
         pts = np.float32([[0, 0], [0, h-1], [w-1, h-1],
                          [w-1, 0]]).reshape(-1, 1, 2)
-        dst = cv2.perspectiveTransform(pts, M)
+        dst = cv2.perspectiveTransform(pts, H)
         points = np.int32(dst)
-        # print(points)
-        img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 5, cv2.LINE_8)
+        rectangle_degree = cal_rectangle_degree(source, points)
 
-        M = cv2.moments(points)
+        if(rectangle_degree > 0.75):
+            source = cv2.polylines(
+                source, [np.int32(dst)], True, 255, 5, cv2.LINE_8)
+        else:
+            print(rectangle_degree)
 
-        cx = int(M['m10']/M['m00'])
-        cy = int(M['m01']/M['m00'])
-        img2 = cv2.circle(img2, (cx, cy), 4, (0, 255, 255), 10)
-        #cv2.namedWindow("t", cv2.WINDOW_NORMAL)
-        #cv2.imshow("t", img2)
+        H = cv2.moments(points)
+
+        cx = int(H['m10']/H['m00'])
+        cy = int(H['m01']/H['m00'])
+        source = cv2.circle(source, (cx, cy), 4, (0, 255, 255), 10)
 
     else:
         print("Not enough matches are found - %d/%d" %
-              (len(good), MIN_MATCH_COUNT))
-        matchesMask = None
-    draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
-                       singlePointColor=None,
-                       matchesMask=matchesMask,  # draw only inliers
-                       flags=2)
+              (len(good_matches), MIN_MATCH_COUNT))
+        #     matchesMask = None
+        # draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
+        #                    singlePointColor=None,
+        #                    matchesMask=matchesMask,  # draw only inliers
+        #                    flags=2)
 
-    img3 = cv2.drawMatches(
-        img1, kp1, img2[:, :, :3], kp2, good, None, **draw_params)
-    img3 = cv2.putText(img3, str(1)+' East', (10, 1720),
-                       cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
-    img3 = cv2.putText(img3, str(2)+' North', (10, 1650),
-                       cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+        # img3 = cv2.drawMatches(
+        #     template, kp1, source[:, :, :3], kp2, good_matches, None, **draw_params)
 
-    #nigg = cv2.cvtColor(img3, cv2.COLOR_RGB2BGR)
-    # cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-    # cv2.imshow("Frame", img3)
-    # cv2.waitKey()
-    return img2
+        # cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
+        # cv2.imshow("Frame", img3)
+        # cv2.waitKey()
+    return cx, cy
     #key = cv2.waitKey(1) & 0xFF
 
 
 if __name__ == '__main__':
     img1 = cv2.imread('./data/target3.jpg')
     img2 = cv2.imread('./data/moban.jpg')
-    start = time.perf_counter()
     match(img1, img2)
-    end = time.perf_counter()
-    print(end-start)
-    np.hstack()

@@ -4,25 +4,26 @@ import sys
 import cv2
 from djitellopy import Tello
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QDateTime
+from PySide6.QtCore import QDateTime, Qt, QThread, Signal
 from PySide6.QtWidgets import QMainWindow
 
-from tello import ControlThread, FrameThread, ControlMode, MatchingThread
+from tello import (ControlMode, ControlThread, FrameThread, IMUThread,
+                   MatchingThread)
 from test_sift import match
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
-
+import os
+os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
+os.environ["QT_SCALE_FACTOR"] = "2"
 
 class mywindow(QMainWindow):
     def __init__(self):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.cv2_source = cv2.imread('./data/moban.jpg')
-        # self.load_template()
-        # self.set_source()
-        # self.template_match()
+        #self.cv2_source = cv2.imread('./data/moban.jpg')
+        self.cv2_source = cv2.imread('./data/newsource.png')
 
         self.is_autocap = 0
 
@@ -53,40 +54,16 @@ class mywindow(QMainWindow):
             self.ui.label_template.width(), self.ui.label_template.height())
         self.ui.label_template.setPixmap(qImg)
 
-    def set_source(self):
-        qImg = cv2toQImage(self.matching_thread.result)
-        qImg = QtGui.QPixmap(qImg).scaled(
-            self.ui.label_source.width(), self.ui.label_source.height())
-        self.ui.label_source.setPixmap(qImg)
-
-    def load_template(self):
-        self.cv2_template = cv2.imread('./data/target3.jpg')
-        qImg = cv2toQImage(self.cv2_template)
-        qImg = QtGui.QPixmap(qImg).scaled(
-            self.ui.label_template.width(), self.ui.label_template.height())
-        self.ui.label_template.setPixmap(qImg)
-
-    def template_match(self):
-        result = match(self.cv2_template, self.cv2_source)
-        qImg = cv2toQImage(result)
-        qImg = QtGui.QPixmap(qImg).scaled(
-            self.ui.label_source.width(), self.ui.label_source.height())
-        self.ui.label_source.setPixmap(qImg)
-
     def keyPressEvent(self, event: QtGui.QKeyEvent):
+        key = event.key()
         if event.isAutoRepeat():
             # 键盘按下反复执行
-            key = event.key()
             if self.control_mode == ControlMode.FIXED_MODE:
                 self.ui.statusbar.showMessage(lut_key(key)+'...')
                 self.control_thread.key = key
-            else:
-                pass
-        else:
-            # 按下时执行
-            key = event.key()
-            if self.control_mode == ControlMode.RC_MODE:
+            elif self.control_mode == ControlMode.RC_MODE:
                 if key == Qt.Key_T or key == Qt.Key_L:
+                    self.ui.statusbar.showMessage(lut_key(key)+'...')
                     self.control_thread.key = key
                 else:
                     if key == Qt.Key_W:
@@ -97,6 +74,8 @@ class mywindow(QMainWindow):
                         self.tello.send_rc_control(0, -self.rc_speed, 0, 0)
                     if key == Qt.Key_D:
                         self.tello.send_rc_control(self.rc_speed, 0, 0, 0)
+        else:
+            # 按下时执行
             if self.control_mode == ControlMode.SINGLE_MODE or self.control_mode == ControlMode.FIXED_MODE:
                 self.ui.statusbar.showMessage(lut_key(key)+'...')
                 self.control_thread.key = key
@@ -132,9 +111,27 @@ class mywindow(QMainWindow):
         self.control_thread.start()
         self.control_thread.finish_signal.connect(self.command_finish)
 
+        self.imu_thread = IMUThread(self.tello, self.cv2_source)
+        self.imu_thread.imu_signal.connect(self.set_imu_source)
+        self.imu_thread.start()
+
+    def set_source(self):
+        self.imu_thread.pos[0] = self.matching_thread.cx
+        self.imu_thread.pos[1] = self.matching_thread.cy
+        # qImg = cv2toQImage(self.matching_thread.result)
+        # qImg = QtGui.QPixmap(qImg).scaled(
+        #     self.ui.label_source.width(), self.ui.label_source.height())
+        # self.ui.label_source.setPixmap(qImg)
+
+    def set_imu_source(self):
+        qImg = cv2toQImage(self.imu_thread.result)
+        qImg = QtGui.QPixmap(qImg).scaled(
+            self.ui.label_source.width(), self.ui.label_source.height())
+        self.ui.label_source.setPixmap(qImg)
+
     def take_photo(self):
         curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
-        cv2.imwrite('output/'+curDataTime+'.png', self.cv2_template)
+        cv2.imwrite('output/'+curDataTime+'.png', self.frame_thread.img)
         print(curDataTime)
 
     def set_control_mode(self, mode: int):
