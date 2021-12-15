@@ -15,8 +15,8 @@ from utils.control import lut_key
 from utils.img import cv2toQImage
 
 # FIX Problem for High DPI and Scale above 100%
-os.environ["QT_FONT_DPI"] = "96"
-os.environ["QT_SCALE_FACTOR"] = "2"
+# os.environ["QT_FONT_DPI"] = "96"
+# os.environ["QT_SCALE_FACTOR"] = "1.5"
 
 
 class mywindow(QMainWindow):
