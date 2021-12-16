@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 
-import cv2
-import numpy as np
-
 
 class SIFT_matcher(object):
     def __init__(self, map):
@@ -39,9 +36,8 @@ class SIFT_matcher(object):
     def match(self, template):
         # find the keypoints and descriptors with SIFT
         MIN_MATCH_COUNT = 10
-        
+
         kp1, des1 = self.sift.detectAndCompute(template, None)
-        
 
         matcher = cv2.BFMatcher()
         matches = matcher.knnMatch(des1, self.des2, k=2)
@@ -101,5 +97,5 @@ if __name__ == '__main__':
     img1 = cv2.imread('./data/target3.jpg')
     img2 = cv2.imread('./data/moban.jpg')
 
-    sift_matcher=SIFT_matcher(img2)
+    sift_matcher = SIFT_matcher(img2)
     sift_matcher.match(img1)

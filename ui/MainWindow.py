@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(814, 600)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -39,6 +39,11 @@ class Ui_MainWindow(object):
         self.label_source = QLabel(self.frame_2)
         self.label_source.setObjectName(u"label_source")
         self.label_source.setEnabled(True)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_source.sizePolicy().hasHeightForWidth())
+        self.label_source.setSizePolicy(sizePolicy)
         self.label_source.setMinimumSize(QSize(400, 400))
 
         self.verticalLayout_2.addWidget(self.label_source)
@@ -136,11 +141,11 @@ class Ui_MainWindow(object):
 
         self.chk_autocap = QCheckBox(self.frame_4)
         self.chk_autocap.setObjectName(u"chk_autocap")
-        sizePolicy = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.chk_autocap.sizePolicy().hasHeightForWidth())
-        self.chk_autocap.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.chk_autocap.sizePolicy().hasHeightForWidth())
+        self.chk_autocap.setSizePolicy(sizePolicy1)
 
         self.verticalLayout_3.addWidget(self.chk_autocap)
 
@@ -156,7 +161,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 800, 22))
+        self.menubar.setGeometry(QRect(0, 0, 814, 22))
         self.menu = QMenu(self.menubar)
         self.menu.setObjectName(u"menu")
         MainWindow.setMenuBar(self.menubar)
