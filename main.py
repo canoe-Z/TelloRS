@@ -43,6 +43,8 @@ class mywindow(QMainWindow):
 
         self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
+        
+
     def chk_autocap(self):
         self.is_autocap = self.ui.chk_autocap.isChecked()
         print(self.is_autocap)

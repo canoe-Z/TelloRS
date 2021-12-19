@@ -6,7 +6,7 @@ class Image_Stitching():
     def __init__(self) :
         self.ratio=0.85
         self.min_match=10
-        self.sift=cv2.xfeatures2d.SIFT_create()
+        self.sift=cv2.SIFT_create()
         self.smoothing_window_size=400
 
     def registration(self,img1,img2):
@@ -81,3 +81,31 @@ if __name__ == '__main__':
         print ("For example: python Image_Stitching.py '/Users/linrl3/Desktop/picture/p1.jpg' '/Users/linrl3/Desktop/picture/p2.jpg'")
     
 
+# #  cv2.imwrite(argv2, final)
+# # if __name__ == '__main__':
+# #     try: 
+# #         w=7
+# #         for i in range(0,6):
+# #             w_1=w-1
+# #             main(str(w)+'.jpg',str(w_1)+'.jpg')
+# #             w=w_1
+
+# #直接怼
+# import cv2
+# import numpy as np
+# def match(img1_path,img2_path):#./matching/tupian/2M6A1157_sd.JPG
+#     img1=cv2.imread(img1_path)
+#     img2=cv2.imread(img2_path)
+# #print(type(img))
+# #print(np.shape(img1))
+#     img=np.hstack((img1[:,:-200,:],img2[:,-264:,:]))
+# #print(img.shape)
+#     cv2.imwrite(img2_path,img)
+# # cv2.imshow('img1',img1[:,50:,:])
+# # cv2.imshow('img2',img2[:,:-50,:])
+
+# w=1183
+# for i in range(0,11):
+#     w_1=w-1
+#     match('./matching/picture/2M6A'+str(w)+'_sd.jpg','./matching/picture/2M6A'+str(w_1)+'_sd.jpg')
+#     w=w_1
