@@ -1,4 +1,5 @@
 from djitellopy import Tello
+from PySide6.QtCore import Qt
 
 
 class MyTello(Tello):
@@ -11,36 +12,12 @@ class MyTello(Tello):
     #         host='192.168.10.1',
     #         retry_count=3)
 
-    def move(self, direction: str, x: int) -> bool:
-        return self.send_control_command("{} {}".format(direction, x))
-
-    def move_left_return(self, x: int):
-        """Fly x cm left.
-        Arguments:
-            x: 20-500
-        """
-        return self.move("left", x)
-
-    def move_right_return(self, x: int):
-        """Fly x cm right.
-        Arguments:
-            x: 20-500
-        """
-        return self.move("right", x)
-
-    def move_forward_return(self, x: int):
-        """Fly x cm forward.
-        Arguments:
-            x: 20-500
-        """
-        return self.move("forward", x)
-
-    def move_back_return(self, x: int):
-        """Fly x cm backwards.
-        Arguments:
-            x: 20-500
-        """
-        return self.move("back", x)
-
-    def takeoff(self):
-        return super().takeoff()
+    def rc_control_by_key(self, key: int, move_speed: int):
+        if key == Qt.Key_W:
+            self.send_rc_control(0, move_speed, 0, 0)
+        if key == Qt.Key_A:
+            self.send_rc_control(-move_speed, 0, 0, 0)
+        if key == Qt.Key_S:
+            self.send_rc_control(0, -move_speed, 0, 0)
+        if key == Qt.Key_D:
+            self.send_rc_control(move_speed, 0, 0, 0)
