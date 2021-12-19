@@ -34,7 +34,7 @@ for fname in images:
 ret, Matrix, dist, rvecs, tvecs = cv.calibrateCamera(
     objpoints, imgpoints, gray.shape[::-1], None, None)
 
-datadir = "./data/map_imgs"
+datadir = "./data/pai1"
 
 path = os.path.join(datadir)
 img_list = os.listdir(path)
@@ -47,7 +47,7 @@ for i in img_list:
 
     dst = cv.undistort(img, Matrix, dist, None, newMatrix)
     dst = dst[30:-30, 20:-20, :]
-    cv.imwrite('./data/result/'+i, dst)
+    cv.imwrite('./data/result2/'+i, dst)
 
 # 计算重投影误差
 tot_error = 0

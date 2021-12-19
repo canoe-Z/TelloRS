@@ -1,19 +1,45 @@
+import glob
+import sys
+import os
 import cv2
 import numpy as np
-import sys
-import glob
+from pydegensac import findFundamentalMatrix, findHomography
+
+
+class RootSIFT:
+    def __init__(self):
+        self.extractor = cv2.SIFT_create()
+
+    def compute(self, image, kps, eps=1e-7):
+        # compute SIFT descriptors
+        (kps, descs) = self.extractor.compute(image, kps)
+
+        # if there are no keypoints or descriptors, return an empty tuple
+        if len(kps) == 0:
+            return ([], None)
+
+        # apply the Hellinger kernel by first L1-normalizing and taking the
+        # square-root
+        descs /= (descs.sum(axis=1, keepdims=True) + eps)
+        descs = np.sqrt(descs)
+
+        # return a tuple of the keypoints and descriptors
+        return (kps, descs)
 
 
 class Image_Stitching():
     def __init__(self):
-        self.ratio = 0.7
-        self.min_match = 10
+        self.ratio = 0.75
         self.sift = cv2.SIFT_create()
-        self.smoothing_window_size = 200
+        self.rootsift = RootSIFT()
+        self.smoothing_window_size = 300
 
     def registration_single(self, img1, img2):
-        kp1, des1 = self.sift.detectAndCompute(img1, None)
-        kp2, des2 = self.sift.detectAndCompute(img2, None)
+        kp1 = self.sift.detect(img1, None)
+        kp2 = self.sift.detect(img2, None)
+        kp1, des1 = self.rootsift.compute(img1, kp1)
+        kp2, des2 = self.rootsift.compute(img2, kp2)
+
         matcher = cv2.BFMatcher()
         raw_matches = matcher.knnMatch(des1, des2, k=2)
         good_points = []
@@ -25,38 +51,39 @@ class Image_Stitching():
         img3 = cv2.drawMatchesKnn(
             img1, kp1, img2, kp2, good_matches, None, flags=2)
         cv2.imwrite('./temp/matching.jpg', img3)
-        if len(good_points) > self.min_match:
-            image1_kp = np.float32(
-                [kp1[i].pt for (_, i) in good_points])
-            image2_kp = np.float32(
-                [kp2[i].pt for (i, _) in good_points])
 
-            index = []
-            for i, (kp1, kp2) in enumerate(zip(image1_kp, image2_kp)):
-                if abs(kp1[1]-kp2[1]) < 20:
-                    index.append(i)
+        image1_kp = np.float32(
+            [kp1[i].pt for (_, i) in good_points])
+        image2_kp = np.float32(
+            [kp2[i].pt for (i, _) in good_points])
 
-            image1_kp = image1_kp[index]
-            image2_kp = image2_kp[index]
+        index = []
+        for i, (kp1, kp2) in enumerate(zip(image1_kp, image2_kp)):
+            if abs(kp1[1]-kp2[1]) < 100:
+                index.append(i)
 
-            # print(image1_kp.shape)
-            # print(image2_kp.shape)
+        image1_kp = image1_kp[index]
+        image2_kp = image2_kp[index]
 
-            sum = np.mean(image1_kp-image2_kp, 0)[0]
-            # print(np.mean(image1_kp-image2_kp, 0)[0])
-            # print(np.std(image1_kp-image2_kp, 0)[0])
+        print(image1_kp.shape)
+        print(image2_kp.shape)
+        sum = np.mean(image1_kp-image2_kp, 0)[0]
+        print(np.mean(image1_kp-image2_kp, 0)[0])
+        print(np.std(image1_kp-image2_kp, 0)[0])
 
-            index = []
-            for i, (kp1, kp2) in enumerate(zip(image1_kp, image2_kp)):
-                if abs(abs(kp1[0]-kp2[0])-sum) < 30:
-                    index.append(i)
+        index = []
+        for i, (kp1, kp2) in enumerate(zip(image1_kp, image2_kp)):
+            if abs(abs(kp1[0]-kp2[0])-sum) < 300:
+                index.append(i)
 
-            image1_kp = image1_kp[index]
-            image2_kp = image2_kp[index]
+        image1_kp = image1_kp[index]
+        image2_kp = image2_kp[index]
 
-            # for kp1, kp2 in image1_kp, image2_kp:
-            H, status = cv2.findHomography(
-                image2_kp, image1_kp, cv2.RANSAC, 3.0)
+        # for kp1, kp2 in image1_kp, image2_kp:
+        # H, _ = cv2.findHomography(
+        #     image2_kp, image1_kp, cv2.RANSAC, 3.0)
+        H, _ = findHomography(image2_kp, image1_kp, 15.0,
+                              max_iters=200000)
         return H
 
     def registration(self, imgs):
@@ -103,6 +130,21 @@ class Image_Stitching():
         mask2 = self.create_mask(img1, img2, version='right_image')
         panorama2 = cv2.warpPerspective(
             img2, H, (width_panorama, height_panorama))*mask2
+
+        # mask1 = self.create_mask(img1, img2, version='left_image')
+        # panorama1 = cv2.warpPerspective(
+        #     img1, np.linalg.inv(H), (width_panorama, height_panorama))*mask1
+
+        # panorama2 = np.zeros((height_panorama, width_panorama, 3))
+        # mask2 = self.create_mask(img1, img2, version='right_image')
+        # #print(panorama2[0:img1.shape[0], img1.shape[1]:, :].shape)
+        # panorama2[0:img1.shape[0], img1.shape[1]:, :] = img2
+        # panorama2 *= mask2
+
+        # cv2.namedWindow('test')
+        # cv2.imshow('test',panorama2)
+        # cv2.waitKey(-1)
+        cv2.imwrite('./temp/test.jpg', panorama2)
         result = panorama1+panorama2
 
         rows, cols = np.where(result[:, :, 0] != 0)
@@ -127,33 +169,51 @@ class Image_Stitching():
             else:
                 print(i)
                 H = H_list[0]
-                for j in range(0, i):
+                for j in range(i):
                     H = np.matmul(H, H_list[j])
+                    H /= H[2, 2]
                 print(H)
                 print(result_list[i-1].shape)
                 print(imgs[i+1].shape)
                 result = self.blending_single(
                     result_list[i-1], imgs[i+1], H)
-                #assert(1 == 2)
                 result_list.append(result)
-        print(len(result_list))
+        return result_list[-1]
 
 
 def main():
     # img1 = cv2.imread(argv1)
     # img2 = cv2.imread(argv2)
-    import os
-    imgs = os.listdir('./data/result/')
-    imgs.sort()
+    #id = 5
+    # for id in range(11,12):
+    #     imgs = os.listdir('./data/map_imgs/'+str(id))
 
-    imgs = [os.path.join('./data/result/', img) for img in imgs[13:18]]
+    #     imgs = [os.path.join('./data/map_imgs/', str(id), img)
+    #             for img in imgs]
+    #     print(len(imgs))
+    #     imgs = [cv2.imread(img) for img in imgs]
+
+    #     if id % 2 == 1:
+    #         imgs = imgs[::-1]
+    #     # new_imgs = []
+    #     # for img in imgs:
+    #     #     new_imgs.append(img[:-300, :, :])
+    #     # print(imgs)
+    #     # images = glob.glob('./data/result/2M6A1631*.JPG')  # 经人提醒，这里的.jpg应该改为.png
+    #     # print(images)
+    #     # imgs=
+    #     result = Image_Stitching().blending(imgs)
+    #     cv2.imwrite('./output/'+str(id)+'.jpg', result)
+
+    imgs = os.listdir('./output/')
+    imgs.sort(key=lambda x: int(x.split('.')[0]))
+
+    imgs = [os.path.join('./output', img)
+            for img in imgs[2:10]]
+    print((imgs))
     imgs = [cv2.imread(img) for img in imgs]
-    # print(imgs)
-    # images = glob.glob('./data/result/2M6A1631*.JPG')  # 经人提醒，这里的.jpg应该改为.png
-    # print(images)
-    # imgs=
-    final = Image_Stitching().blending(imgs)
-    # cv2.imwrite('./temp/panorama.jpg', final)
+    result = Image_Stitching().blending(imgs)
+    cv2.imwrite('./output/'+'final.jpg', result)
 
 
 if __name__ == '__main__':
