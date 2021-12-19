@@ -24,8 +24,10 @@ class mywindow(QMainWindow):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        #self.cv2_source = cv2.imread('./data/moban.jpg')
-        self.cv2_source = cv2.imread('./data/newsource.png')
+
+        #self.cv2_map = cv2.imread('./data/moban.jpg')
+        self.cv2_map = cv2.imread('./data/newsource.png')
+        self.show_map()
 
         self.is_autocap = 0
 
@@ -46,13 +48,21 @@ class mywindow(QMainWindow):
 
         self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
+        nav_queue = queue.Queue()
+        self.tello = Tello()
+        self.frame_thread = FrameThread(self.tello)
+        self.matching_thread = MatchingThread(
+            self.frame_thread, self.cv2_map, nav_queue)
+        self.control_thread = ControlThread(self.tello)
+        self.imu_thread = IMUThread(self.tello, nav_queue)
+
     @Slot()
     def chk_autocap(self):
         self.is_autocap = self.ui.chk_autocap.isChecked()
         print(self.is_autocap)
 
     @Slot()
-    def set_template(self):
+    def show_tello_frame(self):
         qImg = cv2toQImage(self.frame_thread.img)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_template.width(), self.ui.label_template.height())
@@ -108,40 +118,32 @@ class mywindow(QMainWindow):
 
     @Slot()
     def connect_tello(self):
-        self.tello = Tello()
-        self.frame_thread = FrameThread(self.tello)
 
-        self.tello_queue = queue.Queue()
-        self.tello_queue.maxsize = 1
-
-        self.frame_thread.signal.connect(self.set_template)
+        self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
 
-        self.matching_thread = MatchingThread(
-            self.frame_thread, self.cv2_source)
         self.matching_thread.start()
-        self.matching_thread.finish_signal.connect(self.set_source)
+        self.matching_thread.finish_signal.connect(self.show_map)
 
-        self.control_thread = ControlThread(self.tello, self.tello_queue)
         self.control_thread.start()
         self.control_thread.finish_signal.connect(self.command_finish)
 
-        self.imu_thread = IMUThread(self.tello, self.cv2_source)
-        self.imu_thread.imu_signal.connect(self.set_imu_source)
+        self.imu_thread.sift_signal.connect(self.draw_pos)
         self.imu_thread.start()
 
-    @Slot()
-    def set_source(self):
-        self.imu_thread.pos[0] = self.matching_thread.cx
-        self.imu_thread.pos[1] = self.matching_thread.cy
-        # qImg = cv2toQImage(self.matching_thread.result)
-        # qImg = QtGui.QPixmap(qImg).scaled(
-        #     self.ui.label_source.width(), self.ui.label_source.height())
-        # self.ui.label_source.setPixmap(qImg)
+    def draw_pos(self):
+        result = cv2.circle(self.cv2_map, (int(self.imu_thread.pos[0]), int(
+            self.imu_thread.pos[1])), 4, (0, 255, 255), 10)
+        qImg = cv2toQImage(result)
+        qImg = QtGui.QPixmap(qImg).scaled(
+            self.ui.label_source.width(), self.ui.label_source.height())
+        self.ui.label_source.setPixmap(qImg)
+    # @Slot()
 
-    @Slot()
-    def set_imu_source(self):
-        qImg = cv2toQImage(self.imu_thread.result)
+    def show_map(self):
+        # self.imu_thread.pos[0] = self.matching_thread.cx
+        # self.imu_thread.pos[1] = self.matching_thread.cy
+        qImg = cv2toQImage(self.cv2_map)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_source.width(), self.ui.label_source.height())
         self.ui.label_source.setPixmap(qImg)
@@ -151,12 +153,13 @@ class mywindow(QMainWindow):
         curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
         cv2.imwrite('output/'+curDataTime+'.png', self.frame_thread.img)
         print(curDataTime)
-    
+
     @Slot(int)
     def set_control_mode(self, mode: int):
         self.control_mode = mode
         print('切换控制模式为'+str(mode))
 
+    @Slot(int)
     def command_finish(self, key: int):
         self.ui.statusbar.showMessage(lut_key(key)+' OK', 2000)
         curDataTime = QDateTime.currentDateTime().toString('hh_mm_ss_yyyy_MM_dd')

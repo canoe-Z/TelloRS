@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt, QThread, Signal
 
 from map_matcher import SIFT_matcher
 from utils.control import HiddenPrints
+from match import draw
 
 
 class ControlMode(Enum):
@@ -27,6 +28,7 @@ class FrameThread(QThread):
         super(FrameThread, self).__init__()
 
         self.tello = tello
+        self.img = None
 
         self.tello.connect()
         tello.set_video_bitrate(Tello.BITRATE_3MBPS)
@@ -35,29 +37,47 @@ class FrameThread(QThread):
 
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
-        self.img = None
+        self.template1 = cv2.imread("./output/oil.png")
+        self.template2 = cv2.imread("./output/oil1.png")
+        self.template3 = cv2.imread("./output/airplane.png")
+        self.template4 = cv2.imread("./output/airplane1.png")
+        self.template5 = cv2.imread("./output/airplane2.png")
+        self.template6 = cv2.imread("./output/airplane3.png")
+        self.template7 = cv2.imread("./output/airplane4.png")
 
     def run(self):
         while True:
             buffer = self.frame_read.frame
-            self.img = cv2.flip(buffer, 0)
+            self.img=buffer
+            #self.img = cv2.flip(buffer, 0)
+            #self.img = cv2.rotate(self.img, rotateCode=cv2.ROTATE_180)
+            #self.img = self.img[::-1]
+            # print(self.img)
             a = self.img*2
+            # threshold = 0.79
+            # draw(self.img, self.template1, threshold)
+            # draw(self.img, self.template2, threshold)
+            # draw(self.img, self.template3, threshold)
+            # draw(self.img, self.template4, threshold)
+            # draw(self.img, self.template5, threshold)
+            # draw(self.img, self.template6, threshold)
+            # draw(self.img, self.template7, threshold)
             self.signal.emit()
+            sleep(0.02)
 
 
 class ControlThread(QThread):
     finish_signal = Signal(int)
 
-    def __init__(self, tello: Tello, queue: Queue):
+    def __init__(self, tello: Tello):
         super(ControlThread, self).__init__()
         self.tello = tello
-        self.queue = queue
         self.key = None
 
     def run(self):
         while True:
-            with HiddenPrints():
-                self.tello.send_command_without_return("keepalive")
+            # with HiddenPrints():
+            #     self.tello.send_command_without_return("keepalive")
             if self.key:
                 if self.key == Qt.Key_T:
                     self.tello.takeoff()
@@ -81,42 +101,58 @@ class ControlThread(QThread):
 class MatchingThread(QThread):
     finish_signal = Signal()
 
-    def __init__(self, frameThread: FrameThread, source: ndarray):
+    def __init__(self, frameThread: FrameThread, map: ndarray, nav_queue: Queue):
         super(MatchingThread, self).__init__()
-        self.sift_matcher = SIFT_matcher(source)
-        self.source = source
+        self.sift_matcher = SIFT_matcher(map)
         self.frameThread = frameThread
 
         self.result = None
         self.cx = 0
         self.cy = 0
 
+        self.nav_queue = nav_queue
+
     def run(self):
         while True:
             if type(self.frameThread.img) == ndarray:
                 try:
-                    tmp = np.copy(self.source)
-                    self.cx, self.cy = self.sift_matcher(self.frameThread.img)
-                    # self.finish_signal.emit()
+                    start = time.perf_counter()
+
+                    match_num, rectangle_degree, center = self.sift_matcher.match(
+                        self.frameThread.img)
+                    if center is not None and rectangle_degree > 0.5:
+                        self.cx, self.cy = center
+                        self.nav_queue.put(center)
+
+                    end = time.perf_counter()
+                    print(rectangle_degree)
+                    # print(end-start)
+                    self.finish_signal.emit()
                 except:
                     pass
                     # print('定位失败')
+            sleep(0.05)
 
 
 class IMUThread(QThread):
     imu_signal = Signal()
+    sift_signal = Signal()
 
-    def __init__(self, tello: Tello, source: ndarray):
+    def __init__(self, tello: Tello, nav_queue: Queue):
         super(IMUThread, self).__init__()
         self.tello = tello
-        self.source = source
 
-        self.result = None
         self.last_time = time.time()
         self.pos = np.zeros(3, dtype=np.float32)
 
+        self.nav_queue = nav_queue
+
     def run(self):
         while True:
+            if self.nav_queue.not_empty:
+                self.pos[0], self.pos[1] = self.nav_queue.get()
+                print(self.pos[0], self.pos[1])
+                self.sift_signal.emit()
             vx = -self.tello.get_speed_x()
             vy = self.tello.get_speed_y()
             vz = self.tello.get_speed_z()
@@ -128,8 +164,9 @@ class IMUThread(QThread):
 
             ds = v*dt
             self.pos += ds*2.73*10
-            print(self.pos[0], self.pos[1], self.pos[2])
+            #print(self.pos[0], self.pos[1], self.pos[2])
 
-            self.result = cv2.circle(
-                self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
+            # self.result = cv2.circle(
+            #     self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
             self.imu_signal.emit()
+            sleep(0.02)
