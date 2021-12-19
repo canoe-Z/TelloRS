@@ -14,6 +14,7 @@ from map_matcher import SIFT_matcher
 from utils.control import HiddenPrints
 from match import draw
 
+
 class ControlMode(Enum):
     SINGLE_MODE = 0
     RC_MODE = 1
@@ -52,13 +53,13 @@ class FrameThread(QThread):
             # print(self.img)
             #a = self.img*2
             threshold = 0.79
-            draw(self.img,self.template1,threshold)
-            draw(self.img,self.template2,threshold)
-            draw(self.img,self.template3,threshold)
-            draw(self.img,self.template4,threshold)
-            draw(self.img,self.template5,threshold)
-            draw(self.img,self.template6,threshold)
-            draw(self.img,self.template7,threshold)
+            draw(self.img, self.template1, threshold)
+            draw(self.img, self.template2, threshold)
+            draw(self.img, self.template3, threshold)
+            draw(self.img, self.template4, threshold)
+            draw(self.img, self.template5, threshold)
+            draw(self.img, self.template6, threshold)
+            draw(self.img, self.template7, threshold)
 
             self.signal.emit()
 
@@ -66,10 +67,9 @@ class FrameThread(QThread):
 class ControlThread(QThread):
     finish_signal = Signal(int)
 
-    def __init__(self, tello: Tello, queue: Queue):
+    def __init__(self, tello: Tello):
         super(ControlThread, self).__init__()
         self.tello = tello
-        self.queue = queue
         self.key = None
 
     def run(self):
@@ -99,10 +99,9 @@ class ControlThread(QThread):
 class MatchingThread(QThread):
     finish_signal = Signal()
 
-    def __init__(self, frameThread: FrameThread, source: ndarray):
+    def __init__(self, frameThread: FrameThread, map: ndarray):
         super(MatchingThread, self).__init__()
-        self.sift_matcher = SIFT_matcher(source)
-        self.source = source
+        self.sift_matcher = SIFT_matcher(map)
         self.frameThread = frameThread
 
         self.result = None
@@ -113,9 +112,10 @@ class MatchingThread(QThread):
         while True:
             if type(self.frameThread.img) == ndarray:
                 try:
-                    tmp = np.copy(self.source)
-                    self.cx, self.cy = self.sift_matcher(self.frameThread.img)
-                    # self.finish_signal.emit()
+                    match_num, rectangle_degree, center = self.sift_matcher(
+                        self.frameThread.img)
+                    self.cx, self.cy = center
+                    self.finish_signal.emit()
                 except:
                     pass
                     # print('定位失败')
@@ -124,12 +124,10 @@ class MatchingThread(QThread):
 class IMUThread(QThread):
     imu_signal = Signal()
 
-    def __init__(self, tello: Tello, source: ndarray):
+    def __init__(self, tello: Tello):
         super(IMUThread, self).__init__()
         self.tello = tello
-        self.source = source
 
-        self.result = None
         self.last_time = time.time()
         self.pos = np.zeros(3, dtype=np.float32)
 
@@ -146,8 +144,8 @@ class IMUThread(QThread):
 
             ds = v*dt
             self.pos += ds*2.73*10
-            print(self.pos[0], self.pos[1], self.pos[2])
+            #print(self.pos[0], self.pos[1], self.pos[2])
 
-            self.result = cv2.circle(
-                self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
+            # self.result = cv2.circle(
+            #     self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
             self.imu_signal.emit()

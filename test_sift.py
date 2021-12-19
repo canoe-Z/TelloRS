@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import time
 
+from map_matcher import SIFT_matcher
+
 
 def match(img1, img2):
     # find the keypoints and descriptors with SIFT
@@ -26,7 +28,7 @@ def match(img1, img2):
     for m, n in matches:
         if m.distance < 0.9*n.distance:
             good.append(m)
-    #print(len(good))
+    # print(len(good))
     if len(good) > MIN_MATCH_COUNT:
         src_pts = np.float32(
             [kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
@@ -69,19 +71,21 @@ def match(img1, img2):
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
 
     #nigg = cv2.cvtColor(img3, cv2.COLOR_RGB2BGR)
-    cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-    cv2.imshow("Frame", img3)
-    cv2.waitKey()
+    # cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
+    # cv2.imshow("Frame", img3)
+    # cv2.waitKey()
     return img2
     #key = cv2.waitKey(1) & 0xFF
 
 
 if __name__ == '__main__':
-    img1 = cv2.imread('./output/19_09_46_2021_12_13.png')
-    print(img1.shape)
+    img1 = cv2.imread('./data/target.jpg')
     img2 = cv2.imread('./data/moban.jpg')
-    start = time.perf_counter()
-    match(img1, img2)
-    end = time.perf_counter()
-    print(end-start)
-    #np.hstack()
+    sift_matcher = SIFT_matcher(img2)
+
+    while True:
+        start = time.perf_counter()
+        sift_matcher.match(img1)
+        end = time.perf_counter()
+        print(end-start)
+    # np.hstack()
