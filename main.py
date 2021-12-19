@@ -151,7 +151,7 @@ class mywindow(QMainWindow):
         curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
         cv2.imwrite('output/'+curDataTime+'.png', self.frame_thread.img)
         print(curDataTime)
-    
+
     @Slot(int)
     def set_control_mode(self, mode: int):
         self.control_mode = mode
