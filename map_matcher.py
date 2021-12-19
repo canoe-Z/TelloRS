@@ -54,7 +54,7 @@ class SIFT_matcher(object):
                 [self.kp_map[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
 
             H, _ = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 3.0)
-            
+
             h, w = template.shape[:2]
             pts = np.float32([[0, 0], [0, h-1], [w-1, h-1],
                               [w-1, 0]]).reshape(-1, 1, 2)
