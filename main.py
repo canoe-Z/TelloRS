@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from tello import (ControlMode, ControlThread, FrameThread, IMUThread,
                    MatchingThread)
+from detect import DetectThread
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
@@ -47,14 +48,6 @@ class mywindow(QMainWindow):
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
 
         self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
-
-        nav_queue = queue.Queue()
-        self.tello = Tello()
-        self.frame_thread = FrameThread(self.tello)
-        self.matching_thread = MatchingThread(
-            self.frame_thread, self.cv2_map, nav_queue)
-        self.control_thread = ControlThread(self.tello)
-        self.imu_thread = IMUThread(self.tello, nav_queue)
 
     @Slot()
     def chk_autocap(self):
@@ -118,9 +111,20 @@ class mywindow(QMainWindow):
 
     @Slot()
     def connect_tello(self):
+        nav_queue = queue.Queue()
+        self.tello = Tello()
+        self.frame_thread = FrameThread(self.tello)
+        self.matching_thread = MatchingThread(
+            self.frame_thread, self.cv2_map, nav_queue)
+        self.control_thread = ControlThread(self.tello)
+        self.imu_thread = IMUThread(self.tello, nav_queue)
 
-        self.frame_thread.signal.connect(self.show_tello_frame)
+        #self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
+
+        self.detect_thread = DetectThread(self.frame_thread)
+        self.detect_thread.start()
+        self.detect_thread.signal.connect(self.show_det)
 
         self.matching_thread.start()
         self.matching_thread.finish_signal.connect(self.show_map)
@@ -147,6 +151,13 @@ class mywindow(QMainWindow):
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_source.width(), self.ui.label_source.height())
         self.ui.label_source.setPixmap(qImg)
+
+    @Slot()
+    def show_det(self):
+        qImg = cv2toQImage(self.detect_thread.frame)
+        qImg = QtGui.QPixmap(qImg).scaled(
+            self.ui.label_template.width(), self.ui.label_template.height())
+        self.ui.label_template.setPixmap(qImg)
 
     @Slot()
     def take_photo(self):
