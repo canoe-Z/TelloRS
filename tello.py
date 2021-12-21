@@ -37,19 +37,18 @@ class FrameThread(QThread):
 
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
-        self.template1 = cv2.imread("./output/oil.png")
-        self.template2 = cv2.imread("./output/oil1.png")
-        self.template3 = cv2.imread("./output/airplane.png")
-        self.template4 = cv2.imread("./output/airplane1.png")
-        self.template5 = cv2.imread("./output/airplane2.png")
-        self.template6 = cv2.imread("./output/airplane3.png")
-        self.template7 = cv2.imread("./output/airplane4.png")
+        # self.template1 = cv2.imread("./output/oil.png")
+        # self.template2 = cv2.imread("./output/oil1.png")
+        # self.template3 = cv2.imread("./output/airplane.png")
+        # self.template4 = cv2.imread("./output/airplane1.png")
+        # self.template5 = cv2.imread("./output/airplane2.png")
+        # self.template6 = cv2.imread("./output/airplane3.png")
+        # self.template7 = cv2.imread("./output/airplane4.png")
 
     def run(self):
         while True:
             buffer = self.frame_read.frame
-            self.img=buffer
-            #self.img = cv2.flip(buffer, 0)
+            self.img = cv2.flip(buffer, 0)
             #self.img = cv2.rotate(self.img, rotateCode=cv2.ROTATE_180)
             #self.img = self.img[::-1]
             # print(self.img)
@@ -116,16 +115,16 @@ class MatchingThread(QThread):
         while True:
             if type(self.frameThread.img) == ndarray:
                 try:
-                    start = time.perf_counter()
+                    #start = time.perf_counter()
 
                     match_num, rectangle_degree, center = self.sift_matcher.match(
                         self.frameThread.img)
-                    if center is not None and rectangle_degree > 0.5:
+                    if center is not None and rectangle_degree > 0.6 and match_num>15:
                         self.cx, self.cy = center
                         self.nav_queue.put(center)
 
-                    end = time.perf_counter()
-                    print(rectangle_degree)
+                    #end = time.perf_counter()
+                    #print(rectangle_degree)
                     # print(end-start)
                     self.finish_signal.emit()
                 except:
@@ -144,15 +143,11 @@ class IMUThread(QThread):
 
         self.last_time = time.time()
         self.pos = np.zeros(3, dtype=np.float32)
-
+        
         self.nav_queue = nav_queue
 
     def run(self):
         while True:
-            if self.nav_queue.not_empty:
-                self.pos[0], self.pos[1] = self.nav_queue.get()
-                print(self.pos[0], self.pos[1])
-                self.sift_signal.emit()
             vx = -self.tello.get_speed_x()
             vy = self.tello.get_speed_y()
             vz = self.tello.get_speed_z()
@@ -165,8 +160,16 @@ class IMUThread(QThread):
             ds = v*dt
             self.pos += ds*2.73*10
             #print(self.pos[0], self.pos[1], self.pos[2])
-
-            # self.result = cv2.circle(
-            #     self.source, (abs(int(self.pos[1])), 1280-abs(int(self.pos[0]))), 4, (0, 255, 255), 10)
-            self.imu_signal.emit()
+            if self.nav_queue.empty():
+                # print('empty')
+                # print(self.pos[0], self.pos[1], self.pos[2])
+                self.imu_signal.emit()
+            if not self.nav_queue.empty():
+                x, y = self.nav_queue.get()
+                self.pos[1]=-x
+                self.pos[0]=-y+1280
+                # print('2')
+                # print(self.pos[0], self.pos[1])
+                self.sift_signal.emit()
+        
             sleep(0.02)
