@@ -112,7 +112,7 @@ class mywindow(QMainWindow):
     @Slot()
     def connect_tello(self):
         nav_queue = queue.Queue()
-        nav_queue.maxsize=1
+        nav_queue.maxsize = 1
         self.tello = Tello()
         self.frame_thread = FrameThread(self.tello)
         self.matching_thread = MatchingThread(
@@ -120,7 +120,7 @@ class mywindow(QMainWindow):
         self.control_thread = ControlThread(self.tello)
         self.imu_thread = IMUThread(self.tello, nav_queue)
 
-        #self.frame_thread.signal.connect(self.show_tello_frame)
+        # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
 
         self.detect_thread = DetectThread(self.frame_thread)
@@ -136,7 +136,7 @@ class mywindow(QMainWindow):
         self.imu_thread.start()
         self.imu_thread.sift_signal.connect(self.draw_pos_1)
         self.imu_thread.imu_signal.connect(self.draw_pos_2)
-    
+
     @Slot()
     def draw_pos_1(self):
         result = cv2.circle(self.cv2_map, (int(self.matching_thread.cx), int(
@@ -145,11 +145,11 @@ class mywindow(QMainWindow):
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_source.width(), self.ui.label_source.height())
         self.ui.label_source.setPixmap(qImg)
-    
+
     @Slot()
     def draw_pos_2(self):
-        result = cv2.circle(self.cv2_map,(-int(self.imu_thread.pos[1]), 1280-int(self.imu_thread.pos[0])), 
-                4, (0, 255, 0), 10)
+        result = cv2.circle(self.cv2_map, (-int(self.imu_thread.pos[1]), 1280-int(self.imu_thread.pos[0])),
+                            4, (0, 255, 0), 10)
         qImg = cv2toQImage(result)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_source.width(), self.ui.label_source.height())

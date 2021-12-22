@@ -43,7 +43,6 @@ class FrameThread(QThread):
         while True:
             buffer = self.frame_read.frame
             self.qmut.lock()
-            self.img = buffer
             self.img = cv2.flip(buffer, 0)
             a = self.img*2
             self.qmut.unlock()

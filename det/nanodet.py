@@ -1,11 +1,11 @@
-import os  # noqa
-import sys  # noqa
-sys.path.append(os.path.join(os.path.dirname(__file__), "nanodet"))  # noqa
-
 import time
 import cv2
 import numpy as np
 import torch
+
+import os  # noqa
+import sys  # noqa
+sys.path.append(os.path.join(os.path.dirname(__file__), "nanodet"))  # noqa
 
 from nanodet.data.batch_process import stack_batch_img
 from nanodet.data.collate import naive_collate
@@ -70,7 +70,7 @@ class Nanodet(object):
         with torch.no_grad():
             results = self.model.inference(meta)
         # 获得所有检测框
-        all_box, prob = self.get_boxes(results[0], 0.35)
+        all_box, prob = self.get_boxes(results[0], 0.5)
 
         return all_box, prob
 
