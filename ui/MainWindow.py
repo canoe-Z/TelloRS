@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1313, 808)
+        MainWindow.resize(1129, 694)
         self.action_connect = QAction(MainWindow)
         self.action_connect.setObjectName(u"action_connect")
         self.action_takephoto = QAction(MainWindow)
@@ -42,8 +42,8 @@ class Ui_MainWindow(object):
         QListWidgetItem(self.listWidget)
         QListWidgetItem(self.listWidget)
         self.listWidget.setObjectName(u"listWidget")
-        self.listWidget.setMinimumSize(QSize(180, 0))
-        self.listWidget.setMaximumSize(QSize(180, 16777215))
+        self.listWidget.setMinimumSize(QSize(150, 0))
+        self.listWidget.setMaximumSize(QSize(150, 16777215))
         self.listWidget.setStyleSheet(u"QListWidget\n"
 "{\n"
 "    border:1px solid gray;   /*\u8fb9\u754c\u7ebf:\u5bbd\u5ea6\u3001\u989c\u8272*/\n"
@@ -133,8 +133,8 @@ class Ui_MainWindow(object):
 
         self.label_template = QLabel(self.frame_2)
         self.label_template.setObjectName(u"label_template")
-        self.label_template.setMinimumSize(QSize(640, 480))
-        self.label_template.setMaximumSize(QSize(16777215, 300))
+        self.label_template.setMinimumSize(QSize(480, 360))
+        self.label_template.setMaximumSize(QSize(480, 360))
         self.label_template.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.label_template, 0, Qt.AlignVCenter)
@@ -206,8 +206,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_source.sizePolicy().hasHeightForWidth())
         self.label_source.setSizePolicy(sizePolicy)
-        self.label_source.setMinimumSize(QSize(400, 400))
-        self.label_source.setMaximumSize(QSize(400, 400))
+        self.label_source.setMinimumSize(QSize(350, 350))
+        self.label_source.setMaximumSize(QSize(350, 350))
         self.label_source.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_7.addWidget(self.label_source)

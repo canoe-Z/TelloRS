@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
-    <height>808</height>
+    <width>1129</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,13 +19,13 @@
      <widget class="QListWidget" name="listWidget">
       <property name="minimumSize">
        <size>
-        <width>180</width>
+        <width>150</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>180</width>
+        <width>150</width>
         <height>16777215</height>
        </size>
       </property>
@@ -164,14 +164,14 @@ QTableWidget QHeaderView::section
             <widget class="QLabel" name="label_template">
              <property name="minimumSize">
               <size>
-               <width>640</width>
-               <height>480</height>
+               <width>480</width>
+               <height>360</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
-               <height>300</height>
+               <width>480</width>
+               <height>360</height>
               </size>
              </property>
              <property name="text">
@@ -339,14 +339,14 @@ QTableWidget QHeaderView::section
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>400</width>
-                  <height>400</height>
+                  <width>350</width>
+                  <height>350</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>400</width>
-                  <height>400</height>
+                  <width>350</width>
+                  <height>350</height>
                  </size>
                 </property>
                 <property name="text">
