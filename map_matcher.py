@@ -76,25 +76,3 @@ if __name__ == '__main__':
 
     sift_matcher = SIFT_matcher(img2)
     sift_matcher.match(img1)
-
-    # if(rectangle_degree > 0.75):
-    #     map = cv2.polylines(
-    #         self.map, [np.int32(dst)], True, 255, 5, cv2.LINE_8)
-    # else:
-    #     print(rectangle_degree)
-
-#map = cv2.circle(map, (cx, cy), 4, (0, 255, 255), 10)
-    # print("Not enough matches are found - %d/%d" %
-    #       (len(good_matches), MIN_MATCH_COUNT))
-    #     matchesMask = None
-    # draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
-    #                    singlePointColor=None,
-    #                    matchesMask=matchesMask,  # draw only inliers
-    #                    flags=2)
-
-    # img3 = cv2.drawMatches(
-    #     template, kp, source[:, :, :3], kp2, good_matches, None, **draw_params)
-
-    # cv2.namedWindow("Frame", cv2.WINDOW_NORMAL)
-    # cv2.imshow("Frame", map)
-    # cv2.waitKey()

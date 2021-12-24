@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt, QThread, Signal, QMutex
 
 from map_matcher import SIFT_matcher
 from utils.control import HiddenPrints
-from match import draw
+from det.template import draw
 
 from tello import FrameThread
 

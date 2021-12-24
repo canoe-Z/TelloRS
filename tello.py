@@ -14,7 +14,6 @@ from map_matcher import SIFT_matcher
 from utils.control import HiddenPrints
 
 
-
 class ControlMode(Enum):
     SINGLE_MODE = 0
     RC_MODE = 1
@@ -102,7 +101,7 @@ class MatchingThread(QThread):
                 try:
                     match_num, rectangle_degree, center = self.sift_matcher.match(
                         self.frameThread.img)
-                    if center is not None and rectangle_degree > 0.6 and match_num>15:
+                    if center is not None and rectangle_degree > 0.6 and match_num > 15:
                         self.cx, self.cy = center
                         self.nav_queue.put(center)
 
@@ -123,7 +122,7 @@ class IMUThread(QThread):
 
         self.last_time = time.time()
         self.pos = np.zeros(3, dtype=np.float32)
-        
+
         self.nav_queue = nav_queue
 
     def run(self):
@@ -146,10 +145,10 @@ class IMUThread(QThread):
                 self.imu_signal.emit()
             if not self.nav_queue.empty():
                 x, y = self.nav_queue.get()
-                self.pos[1]=-x
-                self.pos[0]=-y+1280
+                self.pos[1] = -x
+                self.pos[0] = -y+1280
                 # print('2')
                 # print(self.pos[0], self.pos[1])
                 self.sift_signal.emit()
-        
+
             sleep(0.02)
