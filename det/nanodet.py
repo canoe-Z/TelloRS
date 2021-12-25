@@ -1,132 +1,221 @@
-import time
 import cv2
 import numpy as np
-import torch
-
-import os  # noqa
-import sys  # noqa
-# sys.path.append(os.path.join(os.path.dirname(__file__), "nanodet"))  # noqa
-
-# from nanodet.data.batch_process import stack_batch_img
-# from nanodet.data.collate import naive_collate
-# from nanodet.data.transform import Pipeline
-# from nanodet.model.arch import build_model
-# from nanodet.util import Logger, cfg, load_config, load_model_weight
-# from nanodet.util.path import mkdir
+import argparse
+import onnxruntime as ort
 
 
-class Nanodet(object):
-    def __init__(self, device="cpu"):
-        # 初始化
-        local_rank = 0
-        torch.backends.cudnn.enabled = True
-        torch.backends.cudnn.benchmark = True
+class NanoDet():
+    def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
+        with open('coco.names', 'rt') as f:
+            self.classes = f.read().rstrip('\n').split('\n')
+        self.num_classes = len(self.classes)
+        self.strides = (8, 16, 32)
+        self.input_shape = (input_shape, input_shape)
+        self.reg_max = 7
+        self.prob_threshold = prob_threshold
+        self.iou_threshold = iou_threshold
+        self.project = np.arange(self.reg_max + 1)
+        self.mean = np.array([103.53, 116.28, 123.675],
+                             dtype=np.float32).reshape(1, 1, 3)
+        self.std = np.array([57.375, 57.12, 58.395],
+                            dtype=np.float32).reshape(1, 1, 3)
 
-        # 获得当前程序的绝对路径
-        self.abs_path = os.path.dirname(__file__)
-        # 配置文件路径
-        config_path = os.path.join(
-            self.abs_path, "nanodet", "config", "nanodet-m-416.yml")
-        # 模型路径
-        model_path = os.path.join(self.abs_path, "model", "model_best.pth")
+        so = ort.SessionOptions()
+        so.log_severity_level = 3
 
-        load_config(cfg, config_path)
-        logger = Logger(local_rank, use_tensorboard=False)
+        if input_shape == 320:
+            self.net = ort.InferenceSession('nanodet.onnx', so)
+        else:
+            self.net = ort.InferenceSession('nanodet_m.onnx', so)
 
-        self.cfg = cfg
-        self.device = device
-        model = build_model(cfg.model)
-        ckpt = torch.load(
-            model_path, map_location=lambda storage, loc: storage)
-        load_model_weight(model, ckpt, logger)
-        if cfg.model.arch.backbone.name == "RepVGG":
-            deploy_config = cfg.model
-            deploy_config.arch.backbone.update({"deploy": True})
-            deploy_model = build_model(deploy_config)
-            from nanodet.model.backbone.repvgg import repvgg_det_model_convert
+        output_detail = self.net.get_outputs()
+        self.output_names = []
+        self.output_names.append(output_detail[0].name)  # cls_pred_stride_8
+        self.output_names.append(output_detail[3].name)  # dis_pred_stride_8
+        self.output_names.append(output_detail[1].name)  # cls_pred_stride_16
+        self.output_names.append(output_detail[4].name)  # dis_pred_stride_16
+        self.output_names.append(output_detail[2].name)  # cls_pred_stride_32
+        self.output_names.append(output_detail[5].name)  # dis_pred_stride_3
 
-            model = repvgg_det_model_convert(model, deploy_model)
-        self.model = model.to(device).eval()
-        self.pipeline = Pipeline(
-            cfg.data.val.pipeline, cfg.data.val.keep_ratio)
+        self.mlvl_anchors = []
+        for i in range(len(self.strides)):
+            anchors = self._make_grid((int(self.input_shape[0] / self.strides[i]), int(
+                self.input_shape[1] / self.strides[i])), self.strides[i])
+            self.mlvl_anchors.append(anchors)
 
-    # 设定要检测的目标标号
-    def set_target(self, target_id):
-        self.target_id = target_id
+    def _make_grid(self, featmap_size, stride):
+        feat_h, feat_w = featmap_size
+        shift_x = np.arange(0, feat_w) * stride
+        shift_y = np.arange(0, feat_h) * stride
+        xv, yv = np.meshgrid(shift_x, shift_y)
+        xv = xv.flatten()
+        yv = yv.flatten()
+        cx = xv + 0.5 * (stride-1)
+        cy = yv + 0.5 * (stride - 1)
+        return np.stack((cx, cy), axis=-1)
 
-    # 传入一张图片 预测检测框位置
-    def detect(self, img):
-        img_info = {"id": 0}
-        height, width = img.shape[:2]
-        img_info["height"] = height
-        img_info["width"] = width
+    def softmax(self, x, axis=1):
+        x_exp = np.exp(x)
+        x_sum = np.sum(x_exp, axis=axis, keepdims=True)
+        s = x_exp / x_sum
+        return s
 
-        meta = dict(img_info=img_info, raw_img=img, img=img)
-        meta = self.pipeline(None, meta, self.cfg.data.val.input_size)
-        meta["img"] = torch.from_numpy(
-            meta["img"].transpose(2, 0, 1)).to(self.device)
-        meta = naive_collate([meta])
-        meta["img"] = stack_batch_img(meta["img"], divisible=32)
-        with torch.no_grad():
-            results = self.model.inference(meta)
-        # 获得所有检测框
-        all_box, prob = self.get_boxes(results[0], 0.5)
-
-        return all_box, prob
-
-    # 获得检测框，检测框变成整形 (x1,y1,w,h)的形式 同时只取给定的目标类型的检测框
-    def get_boxes(self, dets, score_thresh):
-        all_box = []
-        prob = []
-        for label in dets:
-            # 筛选指定目标
-            # if label == self.target_id:
-            for bbox in dets[label]:
-                score = bbox[-1]
-                if score > score_thresh:
-                    x0, y0, x1, y1 = [int(i) for i in bbox[:4]]
-                    all_box.append([x0, y0, abs(x1 - x0), abs(y1 - y0)])
-                    prob.append(score)
-        return np.array(all_box, dtype=np.int), np.array(prob)
-
-    # 画检测框
-    def draw_boxes(self, img, all_box, prob):
-        for bbox, score in zip(all_box, prob):
-            [x, y, w, h] = bbox
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 0), 2)
-            cv2.putText(img, '%.2f' %
-                        score, (x, y - 5), 0, 0.7, (0, 255, 0), 2)
-            # cv2.putText(img, str(self.target_id),
-            #             (x, y - 25), 0, 0.7, (0, 255, 0), 2)
+    def _normalize(self, img):
+        img = img.astype(np.float32)
+        img = (img - self.mean) / self.std
         return img
 
+    def resize_image(self, srcimg, keep_ratio=True):
+        top, left, newh, neww = 0, 0, self.input_shape[0], self.input_shape[1]
+        if keep_ratio and srcimg.shape[0] != srcimg.shape[1]:
+            hw_scale = srcimg.shape[0] / srcimg.shape[1]
+            if hw_scale > 1:
+                newh, neww = self.input_shape[0], int(
+                    self.input_shape[1] / hw_scale)
+                img = cv2.resize(srcimg, (neww, newh),
+                                 interpolation=cv2.INTER_AREA)
+                left = int((self.input_shape[1] - neww) * 0.5)
+                img = cv2.copyMakeBorder(img, 0, 0, left, self.input_shape[1] - neww - left, cv2.BORDER_CONSTANT,
+                                         value=0)
+            else:
+                newh, neww = int(
+                    self.input_shape[0] * hw_scale), self.input_shape[1]
+                img = cv2.resize(srcimg, (neww, newh),
+                                 interpolation=cv2.INTER_AREA)
+                top = int((self.input_shape[0] - newh) * 0.5)
+                img = cv2.copyMakeBorder(
+                    img, top, self.input_shape[0] - newh - top, 0, 0, cv2.BORDER_CONSTANT, value=0)
+        else:
+            img = cv2.resize(srcimg, self.input_shape,
+                             interpolation=cv2.INTER_AREA)
+        return img, newh, neww, top, left
 
-def main():
-    predictor = Nanodet()
-    predictor.set_target(0)
-    cap = cv2.VideoCapture("./data/test_video.mp4")
-    cv2.namedWindow("detect")
-    while cap.isOpened():
-        _, frame = cap.read()
-        start = time.perf_counter()
-        all_box, prob = predictor.detect(frame)
-        frame = predictor.draw_boxes(frame, all_box, prob)
-        end = time.perf_counter()
-        time1 = (end - start) * 1000.
-        print("forward time:%fms" % time1)
-        cv2.imshow("detect", frame)
-        if cv2.waitKey(30) == 27:
-            break
+    def detect(self, srcimg):
+        img, newh, neww, top, left = self.resize_image(srcimg)
+        img = self._normalize(img)
 
-    # img = cv2.imread("../../test.jpg")
-    # import time
-    # start = time.perf_counter()
-    # meta, res = predictor.inference(img)
-    # end = time.perf_counter()
-    # time = (end - start) * 1000.
-    # print("forward time:%fms"%time)
-    # print(type(res))
+        img = img.transpose(2, 0, 1).astype('float32')
+        img = img.reshape(-1, 3, self.input_shape[0], self.input_shape[1])
+        outs = self.net.run(self.output_names, {
+                            self.net.get_inputs()[0].name: img})
+        det_bboxes, det_conf, det_classid = self.post_process(outs)
+
+        drawimg = srcimg.copy()
+        ratioh, ratiow = srcimg.shape[0]/newh, srcimg.shape[1]/neww
+        for i in range(det_bboxes.shape[0]):
+            xmin, ymin, xmax, ymax = max(int((det_bboxes[i, 0] - left) * ratiow), 0), max(int((det_bboxes[i, 1] - top) * ratioh), 0), min(
+                int((det_bboxes[i, 2] - left) * ratiow), srcimg.shape[1]), min(int((det_bboxes[i, 3] - top) * ratioh), srcimg.shape[0])
+            self.drawPred(
+                drawimg, det_classid[i], det_conf[i], xmin, ymin, xmax, ymax)
+        return drawimg
+
+    def post_process(self, preds):
+        cls_scores, bbox_preds = preds[::2], preds[1::2]
+        det_bboxes, det_conf, det_classid = self.get_bboxes_single(
+            cls_scores, bbox_preds, 1, rescale=False)
+        return det_bboxes.astype(np.int32), det_conf, det_classid
+
+    def get_bboxes_single(self, cls_scores, bbox_preds, scale_factor, rescale=False):
+        mlvl_bboxes = []
+        mlvl_scores = []
+        for stride, cls_score, bbox_pred, anchors in zip(self.strides, cls_scores, bbox_preds, self.mlvl_anchors):
+            if cls_score.ndim == 3:
+                cls_score = cls_score.squeeze(axis=0)
+            if bbox_pred.ndim == 3:
+                bbox_pred = bbox_pred.squeeze(axis=0)
+            bbox_pred = self.softmax(
+                bbox_pred.reshape(-1, self.reg_max + 1), axis=1)
+            bbox_pred = np.dot(bbox_pred, self.project).reshape(-1, 4)
+            bbox_pred *= stride
+
+            nms_pre = 1000
+            if nms_pre > 0 and cls_score.shape[0] > nms_pre:
+                max_scores = cls_score.max(axis=1)
+                topk_inds = max_scores.argsort()[::-1][0:nms_pre]
+                anchors = anchors[topk_inds, :]
+                bbox_pred = bbox_pred[topk_inds, :]
+                cls_score = cls_score[topk_inds, :]
+
+            bboxes = self.distance2bbox(
+                anchors, bbox_pred, max_shape=self.input_shape)
+            mlvl_bboxes.append(bboxes)
+            mlvl_scores.append(cls_score)
+
+        mlvl_bboxes = np.concatenate(mlvl_bboxes, axis=0)
+        if rescale:
+            mlvl_bboxes /= scale_factor
+        mlvl_scores = np.concatenate(mlvl_scores, axis=0)
+
+        bboxes_wh = mlvl_bboxes.copy()
+        bboxes_wh[:, 2:4] = bboxes_wh[:, 2:4] - bboxes_wh[:, 0:2]  # xywh
+        classIds = np.argmax(mlvl_scores, axis=1)
+        confidences = np.max(mlvl_scores, axis=1)  # max_class_confidence
+
+        indices = cv2.dnn.NMSBoxes(bboxes_wh.tolist(
+        ), confidences.tolist(), self.prob_threshold, self.iou_threshold)
+
+        if len(indices) > 0:
+            mlvl_bboxes = mlvl_bboxes[indices[:, 0]]
+            confidences = confidences[indices[:, 0]]
+            classIds = classIds[indices[:, 0]]
+            return mlvl_bboxes, confidences, classIds
+        else:
+            print('nothing detect')
+            return np.array([]), np.array([]), np.array([])
+
+    def distance2bbox(self, points, distance, max_shape=None):
+        x1 = points[:, 0] - distance[:, 0]
+        y1 = points[:, 1] - distance[:, 1]
+        x2 = points[:, 0] + distance[:, 2]
+        y2 = points[:, 1] + distance[:, 3]
+        if max_shape is not None:
+            x1 = np.clip(x1, 0, max_shape[1])
+            y1 = np.clip(y1, 0, max_shape[0])
+            x2 = np.clip(x2, 0, max_shape[1])
+            y2 = np.clip(y2, 0, max_shape[0])
+        return np.stack([x1, y1, x2, y2], axis=-1)
+
+    def drawPred(self, frame, classId, conf, left, top, right, bottom):
+        # Draw a bounding box.
+        cv2.rectangle(frame, (left, top), (right, bottom),
+                      (0, 0, 255), thickness=4)
+
+        label = '%.2f' % conf
+        label = '%s:%s' % (self.classes[classId], label)
+
+        # Display the label at the top of the bounding box
+        labelSize, baseLine = cv2.getTextSize(
+            label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+        top = max(top, labelSize[1])
+        # cv.rectangle(frame, (left, top - round(1.5 * labelSize[1])), (left + round(1.5 * labelSize[0]), top + baseLine), (255,255,255), cv.FILLED)
+        cv2.putText(frame, label, (left, top - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), thickness=2)
+        return frame
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--imgpath', type=str,
+                        default='bus.jpg', help="image path")
+    parser.add_argument('--input_shape', default=320, type=int,
+                        choices=[320, 416], help='input image shape')
+    parser.add_argument('--confThreshold', default=0.35,
+                        type=float, help='class confidence')
+    parser.add_argument('--nmsThreshold', default=0.6,
+                        type=float, help='nms iou thresh')
+    args = parser.parse_args()
+
+    srcimg = cv2.imread(args.imgpath)
+    net = NanoDet(input_shape=args.input_shape,
+                  prob_threshold=args.confThreshold, iou_threshold=args.nmsThreshold)
+    import time
+    a = time.time()
+    srcimg = net.detect(srcimg)
+    b = time.time()
+    print('waste time', b-a)
+
+    winName = 'Deep learning object detection in OpenCV'
+    cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
+    cv2.imshow(winName, srcimg)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
