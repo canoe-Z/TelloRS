@@ -46,7 +46,7 @@ class FrameThread(QThread):
             a = self.img*2
             self.qmut.unlock()
             self.signal.emit()
-            sleep(0.02)
+            #sleep(0.01)
 
 
 class ControlThread(QThread):

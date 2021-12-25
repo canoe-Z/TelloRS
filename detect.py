@@ -16,8 +16,9 @@ from det.template import draw
 
 from tello import FrameThread
 
-from det.nanodet import Nanodet
+from det.nanodet import NanoDet
 from utils.control import HiddenPrints
+
 
 class DetectThread(QThread):
     signal = Signal()
@@ -37,7 +38,7 @@ class DetectThread(QThread):
         self.template6 = cv2.imread("./output/airplane3.png")
         self.template7 = cv2.imread("./output/airplane4.png")
 
-        self.predictor = Nanodet()
+        self.predictor = NanoDet()
         # predictor.set_target(0)
 
     def run(self):
@@ -58,9 +59,9 @@ class DetectThread(QThread):
             # draw(self.frame, self.template6, threshold)
             # draw(self.frame, self.template7, threshold)
             with HiddenPrints():
-                all_box, prob = self.predictor.detect(self.frame)
-            self.frame = self.predictor.draw_boxes(self.frame, all_box, prob)
+                self.frame = self.predictor.detect(self.frame)
+            #self.frame = self.predictor.draw_boxes(self.frame, all_box, prob)
 
             #cv2.rectangle(self.frame, (50, 100), (100, 200), (0, 255, 0), 6)
             self.signal.emit()
-            sleep(0.02)
+            sleep(0.01)

@@ -6,7 +6,7 @@ import onnxruntime as ort
 
 class NanoDet():
     def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
-        with open('coco.names', 'rt') as f:
+        with open('./det/model/coco.names', 'rt') as f:
             self.classes = f.read().rstrip('\n').split('\n')
         self.num_classes = len(self.classes)
         self.strides = (8, 16, 32)
@@ -24,9 +24,9 @@ class NanoDet():
         so.log_severity_level = 3
 
         if input_shape == 320:
-            self.net = ort.InferenceSession('nanodet.onnx', so)
+            self.net = ort.InferenceSession('./det/model/nanodet.onnx', so)
         else:
-            self.net = ort.InferenceSession('nanodet_m.onnx', so)
+            self.net = ort.InferenceSession('./det/model/nanodet_m.onnx', so)
 
         output_detail = self.net.get_outputs()
         self.output_names = []

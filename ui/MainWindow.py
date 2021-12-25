@@ -143,7 +143,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addItem(self.verticalSpacer_2)
 
-        self.groupBox_3 = QGroupBox(self.frame_2)
+        self.frame_5 = QFrame(self.frame_2)
+        self.frame_5.setObjectName(u"frame_5")
+        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout = QHBoxLayout(self.frame_5)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.groupBox_3 = QGroupBox(self.frame_5)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setMinimumSize(QSize(0, 100))
         self.groupBox_3.setMaximumSize(QSize(16777215, 16777215))
@@ -156,6 +163,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
 
         self.comboBox = QComboBox(self.groupBox_3)
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
@@ -176,7 +184,15 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.horizontalScrollBar, 1, 1, 1, 1)
 
 
-        self.verticalLayout_2.addWidget(self.groupBox_3, 0, Qt.AlignBottom)
+        self.horizontalLayout.addWidget(self.groupBox_3)
+
+        self.groupBox_4 = QGroupBox(self.frame_5)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+
+        self.horizontalLayout.addWidget(self.groupBox_4)
+
+
+        self.verticalLayout_2.addWidget(self.frame_5, 0, Qt.AlignBottom)
 
 
         self.horizontalLayout_4.addWidget(self.frame_2)
@@ -374,9 +390,11 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u5668", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
 
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
         self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))

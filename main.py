@@ -35,8 +35,8 @@ class mywindow(QMainWindow):
         self.rc_speed = 30
         self.move_distance = 30
 
-        self.ui.btn_connect.clicked.connect(self.connect_tello)
-        self.ui.btn_takephoto.clicked.connect(self.take_photo)
+        self.ui.action_connect.triggered.connect(self.connect_tello)
+        self.ui.action_takephoto.triggered.connect(self.take_photo)
 
         self.control_mode = ControlMode.FIXED_MODE
         self.ui.rbtn_move_fixed.setChecked(True)
