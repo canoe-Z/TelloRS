@@ -5,14 +5,14 @@ import torch
 
 import os  # noqa
 import sys  # noqa
-sys.path.append(os.path.join(os.path.dirname(__file__), "nanodet"))  # noqa
+# sys.path.append(os.path.join(os.path.dirname(__file__), "nanodet"))  # noqa
 
-from nanodet.data.batch_process import stack_batch_img
-from nanodet.data.collate import naive_collate
-from nanodet.data.transform import Pipeline
-from nanodet.model.arch import build_model
-from nanodet.util import Logger, cfg, load_config, load_model_weight
-from nanodet.util.path import mkdir
+# from nanodet.data.batch_process import stack_batch_img
+# from nanodet.data.collate import naive_collate
+# from nanodet.data.transform import Pipeline
+# from nanodet.model.arch import build_model
+# from nanodet.util import Logger, cfg, load_config, load_model_weight
+# from nanodet.util.path import mkdir
 
 
 class Nanodet(object):
