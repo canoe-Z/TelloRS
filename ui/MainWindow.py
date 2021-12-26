@@ -23,6 +23,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
     QVBoxLayout, QWidget)
 
+from ui.ClickJumpSlider import ClickJumpSlider
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -313,7 +315,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.frame_4)
 
-        self.horizontalSlider = QSlider(self.groupBox)
+        self.horizontalSlider = ClickJumpSlider(self.groupBox)
         self.horizontalSlider.setObjectName(u"horizontalSlider")
         self.horizontalSlider.setOrientation(Qt.Horizontal)
 

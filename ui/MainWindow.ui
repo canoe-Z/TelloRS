@@ -539,7 +539,7 @@ QTableWidget QHeaderView::section
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSlider" name="horizontalSlider">
+                  <widget class="ClickJumpSlider" name="horizontalSlider">
                    <property name="toolTip">
                     <string/>
                    </property>
@@ -624,6 +624,13 @@ QTableWidget QHeaderView::section
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickJumpSlider</class>
+   <extends>QSlider</extends>
+   <header>ui/ClickJumpSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

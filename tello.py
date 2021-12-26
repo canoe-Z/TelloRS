@@ -46,11 +46,12 @@ class FrameThread(QThread):
             a = self.img*2
             self.qmut.unlock()
             self.signal.emit()
-            #sleep(0.01)
+            # sleep(0.01)
 
 
 class ControlThread(QThread):
     finish_signal = Signal(int)
+    qmut = QMutex()
 
     def __init__(self, tello: Tello):
         super(ControlThread, self).__init__()
@@ -61,22 +62,27 @@ class ControlThread(QThread):
         while True:
             # with HiddenPrints():
             #     self.tello.send_command_without_return("keepalive")
-            if self.key:
-                if self.key == Qt.Key_T:
+            self.qmut.lock()
+            key = self.key
+            self.qmut.unlock()
+            if key:
+                if key == Qt.Key_T:
                     self.tello.takeoff()
-                if self.key == Qt.Key_W:
+                if key == Qt.Key_W:
                     self.tello.move_forward(30)
-                if self.key == Qt.Key_A:
+                if key == Qt.Key_A:
                     self.tello.move_left(30)
-                if self.key == Qt.Key_S:
+                if key == Qt.Key_S:
                     self.tello.move_back(30)
-                if self.key == Qt.Key_D:
+                if key == Qt.Key_D:
                     self.tello.move_right(30)
-                if self.key == Qt.Key_L:
+                if key == Qt.Key_L:
                     self.tello.land()
 
-                self.finish_signal.emit(self.key)
+                self.finish_signal.emit(key)
+                self.qmut.lock()
                 self.key = None
+                self.qmut.unlock()
             else:
                 sleep(0.01)
 
