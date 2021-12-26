@@ -4,7 +4,7 @@ import argparse
 import onnxruntime as ort
 
 
-class NanoDet():
+class NanoDet(object):
     def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
         with open('./det/model/coco.names', 'rt') as f:
             self.classes = f.read().rstrip('\n').split('\n')

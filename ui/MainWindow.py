@@ -17,11 +17,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QListWidget, QListWidgetItem, QMainWindow, QRadioButton,
-    QScrollBar, QSizePolicy, QSlider, QSpacerItem,
-    QStackedWidget, QStatusBar, QToolBar, QVBoxLayout,
-    QWidget)
+    QGraphicsView, QGridLayout, QGroupBox, QHBoxLayout,
+    QLabel, QListWidget, QListWidgetItem, QMainWindow,
+    QRadioButton, QScrollBar, QSizePolicy, QSlider,
+    QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -341,6 +341,9 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_3)
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
+        self.graphicsView = QGraphicsView(self.page_4)
+        self.graphicsView.setObjectName(u"graphicsView")
+        self.graphicsView.setGeometry(QRect(60, 0, 841, 561))
         self.stackedWidget.addWidget(self.page_4)
 
         self.gridLayout.addWidget(self.stackedWidget, 0, 1, 1, 1)

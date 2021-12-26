@@ -39,6 +39,9 @@ class mywindow(QMainWindow):
         self.ui.action_connect.triggered.connect(self.connect_tello)
         self.ui.action_takephoto.triggered.connect(self.take_photo)
 
+        self.ui.listWidget.currentRowChanged.connect(
+            self.ui.stackedWidget.setCurrentIndex)
+
         self.control_mode = ControlMode.FIXED_MODE
         self.ui.rbtn_move_fixed.setChecked(True)
         self.ui.rbtn_move_single.clicked.connect(
@@ -143,14 +146,14 @@ class mywindow(QMainWindow):
         self.control_thread.finish_signal.connect(self.command_finish)
 
         self.imu_thread.start()
-        self.imu_thread.sift_signal.connect(self.draw_pos_1)
-        self.imu_thread.imu_signal.connect(self.draw_pos_2)
+        self.imu_thread.sift_signal.connect(self.draw_sift_pos)
+        self.imu_thread.imu_signal.connect(self.draw_imu_pos)
 
         self.ui.statusbar.showMessage('连接成功!')
         self.tello_connected = True
 
     @Slot()
-    def draw_pos_1(self):
+    def draw_sift_pos(self):
         result = cv2.circle(self.cv2_map, (int(self.matching_thread.cx), int(
             self.matching_thread.cy)), 4, (0, 0, 255), 10)
         qImg = cv2toQImage(result)
@@ -159,7 +162,7 @@ class mywindow(QMainWindow):
         self.ui.label_source.setPixmap(qImg)
 
     @Slot()
-    def draw_pos_2(self):
+    def draw_imu_pos(self):
         result = cv2.circle(self.cv2_map, (-int(self.imu_thread.pos[1]), 1280-int(self.imu_thread.pos[0])),
                             4, (0, 255, 0), 10)
         qImg = cv2toQImage(result)
@@ -188,7 +191,7 @@ class mywindow(QMainWindow):
 
         curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
         cv2.imwrite('output/'+curDataTime+'.png', self.frame_thread.img)
-        print(curDataTime)
+        self.ui.statusbar.showMessage('图像已保存!')
 
     @Slot(int)
     def set_control_mode(self, mode: int):
