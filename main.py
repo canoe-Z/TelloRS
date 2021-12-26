@@ -16,8 +16,8 @@ from utils.control import lut_key
 from utils.img import cv2toQImage
 
 # FIX Problem for High DPI and Scale above 100%
-# os.environ["QT_FONT_DPI"] = "96"
-# os.environ["QT_SCALE_FACTOR"] = "1.5"
+os.environ["QT_FONT_DPI"] = "96"
+os.environ["QT_SCALE_FACTOR"] = "1.5"
 
 
 class mywindow(QMainWindow):
@@ -26,7 +26,8 @@ class mywindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #self.cv2_map = cv2.imread('./data/moban.jpg')
+        self.tello_connected = False
+
         self.cv2_map = cv2.imread('./data/newsource.png')
         self.show_map()
 
@@ -62,6 +63,9 @@ class mywindow(QMainWindow):
         self.ui.label_template.setPixmap(qImg)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if not self.tello_connected:
+            return
+
         key = event.key()
         if event.isAutoRepeat():
             # 键盘按下反复执行
@@ -98,6 +102,9 @@ class mywindow(QMainWindow):
                         self.tello.send_rc_control(self.rc_speed, 0, 0, 0)
 
     def keyReleaseEvent(self, event: QtGui.QKeyEvent):
+        if not self.tello_connected:
+            return
+
         if event.isAutoRepeat():
             # 键盘按下反复执行
             pass
@@ -111,6 +118,8 @@ class mywindow(QMainWindow):
 
     @Slot()
     def connect_tello(self):
+        self.ui.statusbar.showMessage('正在连接Tello...')
+
         nav_queue = queue.Queue()
         nav_queue.maxsize = 1
         self.tello = Tello()
@@ -137,6 +146,9 @@ class mywindow(QMainWindow):
         self.imu_thread.sift_signal.connect(self.draw_pos_1)
         self.imu_thread.imu_signal.connect(self.draw_pos_2)
 
+        self.ui.statusbar.showMessage('连接成功!')
+        self.tello_connected = True
+
     @Slot()
     def draw_pos_1(self):
         result = cv2.circle(self.cv2_map, (int(self.matching_thread.cx), int(
@@ -157,8 +169,6 @@ class mywindow(QMainWindow):
 
     @Slot()
     def show_map(self):
-        # self.imu_thread.pos[0] = self.matching_thread.cx
-        # self.imu_thread.pos[1] = self.matching_thread.cy
         qImg = cv2toQImage(self.cv2_map)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_source.width(), self.ui.label_source.height())
@@ -173,6 +183,9 @@ class mywindow(QMainWindow):
 
     @Slot()
     def take_photo(self):
+        if not self.tello_connected:
+            return
+
         curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
         cv2.imwrite('output/'+curDataTime+'.png', self.frame_thread.img)
         print(curDataTime)

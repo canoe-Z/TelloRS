@@ -1,23 +1,18 @@
-import time
 from enum import Enum
-from queue import Queue
 from time import sleep
 
 import cv2
-import numpy as np
-from djitellopy import Tello
-from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QMutex
-
-from map_matcher import SIFT_matcher
-from utils.control import HiddenPrints
-from det.template import draw
-
-from tello import FrameThread
+from PySide6.QtCore import QMutex, Qt, QThread, Signal
 
 from det.nanodet import NanoDet
-from utils.control import HiddenPrints
+from tello import FrameThread
+
+
+class DetectMethod(Enum):
+    NANODET = 0
+    YOLOV5 = 1
+    TEMPLATE_MATCHING = 2
 
 
 class DetectThread(QThread):
@@ -29,15 +24,8 @@ class DetectThread(QThread):
 
         self.frameThread = frameThread
         self.frame = None
-
-        self.template1 = cv2.imread("./output/oil.png")
-        self.template2 = cv2.imread("./output/oil1.png")
-        self.template3 = cv2.imread("./output/airplane.png")
-        self.template4 = cv2.imread("./output/airplane1.png")
-        self.template5 = cv2.imread("./output/airplane2.png")
-        self.template6 = cv2.imread("./output/airplane3.png")
-        self.template7 = cv2.imread("./output/airplane4.png")
-
+        self.detect_realtime = True
+        self.detect_method = DetectMethod.NANODET
         self.predictor = NanoDet()
         # predictor.set_target(0)
 
@@ -58,8 +46,19 @@ class DetectThread(QThread):
             # draw(self.frame, self.template5, threshold)
             # draw(self.frame, self.template6, threshold)
             # draw(self.frame, self.template7, threshold)
-            with HiddenPrints():
-                self.frame = self.predictor.detect(self.frame)
+
+            if self.detect_realtime:
+                if self.detect_method == DetectMethod.NANODET:
+                    # with HiddenPrints():
+                    self.frame = self.predictor.detect(self.frame)
+                elif self.detect_method == DetectMethod.NANODET:
+                    pass
+                elif self.detect_method == DetectMethod.NANODET:
+                    pass
+
+            else:
+                pass
+
             #self.frame = self.predictor.draw_boxes(self.frame, all_box, prob)
 
             #cv2.rectangle(self.frame, (50, 100), (100, 200), (0, 255, 0), 6)
