@@ -9,7 +9,7 @@ from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow
 
 from tello import (ControlMode, ControlThread, FrameThread, IMUThread,
-                   MatchingThread)
+                   MatchingThread, TestThread)
 from detect import DetectThread
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
@@ -52,6 +52,18 @@ class mywindow(QMainWindow):
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
 
         self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
+
+        self.tt = TestThread()
+        self.tt.start()
+        self.ui.pushButton.clicked.connect(self.testt)
+
+    def testt(self):
+        print("change")
+        self.tt.is_pause = not self.tt.is_pause
+        # if self.tt.is_pause:
+        #     self.tt.is_pause = False
+        # else:
+        #     self.tt.is_pause = True
 
     @Slot()
     def chk_autocap(self):

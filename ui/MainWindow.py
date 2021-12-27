@@ -19,9 +19,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFrame,
     QGraphicsView, QGridLayout, QGroupBox, QHBoxLayout,
     QLabel, QListWidget, QListWidgetItem, QMainWindow,
-    QRadioButton, QScrollBar, QSizePolicy, QSlider,
-    QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
-    QVBoxLayout, QWidget)
+    QPushButton, QRadioButton, QScrollBar, QSizePolicy,
+    QSlider, QSpacerItem, QStackedWidget, QStatusBar,
+    QToolBar, QVBoxLayout, QWidget)
 
 from ui.ClickJumpSlider import ClickJumpSlider
 
@@ -337,6 +337,9 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
+        self.pushButton = QPushButton(self.page_2)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setGeometry(QRect(410, 220, 75, 24))
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
@@ -365,7 +368,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -415,6 +418,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.horizontalSlider.setToolTip("")
 #endif // QT_CONFIG(tooltip)
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 

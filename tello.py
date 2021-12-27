@@ -8,7 +8,7 @@ import numpy as np
 from djitellopy import Tello
 from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QMutex
+from PySide6.QtCore import Qt, QThread, Signal, QMutex, QSemaphore
 
 from map_matcher import SIFT_matcher
 from utils.control import HiddenPrints
@@ -158,3 +158,24 @@ class IMUThread(QThread):
                 self.sift_signal.emit()
 
             sleep(0.02)
+
+
+class TestThread(QThread):
+    def __init__(self):
+        super(TestThread, self).__init__()
+        self.semaphore = QSemaphore()
+        self.is_pause = False
+
+    def run(self):
+        while True:
+            if not self.is_pause:
+                print("sb")
+            #sleep(0.001)
+
+    def pause(self):
+        self.pause = True
+        self.semaphore.acquire()
+
+    def resume(self):
+        self.pause = False
+        self.semaphore.release()
