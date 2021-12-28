@@ -10,8 +10,29 @@ from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, QMutex, QSemaphore
 
-from map_matcher import SIFT_matcher
+from match.sift_matcher import SIFTMatcher
 from utils.control import HiddenPrints
+
+
+class MyTello(Tello):
+    # RETRY_COUNT = 3  # number of retries after a failed command
+    # TELLO_IP = '192.168.10.1'  # Tello IP address
+
+    # def __init__(self):
+    #     super(MyTello,self).__init__(
+    #         self,
+    #         host='192.168.10.1',
+    #         retry_count=3)
+
+    def rc_control_by_key(self, key: int, move_speed: int):
+        if key == Qt.Key_W:
+            self.send_rc_control(0, move_speed, 0, 0)
+        if key == Qt.Key_A:
+            self.send_rc_control(-move_speed, 0, 0, 0)
+        if key == Qt.Key_S:
+            self.send_rc_control(0, -move_speed, 0, 0)
+        if key == Qt.Key_D:
+            self.send_rc_control(move_speed, 0, 0, 0)
 
 
 class ControlMode(Enum):
@@ -41,12 +62,13 @@ class FrameThread(QThread):
     def run(self):
         while True:
             buffer = self.frame_read.frame
+            buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
             self.qmut.lock()
             self.img = cv2.flip(buffer, 0)
-            a = self.img*2
+            #a = self.img*2
             self.qmut.unlock()
             self.signal.emit()
-            # sleep(0.01)
+            sleep(0.01)
 
 
 class ControlThread(QThread):
@@ -60,8 +82,6 @@ class ControlThread(QThread):
 
     def run(self):
         while True:
-            # with HiddenPrints():
-            #     self.tello.send_command_without_return("keepalive")
             self.qmut.lock()
             key = self.key
             self.qmut.unlock()
@@ -83,99 +103,4 @@ class ControlThread(QThread):
                 self.qmut.lock()
                 self.key = None
                 self.qmut.unlock()
-            else:
-                sleep(0.01)
-
-
-class MatchingThread(QThread):
-    finish_signal = Signal()
-
-    def __init__(self, frameThread: FrameThread, map: ndarray, nav_queue: Queue):
-        super(MatchingThread, self).__init__()
-        self.sift_matcher = SIFT_matcher(map)
-        self.frameThread = frameThread
-
-        self.result = None
-        self.cx = 0
-        self.cy = 0
-
-        self.nav_queue = nav_queue
-
-    def run(self):
-        while True:
-            if type(self.frameThread.img) == ndarray:
-                try:
-                    match_num, rectangle_degree, center = self.sift_matcher.match(
-                        self.frameThread.img)
-                    if center is not None and rectangle_degree > 0.6 and match_num > 15:
-                        self.cx, self.cy = center
-                        self.nav_queue.put(center)
-
-                    self.finish_signal.emit()
-                except:
-                    pass
-                    # print('定位失败')
-            sleep(0.05)
-
-
-class IMUThread(QThread):
-    imu_signal = Signal()
-    sift_signal = Signal()
-
-    def __init__(self, tello: Tello, nav_queue: Queue):
-        super(IMUThread, self).__init__()
-        self.tello = tello
-
-        self.last_time = time.time()
-        self.pos = np.zeros(3, dtype=np.float32)
-
-        self.nav_queue = nav_queue
-
-    def run(self):
-        while True:
-            vx = -self.tello.get_speed_x()
-            vy = self.tello.get_speed_y()
-            vz = self.tello.get_speed_z()
-            v = np.array([vx, vy, vz], dtype=np.float32)
-
-            currnet_time = time.time()
-            dt = currnet_time-self.last_time
-            self.last_time = currnet_time
-
-            ds = v*dt
-            self.pos += ds*2.73*10
-            #print(self.pos[0], self.pos[1], self.pos[2])
-            if self.nav_queue.empty():
-                # print('empty')
-                # print(self.pos[0], self.pos[1], self.pos[2])
-                self.imu_signal.emit()
-            if not self.nav_queue.empty():
-                x, y = self.nav_queue.get()
-                self.pos[1] = -x
-                self.pos[0] = -y+1280
-                # print('2')
-                # print(self.pos[0], self.pos[1])
-                self.sift_signal.emit()
-
-            sleep(0.02)
-
-
-class TestThread(QThread):
-    def __init__(self):
-        super(TestThread, self).__init__()
-        self.semaphore = QSemaphore()
-        self.is_pause = False
-
-    def run(self):
-        while True:
-            if not self.is_pause:
-                print("sb")
-            #sleep(0.001)
-
-    def pause(self):
-        self.pause = True
-        self.semaphore.acquire()
-
-    def resume(self):
-        self.pause = False
-        self.semaphore.release()
+            sleep(0.01)

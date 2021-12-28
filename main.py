@@ -8,16 +8,16 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow
 
-from tello import (ControlMode, ControlThread, FrameThread, IMUThread,
-                   MatchingThread, TestThread)
-from detect import DetectThread
+from tello import ControlMode, ControlThread, FrameThread
+from nav import IMUThread, MatchingThread
+from process import DetectThread, VideoWriter
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
 
 # FIX Problem for High DPI and Scale above 100%
-os.environ["QT_FONT_DPI"] = "96"
-os.environ["QT_SCALE_FACTOR"] = "1.5"
+# os.environ["QT_FONT_DPI"] = "96"
+# os.environ["QT_SCALE_FACTOR"] = "1.5"
 
 
 class mywindow(QMainWindow):
@@ -53,17 +53,22 @@ class mywindow(QMainWindow):
 
         self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
-        self.tt = TestThread()
-        self.tt.start()
-        self.ui.pushButton.clicked.connect(self.testt)
+        self.video_writer = VideoWriter()
+        self.video_writer.start()
 
-    def testt(self):
-        print("change")
-        self.tt.is_pause = not self.tt.is_pause
-        # if self.tt.is_pause:
-        #     self.tt.is_pause = False
-        # else:
-        #     self.tt.is_pause = True
+        self.ui.pushButton.clicked.connect(self.start_record)
+        self.ui.pushButton_2.clicked.connect(self.stop_record)
+
+        self.ui.gb_det.clicked.connect(self.print_state)
+
+    def print_state(self, checked: bool):
+        self.detect_thread.detect_realtime = checked
+
+    def start_record(self):
+        self.video_writer.is_recording = True
+
+    def stop_record(self):
+        self.video_writer.is_recording = False
 
     @Slot()
     def chk_autocap(self):
@@ -78,8 +83,8 @@ class mywindow(QMainWindow):
         self.ui.label_template.setPixmap(qImg)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
-        if not self.tello_connected:
-            return
+        # if not self.tello_connected:
+        #     return
 
         key = event.key()
         if event.isAutoRepeat():
@@ -117,8 +122,8 @@ class mywindow(QMainWindow):
                         self.tello.send_rc_control(self.rc_speed, 0, 0, 0)
 
     def keyReleaseEvent(self, event: QtGui.QKeyEvent):
-        if not self.tello_connected:
-            return
+        # if not self.tello_connected:
+        #     return
 
         if event.isAutoRepeat():
             # 键盘按下反复执行

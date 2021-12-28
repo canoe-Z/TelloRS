@@ -155,12 +155,13 @@ class NanoDet(object):
         ), confidences.tolist(), self.prob_threshold, self.iou_threshold)
 
         if len(indices) > 0:
+            indices = indices.reshape(-1, 1)
             mlvl_bboxes = mlvl_bboxes[indices[:, 0]]
             confidences = confidences[indices[:, 0]]
             classIds = classIds[indices[:, 0]]
             return mlvl_bboxes, confidences, classIds
         else:
-            print('nothing detect')
+            #print('nothing detect')
             return np.array([]), np.array([]), np.array([])
 
     def distance2bbox(self, points, distance, max_shape=None):

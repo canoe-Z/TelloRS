@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-class SIFT_matcher(object):
+class SIFTMatcher(object):
     def __init__(self, map):
         self.map = map
         self.sift = cv2.SIFT_create()
@@ -74,5 +74,5 @@ if __name__ == '__main__':
     img1 = cv2.imread('./data/target3.jpg')
     img2 = cv2.imread('./data/moban.jpg')
 
-    sift_matcher = SIFT_matcher(img2)
+    sift_matcher = SIFTMatcher(img2)
     sift_matcher.match(img1)

@@ -152,19 +152,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QHBoxLayout(self.frame_5)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.groupBox_3 = QGroupBox(self.frame_5)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.groupBox_3.setMinimumSize(QSize(0, 100))
-        self.groupBox_3.setMaximumSize(QSize(16777215, 16777215))
-        self.groupBox_3.setCheckable(True)
-        self.gridLayout_2 = QGridLayout(self.groupBox_3)
+        self.gb_det = QGroupBox(self.frame_5)
+        self.gb_det.setObjectName(u"gb_det")
+        self.gb_det.setMinimumSize(QSize(0, 100))
+        self.gb_det.setMaximumSize(QSize(16777215, 16777215))
+        self.gb_det.setCheckable(True)
+        self.gridLayout_2 = QGridLayout(self.gb_det)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label_4 = QLabel(self.groupBox_3)
+        self.label_4 = QLabel(self.gb_det)
         self.label_4.setObjectName(u"label_4")
 
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
 
-        self.comboBox = QComboBox(self.groupBox_3)
+        self.comboBox = QComboBox(self.gb_det)
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -173,12 +173,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.comboBox, 0, 1, 1, 1)
 
-        self.label_3 = QLabel(self.groupBox_3)
+        self.label_3 = QLabel(self.gb_det)
         self.label_3.setObjectName(u"label_3")
 
         self.gridLayout_2.addWidget(self.label_3, 1, 0, 1, 1)
 
-        self.horizontalScrollBar = QScrollBar(self.groupBox_3)
+        self.horizontalScrollBar = QScrollBar(self.gb_det)
         self.horizontalScrollBar.setObjectName(u"horizontalScrollBar")
         self.horizontalScrollBar.setMaximumSize(QSize(300, 16777215))
         self.horizontalScrollBar.setOrientation(Qt.Horizontal)
@@ -186,10 +186,11 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.horizontalScrollBar, 1, 1, 1, 1)
 
 
-        self.horizontalLayout.addWidget(self.groupBox_3)
+        self.horizontalLayout.addWidget(self.gb_det)
 
         self.groupBox_4 = QGroupBox(self.frame_5)
         self.groupBox_4.setObjectName(u"groupBox_4")
+        self.groupBox_4.setCheckable(True)
 
         self.horizontalLayout.addWidget(self.groupBox_4)
 
@@ -340,6 +341,9 @@ class Ui_MainWindow(object):
         self.pushButton = QPushButton(self.page_2)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(410, 220, 75, 24))
+        self.pushButton_2 = QPushButton(self.page_2)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setGeometry(QRect(500, 220, 75, 24))
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
@@ -368,7 +372,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -395,7 +399,7 @@ class Ui_MainWindow(object):
         self.listWidget.setSortingEnabled(__sortingEnabled)
 
         self.label_template.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
+        self.gb_det.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u5668", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
@@ -419,6 +423,7 @@ class Ui_MainWindow(object):
         self.horizontalSlider.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 
