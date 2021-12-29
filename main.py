@@ -8,7 +8,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow
 
-from tello import ControlMode, ControlThread, FrameThread
+from control import ControlMode, ControlThread, FrameThread
 from nav import IMUThread, MatchingThread
 from process import DetectThread, VideoWriter
 from ui.MainWindow import Ui_MainWindow

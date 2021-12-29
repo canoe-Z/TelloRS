@@ -8,7 +8,7 @@ import os
 
 from det.nanodet import NanoDet
 from det.template import TemplateMatcher
-from tello import FrameThread
+from control import FrameThread
 
 
 class DetectMethod(Enum):

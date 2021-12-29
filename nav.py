@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt, QThread, Signal, QMutex
 
 from match.sift_matcher import SIFTMatcher
 from utils.control import HiddenPrints
-from tello import FrameThread
+from control import FrameThread
 
 
 class MatchingThread(QThread):
