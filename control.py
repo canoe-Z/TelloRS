@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt, QThread, Signal, QMutex, QSemaphore
 
 from match.sift import SIFTMatcher
 from utils.control import HiddenPrints
+from vidgear.gears.stabilizer import Stabilizer
 
 
 class MyTello(Tello):
@@ -44,6 +45,8 @@ class ControlMode(Enum):
 class FrameThread(QThread):
     signal = Signal()
     qmut = QMutex()
+    stab = Stabilizer(smoothing_radius=7, border_size=0,
+                      crop_n_zoom=False, border_type='reflect_101')
 
     def __init__(self, tello: Tello):
         super(FrameThread, self).__init__()
@@ -59,13 +62,29 @@ class FrameThread(QThread):
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
 
+        self.stab_on = True
+
     def run(self):
         while True:
             buffer = self.frame_read.frame
             buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
+
+            frame = cv2.flip(buffer, 0)
+
+            if self.stab_on:
+                # send current frame to stabilizer for processing
+                stabilized_frame = self.stab.stabilize(frame)
+
+                # wait for stabilizer which still be initializing
+                if stabilized_frame is None:
+                    continue
+
             self.qmut.lock()
-            self.img = cv2.flip(buffer, 0)
-            #a = self.img*2
+            if self.stab_on:
+                self.img = stabilized_frame
+            else:
+                self.img = frame
+
             self.qmut.unlock()
             self.signal.emit()
             sleep(0.01)
