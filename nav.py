@@ -10,7 +10,7 @@ from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, QMutex
 
-from match.sift_matcher import SIFTMatcher
+from match.sift import SIFTMatcher
 from utils.control import HiddenPrints
 from control import FrameThread
 
