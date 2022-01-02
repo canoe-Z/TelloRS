@@ -9,8 +9,8 @@ from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow
 
 from control import ControlMode, ControlThread, FrameThread
-from nav import IMUThread, MatchingThread
-from process import DetectThread, VideoWriter
+from nav import IMUThread, MatchingThread, autoThread
+from process import ProcessThread, VideoWriter
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
@@ -58,6 +58,7 @@ class mywindow(QMainWindow):
 
         self.ui.pushButton.clicked.connect(self.start_record)
         self.ui.pushButton_2.clicked.connect(self.stop_record)
+        self.ui.pushButton_3.clicked.connect(self.auto)
 
         self.ui.gb_det.clicked.connect(self.print_state)
 
@@ -69,6 +70,10 @@ class mywindow(QMainWindow):
 
     def stop_record(self):
         self.video_writer.is_recording = False
+
+    @Slot()
+    def auto(self):
+        self.auto_thread.start()
 
     @Slot()
     def chk_autocap(self):
@@ -142,17 +147,21 @@ class mywindow(QMainWindow):
 
         nav_queue = queue.Queue()
         nav_queue.maxsize = 1
+        auto_queue = queue.Queue()
+        auto_queue.maxsize = 1
         self.tello = Tello()
         self.frame_thread = FrameThread(self.tello)
         self.matching_thread = MatchingThread(
             self.frame_thread, self.cv2_map, nav_queue)
         self.control_thread = ControlThread(self.tello)
-        self.imu_thread = IMUThread(self.tello, nav_queue)
+        self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
+        self.auto_thread = autoThread(
+            self.tello, auto_queue, self.frame_thread)
 
         # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
 
-        self.detect_thread = DetectThread(self.frame_thread)
+        self.detect_thread = ProcessThread(self.frame_thread)
         self.detect_thread.start()
         self.detect_thread.signal.connect(self.show_det)
 

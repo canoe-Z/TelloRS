@@ -8,11 +8,12 @@ import numpy as np
 from djitellopy import Tello
 from numpy import ndarray
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QMutex
+from PySide6.QtCore import Qt, QThread, Signal, QMutex, QDateTime
 
 from match.sift import SIFTMatcher
 from utils.control import HiddenPrints
 from control import FrameThread
+import math
 
 
 class MatchingThread(QThread):
@@ -50,7 +51,7 @@ class IMUThread(QThread):
     imu_signal = Signal()
     sift_signal = Signal()
 
-    def __init__(self, tello: Tello, nav_queue: Queue):
+    def __init__(self, tello: Tello, nav_queue: Queue, auto_queue: Queue):
         super(IMUThread, self).__init__()
         self.tello = tello
 
@@ -58,6 +59,7 @@ class IMUThread(QThread):
         self.pos = np.zeros(3, dtype=np.float32)
 
         self.nav_queue = nav_queue
+        self.auto_queue = auto_queue
 
     def run(self):
         while True:
@@ -71,7 +73,7 @@ class IMUThread(QThread):
             self.last_time = currnet_time
 
             ds = v*dt
-            self.pos += ds*2.73*10
+            self.pos += ds*2.8*10
             #print(self.pos[0], self.pos[1], self.pos[2])
             if self.nav_queue.empty():
                 # print('empty')
@@ -79,10 +81,59 @@ class IMUThread(QThread):
                 self.imu_signal.emit()
             if not self.nav_queue.empty():
                 x, y = self.nav_queue.get()
-                self.pos[1] = -x
-                self.pos[0] = -y+1280
-                # print('2')
-                # print(self.pos[0], self.pos[1])
-                self.sift_signal.emit()
+                dst = math.sqrt((self.pos[1]-(-x)) **
+                                2+(self.pos[0]-(-y+1280))**2)
+                if dst < 300:
+                    self.pos[1] = -x
+                    self.pos[0] = -y+1280
+                    # print('2')
+                    # print(self.pos[0], self.pos[1])
+                    self.sift_signal.emit()
+            if not self.auto_queue.empty():
+                self.auto_queue.get()
+            self.auto_queue.put([-int(self.pos[1]), -int(self.pos[0])+1280])
 
-            sleep(0.02)
+            sleep(0.01)
+
+
+class autoThread(QThread):
+    finish_signal = Signal(int)
+
+    def __init__(self, tello: Tello, auto_queue: Queue, frameThread: FrameThread):
+        super(autoThread, self).__init__()
+        self.tello = tello
+        self.auto_queue = auto_queue
+        self.frame_thread = frameThread
+
+    def run(self):
+        while True:
+            x, y = self.auto_queue.get()
+            print(x, y)
+            if 100 < y < 1230 and 10 < x < 1260:
+                self.tello.move_forward(30)
+                curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
+                cv2.imwrite('output/'+curDataTime +
+                            '.png', self.frame_thread.img)
+            if y < 100 and 10 < x < 1260:
+                self.tello.move_right(50)
+                curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
+                cv2.imwrite('output/'+curDataTime +
+                            '.png', self.frame_thread.img)
+                self.tello.rotate_clockwise(180)
+                self.tello.move_forward(50)
+                curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
+                cv2.imwrite('output/'+curDataTime +
+                            '.png', self.frame_thread.img)
+            if y > 1230 and 10 < x < 1260:
+                self.tello.move_left(50)
+                curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
+                cv2.imwrite('output/'+curDataTime +
+                            '.png', self.frame_thread.img)
+                self.tello.rotate_clockwise(180)
+                self.tello.move_forward(50)
+                curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
+                cv2.imwrite('output/'+curDataTime +
+                            '.png', self.frame_thread.img)
+            else:
+                self.tello.land
+            sleep(1)

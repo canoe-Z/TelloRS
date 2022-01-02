@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
-    <height>694</height>
+    <width>1114</width>
+    <height>642</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,7 +118,7 @@ QTableWidget QHeaderView::section
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -594,6 +594,19 @@ QTableWidget QHeaderView::section
          <rect>
           <x>500</x>
           <y>220</y>
+          <width>75</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="geometry">
+         <rect>
+          <x>350</x>
+          <y>470</y>
           <width>75</width>
           <height>24</height>
          </rect>

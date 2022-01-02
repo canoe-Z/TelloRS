@@ -8,6 +8,7 @@ import os
 
 from det.nanodet import NanoDet
 from det.template import TemplateMatcher
+from cls.resnet import ResNet
 from control import FrameThread
 
 
@@ -17,12 +18,12 @@ class DetectMethod(Enum):
     TEMPLATE_MATCHING = 2
 
 
-class DetectThread(QThread):
+class ProcessThread(QThread):
     signal = Signal()
     mutex = QMutex()
 
     def __init__(self, frameThread: FrameThread):
-        super(DetectThread, self).__init__()
+        super(ProcessThread, self).__init__()
 
         self.frameThread = frameThread
         self.frame = None
@@ -30,17 +31,26 @@ class DetectThread(QThread):
         self.detect_method = DetectMethod.NANODET
         self.predictor = NanoDet()
 
+        # Template
         template_dir = './det/model/template'
         template_path = [template_dir +
                          path for path in os.listdir(template_dir)]
         templates = [cv2.imread(path) for path in template_path]
         self.template_matcher = TemplateMatcher(templates)
 
+        # CLS
+        self.classifier = ResNet()
+
     def run(self):
         while True:
             self.mutex.lock()
             self.frame = self.frameThread.img
             self.mutex.unlock()
+            if self.frame is None:
+                continue
+
+            result = self.classifier.test(self.frame)
+            print(result)
 
             if self.detect_realtime:
                 if self.detect_method == DetectMethod.NANODET:

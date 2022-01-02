@@ -62,7 +62,7 @@ class FrameThread(QThread):
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
 
-        self.stab_on = True
+        self.stab_on = False
 
     def run(self):
         while True:
@@ -84,6 +84,8 @@ class FrameThread(QThread):
                 self.img = stabilized_frame
             else:
                 self.img = frame
+            #self.img = frame
+            a = self.img*2
 
             self.qmut.unlock()
             self.signal.emit()
