@@ -63,7 +63,7 @@ class mywindow(QMainWindow):
         self.ui.gb_det.clicked.connect(self.print_state)
 
     def print_state(self, checked: bool):
-        self.detect_thread.detect_realtime = checked
+        self.process_thread.det_realtime = checked
 
     def start_record(self):
         self.video_writer.is_recording = True
@@ -161,9 +161,9 @@ class mywindow(QMainWindow):
         # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
 
-        self.detect_thread = ProcessThread(self.frame_thread)
-        self.detect_thread.start()
-        self.detect_thread.signal.connect(self.show_det)
+        self.process_thread = ProcessThread(self.frame_thread)
+        self.process_thread.start()
+        self.process_thread.signal.connect(self.show_det)
 
         self.matching_thread.start()
         self.matching_thread.finish_signal.connect(self.show_map)
@@ -205,7 +205,7 @@ class mywindow(QMainWindow):
 
     @Slot()
     def show_det(self):
-        qImg = cv2toQImage(self.detect_thread.frame)
+        qImg = cv2toQImage(self.process_thread.frame)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_template.width(), self.ui.label_template.height())
         self.ui.label_template.setPixmap(qImg)

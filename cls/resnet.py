@@ -33,7 +33,7 @@ if __name__ == '__main__':
     model = ResNet()
     import time
     a = time.time()
-    img = cv2.imread('./data/test.png')
+    img = cv2.imread('./data/18_21_39_2021_12_14.png')
     result = model.test(img)
     b = time.time()
     print('waste time', b-a)

@@ -12,10 +12,15 @@ from cls.resnet import ResNet
 from control import FrameThread
 
 
-class DetectMethod(Enum):
+class DetMethod(Enum):
     NANODET = 0
     YOLOV5 = 1
     TEMPLATE_MATCHING = 2
+
+
+class ClsMethod(Enum):
+    RESNET18 = 0
+    YOLOV5 = 1
 
 
 class ProcessThread(QThread):
@@ -27,9 +32,11 @@ class ProcessThread(QThread):
 
         self.frameThread = frameThread
         self.frame = None
-        self.detect_realtime = True
-        self.detect_method = DetectMethod.NANODET
-        self.predictor = NanoDet()
+
+        # NanoDet
+        self.det_realtime = True
+        self.det_method = DetMethod.NANODET
+        self.detector = NanoDet()
 
         # Template
         template_dir = './det/model/template'
@@ -39,6 +46,8 @@ class ProcessThread(QThread):
         self.template_matcher = TemplateMatcher(templates)
 
         # CLS
+        self.cls_realtime = True
+        self.cls_method = ClsMethod.RESNET18
         self.classifier = ResNet()
 
     def run(self):
@@ -49,15 +58,18 @@ class ProcessThread(QThread):
             if self.frame is None:
                 continue
 
-            result = self.classifier.test(self.frame)
-            print(result)
+            # cls
+            if self.cls_realtime:
+                result = self.classifier.test(self.frame)
+                print(result)
 
-            if self.detect_realtime:
-                if self.detect_method == DetectMethod.NANODET:
-                    self.frame = self.predictor.detect(self.frame)
-                elif self.detect_method == DetectMethod.YOLOV5:
+            # det
+            if self.det_realtime:
+                if self.det_method == DetMethod.NANODET:
+                    self.frame = self.detector.detect(self.frame)
+                elif self.det_method == DetMethod.YOLOV5:
                     pass
-                elif self.detect_method == DetectMethod.TEMPLATE_MATCHING:
+                elif self.det_method == DetMethod.TEMPLATE_MATCHING:
                     self.frame = self.template_matcher.detect(self.frame)
 
             else:
@@ -76,7 +88,6 @@ class VideoWriter(QThread):
         self.is_recording = False
         self.video_count = 0
         self.fps = 30
-        # self.
 
     def run(self):
         while True:
