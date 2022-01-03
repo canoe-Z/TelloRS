@@ -7,8 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1114</width>
-    <height>642</height>
+    <height>643</height>
    </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
   </property>
   <property name="windowTitle">
    <string>TelloRS</string>
@@ -296,7 +299,7 @@ QTableWidget QHeaderView::section
                </widget>
               </item>
               <item>
-               <widget class="QGroupBox" name="groupBox_4">
+               <widget class="QGroupBox" name="gb_cls">
                 <property name="title">
                  <string>实时场景分类</string>
                 </property>
@@ -328,7 +331,7 @@ QTableWidget QHeaderView::section
                    </property>
                    <item>
                     <property name="text">
-                     <string>NanoDet</string>
+                     <string>ResNet18</string>
                     </property>
                    </item>
                    <item>
@@ -336,18 +339,6 @@ QTableWidget QHeaderView::section
                      <string>YOLOv5</string>
                     </property>
                    </item>
-                   <item>
-                    <property name="text">
-                     <string>模板匹配</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_7">
-                   <property name="text">
-                    <string>未知</string>
-                   </property>
                   </widget>
                  </item>
                 </layout>

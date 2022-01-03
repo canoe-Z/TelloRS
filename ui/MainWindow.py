@@ -29,7 +29,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1114, 642)
+        MainWindow.resize(1114, 643)
+        MainWindow.setFocusPolicy(Qt.StrongFocus)
         self.action_connect = QAction(MainWindow)
         self.action_connect.setObjectName(u"action_connect")
         self.action_takephoto = QAction(MainWindow)
@@ -188,23 +189,22 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.gb_det)
 
-        self.groupBox_4 = QGroupBox(self.frame_5)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.groupBox_4.setCheckable(True)
-        self.gridLayout_3 = QGridLayout(self.groupBox_4)
+        self.gb_cls = QGroupBox(self.frame_5)
+        self.gb_cls.setObjectName(u"gb_cls")
+        self.gb_cls.setCheckable(True)
+        self.gridLayout_3 = QGridLayout(self.gb_cls)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.label_5 = QLabel(self.groupBox_4)
+        self.label_5 = QLabel(self.gb_cls)
         self.label_5.setObjectName(u"label_5")
 
         self.gridLayout_3.addWidget(self.label_5, 0, 0, 1, 1)
 
-        self.label_6 = QLabel(self.groupBox_4)
+        self.label_6 = QLabel(self.gb_cls)
         self.label_6.setObjectName(u"label_6")
 
         self.gridLayout_3.addWidget(self.label_6, 1, 0, 1, 1)
 
-        self.comboBox_2 = QComboBox(self.groupBox_4)
-        self.comboBox_2.addItem("")
+        self.comboBox_2 = QComboBox(self.gb_cls)
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.comboBox_2.setObjectName(u"comboBox_2")
@@ -212,13 +212,8 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.comboBox_2, 0, 1, 1, 1)
 
-        self.label_7 = QLabel(self.groupBox_4)
-        self.label_7.setObjectName(u"label_7")
 
-        self.gridLayout_3.addWidget(self.label_7, 1, 1, 1, 1)
-
-
-        self.horizontalLayout.addWidget(self.groupBox_4)
+        self.horizontalLayout.addWidget(self.gb_cls)
 
 
         self.verticalLayout_2.addWidget(self.frame_5, 0, Qt.AlignBottom)
@@ -435,14 +430,12 @@ class Ui_MainWindow(object):
         self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
 
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
+        self.gb_cls.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u5668", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u7ed3\u679c", None))
-        self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
+        self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"ResNet18", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
-        self.comboBox_2.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
 
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u672a\u77e5", None))
         self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))

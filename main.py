@@ -25,6 +25,7 @@ class mywindow(QMainWindow):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setFocus()
 
         self.tello_connected = False
 
@@ -88,10 +89,12 @@ class mywindow(QMainWindow):
         self.ui.label_template.setPixmap(qImg)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
-        # if not self.tello_connected:
-        #     return
+        if not self.tello_connected:
+            return
 
         key = event.key()
+        print(key)
+
         if event.isAutoRepeat():
             # 键盘按下反复执行
             if self.control_mode == ControlMode.FIXED_MODE:
@@ -127,8 +130,8 @@ class mywindow(QMainWindow):
                         self.tello.send_rc_control(self.rc_speed, 0, 0, 0)
 
     def keyReleaseEvent(self, event: QtGui.QKeyEvent):
-        # if not self.tello_connected:
-        #     return
+        if not self.tello_connected:
+            return
 
         if event.isAutoRepeat():
             # 键盘按下反复执行
