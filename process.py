@@ -33,19 +33,19 @@ class ProcessThread(QThread):
         self.frameThread = frameThread
         self.frame = None
 
-        # NanoDet
+        # nanodet
         self.det_realtime = True
         self.det_method = DetMethod.NANODET
         self.detector = NanoDet()
 
-        # Template
+        # template
         template_dir = './det/model/template'
         template_path = [template_dir +
                          path for path in os.listdir(template_dir)]
         templates = [cv2.imread(path) for path in template_path]
         self.template_matcher = TemplateMatcher(templates)
 
-        # CLS
+        # cls
         self.cls_realtime = True
         self.cls_method = ClsMethod.RESNET18
         self.classifier = ResNet()
