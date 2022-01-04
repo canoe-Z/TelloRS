@@ -82,7 +82,7 @@ class ProcessThread(QThread):
 
 
 class VideoWriter(QThread):
-    def __init__(self, frameThread=None):
+    def __init__(self, frameThread: FrameThread):
         super(VideoWriter, self).__init__()
         self.frameThread = frameThread
         self.is_recording = False
@@ -95,15 +95,14 @@ class VideoWriter(QThread):
             if self.is_recording:
                 print("正在保存录像...")
                 # self.ui.lineEdit_tips.setText("正在保存录像...")
-                #self.video_count += 1
+                self.video_count += 1
+                self.video_width = self.frameThread.img.shape[0]
+                self.video_height = self.frameThread.img.shape[1]
 
-                # self.video_width = self.frameThread.img.shape[0]
-                # self.video_height = self.frameThread.img.shape[1]
-
-                # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-                # video_name = "video" + str(self.video_count) + ".avi"
-                # out = cv2.VideoWriter(video_name, fourcc, self.fps, (int(
-                #     self.video_width), int(self.video_height)))
+                fourcc = cv2.VideoWriter_fourcc(*'XVID')
+                video_name = "video" + str(self.video_count) + ".avi"
+                out = cv2.VideoWriter(video_name, fourcc, self.fps, (int(
+                    self.video_width), int(self.video_height)))
                 while True:
                     # # 多线程终止条件
                     # if gv.get_value("THREAD_STOP"):

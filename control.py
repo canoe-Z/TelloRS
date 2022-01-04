@@ -84,7 +84,8 @@ class FrameThread(QThread):
                 self.img = stabilized_frame
             else:
                 self.img = frame
-            #self.img = frame
+
+            # 虽然不知道有什么用，但是千万不要删这行代码
             a = self.img*2
 
             self.qmut.unlock()

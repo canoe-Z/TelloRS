@@ -29,7 +29,7 @@ class mywindow(QMainWindow):
 
         self.tello_connected = False
 
-        self.cv2_map = cv2.imread('./data/newsource.png')
+        self.cv2_map = cv2.imread('./map/newsource.png')
         self.show_map()
 
         self.is_autocap = 0
