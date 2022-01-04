@@ -82,7 +82,7 @@ class ProcessThread(QThread):
 
 
 class VideoWriter(QThread):
-    def __init__(self, frameThread: FrameThread):
+    def __init__(self, frameThread=None):
         super(VideoWriter, self).__init__()
         self.frameThread = frameThread
         self.is_recording = False
