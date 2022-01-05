@@ -30,6 +30,7 @@ def get_and_check(root, name, length):
 def get_filename_as_int(filename):
     try:
         filename = os.path.splitext(filename)[0]
+        filename = filename.replace('-', '')
         return int(filename)
     except:
         raise NotImplementedError(
@@ -104,7 +105,7 @@ def convert(xml_list, xml_dir, json_file):
 
 
 if __name__ == '__main__':
-    xml_dir = './data/train'
+    xml_dir = r'./data/train'
     xml_list = [x for x in os.listdir(xml_dir) if '.xml' in x]
     dist_dir = './data/train_COCO/annotations'
     json_file = os.path.join(dist_dir, 'train.json')
