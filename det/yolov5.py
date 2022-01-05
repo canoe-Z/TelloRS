@@ -11,13 +11,15 @@ class YOLOv5(object):
     def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
         stride, names = 64, [
             f'class{i}' for i in range(1000)]  # assign defaults
-        self.session = onnxruntime.InferenceSession('./det/model/best.onnx')
+        self.prob_threshold = prob_threshold
+        self.iou_threshold = iou_threshold
+        self.session = onnxruntime.InferenceSession('./det/model/320.onnx')
 
     def detect(self, img):
         im = img.copy().astype('float32')
 
         # Padded resize
-        im = letterbox(im, 640, stride=32, auto=False, scaleFill=False)[0]
+        im = letterbox(im, 320, stride=32, auto=False, scaleFill=False)[0]
         im = im.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
 
         im /= 255  # 0 - 255 to 0.0 - 1.0
@@ -57,11 +59,11 @@ if __name__ == '__main__':
                  prob_threshold=args.confThreshold, iou_threshold=args.nmsThreshold)
 
     import time
-    while True:
-        a = time.time()
-        result = net.detect(srcimg)
-        b = time.time()
-        print('waste time', b-a)
+    #while True:
+    a = time.time()
+    result = net.detect(srcimg)
+    b = time.time()
+    print('waste time', b-a)
 
     winName = 'Deep learning object detection in OpenCV'
     cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
