@@ -121,7 +121,7 @@ QTableWidget QHeaderView::section
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
@@ -513,7 +513,7 @@ QTableWidget QHeaderView::section
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSlider" name="horizontalSlider_2">
+                     <widget class="ClickJumpSlider" name="horizontalSlider_2">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -540,7 +540,7 @@ QTableWidget QHeaderView::section
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSlider" name="horizontalSlider_5">
+                     <widget class="ClickJumpSlider" name="horizontalSlider_5">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -1031,7 +1031,7 @@ QTableWidget QHeaderView::section
               <item alignment="Qt::AlignHCenter">
                <widget class="QRadioButton" name="radioButton_2">
                 <property name="text">
-                 <string>是否自动控制</string>
+                 <string>自动捕捉目标</string>
                 </property>
                </widget>
               </item>
@@ -1155,16 +1155,11 @@ QTableWidget QHeaderView::section
        </layout>
       </widget>
       <widget class="QWidget" name="page_4">
-       <widget class="QGraphicsView" name="graphicsView">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>30</y>
-          <width>841</width>
-          <height>561</height>
-         </rect>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QGraphicsView" name="graphicsView"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -1219,6 +1214,13 @@ QTableWidget QHeaderView::section
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickJumpSlider</class>
+   <extends>QSlider</extends>
+   <header>ui/ClickJumpSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

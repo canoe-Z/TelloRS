@@ -1,15 +1,16 @@
+import os
 from enum import Enum
 from time import sleep
 
 import cv2
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QMutex, Qt, QThread, Signal, QDateTime
-import os
+from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal
 
-from det.nanodet import NanoDet
-from det.template import TemplateMatcher
 from cls.resnet import ResNet
 from control import FrameThread
+from det.nanodet import NanoDet
+from det.template import TemplateMatcher
+from det.yolov5 import YOLOv5
 
 
 class DetMethod(Enum):
@@ -36,7 +37,10 @@ class ProcessThread(QThread):
         # nanodet
         self.det_realtime = True
         self.det_method = DetMethod.NANODET
-        self.detector = NanoDet()
+        #self.detector = NanoDet()
+
+        # YOLOV5
+        self.detector = YOLOv5()
 
         # template
         template_dir = './det/model/template'

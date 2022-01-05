@@ -18,7 +18,8 @@ def get(root, name):
 def get_and_check(root, name, length):
     vars = root.findall(name)
     if len(vars) == 0:
-        raise NotImplementedError('Can not find %s in %s.' % (name, root.tag))
+        return None
+        #raise NotImplementedError('Can not find %s in %s.' % (name, root.tag))
     if length > 0 and len(vars) != length:
         raise NotImplementedError(
             'The size of %s is supposed to be %d, but is %d.' % (name, length, len(vars)))
@@ -30,6 +31,7 @@ def get_and_check(root, name, length):
 def get_filename_as_int(filename):
     try:
         filename = os.path.splitext(filename)[0]
+        filename = filename.replace('video_', '')
         filename = filename.replace('-', '')
         return int(filename)
     except:
@@ -74,26 +76,44 @@ def convert(xml_list, xml_dir, json_file):
 
         for obj in get(root, 'object'):
             category = get_and_check(obj, 'name', 1).text
+            if category in ['buliding', 'house', 'building']:
+                break
             if category not in categories:
                 new_id = len(categories) + 1
                 categories[category] = new_id
             category_id = categories[category]
-            bndbox = get_and_check(obj, 'robndbox', 1)
-            cx = int(float(get_and_check(bndbox, 'cx', 1).text)) - 1
-            cy = int(float(get_and_check(bndbox, 'cy', 1).text)) - 1
-            w = int(float(get_and_check(bndbox, 'w', 1).text))
-            h = int(float(get_and_check(bndbox, 'h', 1).text))
-            angle = float(get_and_check(bndbox, 'angle', 1).text)
-            hbb = obb2hbb([cx, cy, w, h, angle])
-            w_hbb = hbb[2]-hbb[0]
-            h_hbb = hbb[3]-hbb[1]
-
-            ann = {'area': w*h, 'iscrowd': 0, 'image_id':
-                   image_id, 'bbox': [hbb[0], hbb[1], w_hbb, h_hbb],
-                   'category_id': category_id, 'id': bnd_id, 'ignore': 0,
-                   'segmentation': []}
-            json_dict['annotations'].append(ann)
-            bnd_id = bnd_id + 1
+            robndbox = get_and_check(obj, 'robndbox', 1)
+            bndbox = get_and_check(obj, 'bndbox', 1)
+            if bndbox:
+                xmin = int(float(get_and_check(bndbox, 'xmin', 1).text)) - 1
+                ymin = int(float(get_and_check(bndbox, 'ymin', 1).text)) - 1
+                xmax = int(float(get_and_check(bndbox, 'xmax', 1).text))
+                ymax = int(float(get_and_check(bndbox, 'ymax', 1).text))
+                w = xmax-xmin
+                h = ymax-ymin
+                bbox = [xmin, ymin, w, h]
+                ann = {'area': w*h, 'iscrowd': 0, 'image_id':
+                       image_id, 'bbox': bbox,
+                       'category_id': category_id, 'id': bnd_id, 'ignore': 0,
+                       'segmentation': []}
+                json_dict['annotations'].append(ann)
+                bnd_id = bnd_id + 1
+            if robndbox:
+                cx = int(float(get_and_check(robndbox, 'cx', 1).text)) - 1
+                cy = int(float(get_and_check(robndbox, 'cy', 1).text)) - 1
+                w = int(float(get_and_check(robndbox, 'w', 1).text))
+                h = int(float(get_and_check(robndbox, 'h', 1).text))
+                angle = float(get_and_check(robndbox, 'angle', 1).text)
+                hbb = obb2hbb([cx, cy, w, h, angle])
+                w_hbb = hbb[2]-hbb[0]
+                h_hbb = hbb[3]-hbb[1]
+                bbox = [hbb[0], hbb[1], w_hbb, h_hbb]
+                ann = {'area': w*h, 'iscrowd': 0, 'image_id':
+                       image_id, 'bbox': bbox,
+                       'category_id': category_id, 'id': bnd_id, 'ignore': 0,
+                       'segmentation': []}
+                json_dict['annotations'].append(ann)
+                bnd_id = bnd_id + 1
 
     for cate, cid in categories.items():
         cat = {'supercategory': 'none', 'id': cid, 'name': cate}
@@ -105,8 +125,8 @@ def convert(xml_list, xml_dir, json_file):
 
 
 if __name__ == '__main__':
-    xml_dir = r'./data/train'
+    xml_dir = './data/car/car'
     xml_list = [x for x in os.listdir(xml_dir) if '.xml' in x]
-    dist_dir = './data/train_COCO/annotations'
+    dist_dir = './data/car_COCO/annotations'
     json_file = os.path.join(dist_dir, 'train.json')
     convert(xml_list, xml_dir, json_file)

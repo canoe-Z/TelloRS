@@ -4,7 +4,7 @@ import torch
 import time
 import numpy as np
 import argparse
-from yolov5_utils import *
+from det.yolov5_utils import *
 
 
 class YOLOv5(object):
@@ -13,7 +13,7 @@ class YOLOv5(object):
             f'class{i}' for i in range(1000)]  # assign defaults
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
-        self.session = onnxruntime.InferenceSession('./det/model/320.onnx')
+        self.session = onnxruntime.InferenceSession('./det/model/yolov5n.onnx')
 
     def detect(self, img):
         im = img.copy().astype('float32')
@@ -38,7 +38,7 @@ class YOLOv5(object):
                 bx, by, bw, bh, conf, _ = bbox
                 c1, c2 = ((int(bx), int(by)), (int(bw), int(bh)))
                 cv2.rectangle(img, c1, c2, (0, 0, 255),
-                              1, cv2.LINE_AA)  # filled
+                              5, cv2.LINE_AA)  # filled
         return img
 
 

@@ -24,6 +24,8 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
     QStatusBar, QTextBrowser, QToolBar, QVBoxLayout,
     QWidget)
 
+from ui.ClickJumpSlider import ClickJumpSlider
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -296,7 +298,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.label_2)
 
-        self.horizontalSlider_2 = QSlider(self.frame_21)
+        self.horizontalSlider_2 = ClickJumpSlider(self.frame_21)
         self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
         self.horizontalSlider_2.setOrientation(Qt.Horizontal)
 
@@ -314,7 +316,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.label_7)
 
-        self.horizontalSlider_5 = QSlider(self.frame_21)
+        self.horizontalSlider_5 = ClickJumpSlider(self.frame_21)
         self.horizontalSlider_5.setObjectName(u"horizontalSlider_5")
         self.horizontalSlider_5.setOrientation(Qt.Horizontal)
 
@@ -566,9 +568,13 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.page_3)
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
+        self.verticalLayout_4 = QVBoxLayout(self.page_4)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.graphicsView = QGraphicsView(self.page_4)
         self.graphicsView.setObjectName(u"graphicsView")
-        self.graphicsView.setGeometry(QRect(40, 30, 841, 561))
+
+        self.verticalLayout_4.addWidget(self.graphicsView)
+
         self.stackedWidget.addWidget(self.page_4)
 
         self.horizontalLayout_6.addWidget(self.stackedWidget)
@@ -590,7 +596,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -702,7 +708,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.label_template_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u662f\u5426\u81ea\u52a8\u63a7\u5236", None))
+        self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
         self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.radioButton_5.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f", None))
