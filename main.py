@@ -52,14 +52,14 @@ class mywindow(QMainWindow):
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
 
-        self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
+        #self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
-        self.video_writer = VideoWriter()
-        self.video_writer.start()
-
-        self.ui.pushButton.clicked.connect(self.start_record)
-        self.ui.pushButton_2.clicked.connect(self.stop_record)
-        self.ui.pushButton_3.clicked.connect(self.auto)
+        
+        self.ui.action_record.triggered.connect(self.start_record)
+        self.ui.action_stoprecord.triggered.connect(self.stop_record)
+        # self.ui.pushButton.clicked.connect(self.start_record)
+        # self.ui.pushButton_2.clicked.connect(self.stop_record)
+        # self.ui.pushButton_3.clicked.connect(self.auto)
 
         self.ui.gb_det.clicked.connect(self.print_state)
 
@@ -163,6 +163,9 @@ class mywindow(QMainWindow):
 
         # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
+
+        self.video_writer = VideoWriter(self.frame_thread)
+        self.video_writer.start()
 
         self.process_thread = ProcessThread(self.frame_thread)
         self.process_thread.start()
