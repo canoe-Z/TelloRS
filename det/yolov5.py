@@ -1,10 +1,11 @@
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
 import onnxruntime
 import cv2
 import torch
 import time
 import numpy as np
 import argparse
-from det.yolov5_utils import *
+from det.utils.yolov5_utils import *
 
 
 class YOLOv5(object):
@@ -13,7 +14,7 @@ class YOLOv5(object):
             f'class{i}' for i in range(1000)]  # assign defaults
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
-        self.session = onnxruntime.InferenceSession('./det/model/yolov5n.onnx')
+        self.session = onnxruntime.InferenceSession('./det/model/yolov5n_uav.onnx')
 
     def detect(self, img):
         im = img.copy().astype('float32')

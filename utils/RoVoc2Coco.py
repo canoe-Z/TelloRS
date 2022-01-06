@@ -125,8 +125,8 @@ def convert(xml_list, xml_dir, json_file):
 
 
 if __name__ == '__main__':
-    xml_dir = './data/car/car'
+    xml_dir = './data/uav/val/xml'
     xml_list = [x for x in os.listdir(xml_dir) if '.xml' in x]
-    dist_dir = './data/car_COCO/annotations'
-    json_file = os.path.join(dist_dir, 'train.json')
+    dist_dir = './data/uav_COCO/annotations'
+    json_file = os.path.join(dist_dir, 'val.json')
     convert(xml_list, xml_dir, json_file)

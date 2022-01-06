@@ -52,9 +52,8 @@ class mywindow(QMainWindow):
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
 
-        #self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
+        # self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
-        
         self.ui.action_record.triggered.connect(self.start_record)
         self.ui.action_stoprecord.triggered.connect(self.stop_record)
         # self.ui.pushButton.clicked.connect(self.start_record)
@@ -161,7 +160,7 @@ class mywindow(QMainWindow):
         self.auto_thread = autoThread(
             self.tello, auto_queue, self.frame_thread)
 
-        # self.frame_thread.signal.connect(self.show_tello_frame)
+        #self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
 
         self.video_writer = VideoWriter(self.frame_thread)
@@ -215,6 +214,7 @@ class mywindow(QMainWindow):
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_template.width(), self.ui.label_template.height())
         self.ui.label_template.setPixmap(qImg)
+        self.ui.label_cls_result.setText(self.process_thread.cls_result)
 
     @Slot()
     def take_photo(self):

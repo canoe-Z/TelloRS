@@ -9,6 +9,7 @@ from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal
 from cls.resnet import ResNet
 from control import FrameThread
 from det.nanodet import NanoDet
+from det.nanodet_plus import NanoDetPlus
 from det.template import TemplateMatcher
 from det.yolov5 import YOLOv5
 
@@ -42,6 +43,7 @@ class ProcessThread(QThread):
         # YOLOV5
         self.detector = YOLOv5()
 
+        #self.detector = NanoDetPlus('./det/model/nanodet_car.onnx')
         # template
         template_dir = './det/model/template'
         template_path = [template_dir +
@@ -51,6 +53,7 @@ class ProcessThread(QThread):
 
         # cls
         self.cls_realtime = True
+        self.cls_result = ''
         self.cls_method = ClsMethod.RESNET18
         self.classifier = ResNet()
 
@@ -64,7 +67,7 @@ class ProcessThread(QThread):
 
             # cls
             if self.cls_realtime:
-                result = self.classifier.test(self.frame)
+                self.cls_result = self.classifier.test(self.frame)
                 # print(result)
 
             # det

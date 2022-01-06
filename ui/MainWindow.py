@@ -223,6 +223,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.comboBox_2, 0, 1, 1, 1)
 
+        self.label_cls_result = QLabel(self.gb_cls)
+        self.label_cls_result.setObjectName(u"label_cls_result")
+
+        self.gridLayout_3.addWidget(self.label_cls_result, 1, 1, 1, 1)
+
 
         self.horizontalLayout.addWidget(self.gb_cls)
 
@@ -596,7 +601,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -641,6 +646,7 @@ class Ui_MainWindow(object):
         self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"ResNet18", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
 
+        self.label_cls_result.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.rbtn_move_fixed.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
