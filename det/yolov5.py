@@ -14,7 +14,7 @@ class YOLOv5(object):
             f'class{i}' for i in range(1000)]  # assign defaults
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
-        self.session = onnxruntime.InferenceSession('./det/model/yolov5n_uav.onnx')
+        self.session = onnxruntime.InferenceSession('./det/model/best4.onnx')
 
     def detect(self, img):
         im = img.copy().astype('float32')

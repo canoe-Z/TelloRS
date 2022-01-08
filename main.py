@@ -63,30 +63,6 @@ class mywindow(QMainWindow):
 
         # self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
 
-<<<<<<< HEAD
-        #滑动条连接
-        self.ui.slider_step_1.setValue(30)
-        self.ui.slider_step_3.setValue(30)
-        self.ui.slider_speed_1.setValue(self.rc_speed)
-        self.ui.slider_speed_3.setValue(self.rc_speed)
-        self.ui.slider_step_1.setMinimum(20)#最小值
-        self.ui.slider_step_1.setMaximum(100)#最大值
-        self.ui.slider_step_1.valueChanged.connect(self.movestep_1)
-        self.ui.slider_step_3.setMinimum(20)#最小值
-        self.ui.slider_step_3.setMaximum(100)#最大值
-        self.ui.slider_step_3.valueChanged.connect(self.movestep_3)
-
-        self.ui.slider_speed_1.setMinimum(10)#最小值
-        self.ui.slider_speed_1.setMaximum(50)#最大值
-        self.ui.slider_speed_1.valueChanged.connect(self.movespeed_1)
-        self.ui.slider_speed_3.setMinimum(10)#最小值
-        self.ui.slider_speed_3.setMaximum(50)#最大值
-        self.ui.slider_speed_3.valueChanged.connect(self.movespeed_3)
-
-        self.ui.autotargetbutton.clicked.connect(self.autoThread1)#自动巡检
-        
-=======
->>>>>>> c7b238555a4b8b54158b793161d29f887b4b1d30
         self.ui.action_record.triggered.connect(self.start_record)
         self.ui.action_stoprecord.triggered.connect(self.stop_record)
 
@@ -302,12 +278,9 @@ class mywindow(QMainWindow):
         qImg3 = QtGui.QPixmap(qImg).scaled(
             self.ui.label_template_3.width(), self.ui.label_template_3.height())
         self.ui.label_template.setPixmap(qImg)
-<<<<<<< HEAD
         self.ui.label_template_2.setPixmap(qImg2)
         self.ui.label_template_3.setPixmap(qImg3)
-=======
         self.ui.label_cls_result.setText(self.process_thread.cls_result)
->>>>>>> c7b238555a4b8b54158b793161d29f887b4b1d30
 
     @Slot()
     def take_photo(self):

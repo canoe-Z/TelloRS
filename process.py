@@ -41,9 +41,9 @@ class ProcessThread(QThread):
         #self.detector = NanoDet()
 
         # YOLOV5
-        self.detector = YOLOv5()
+        #self.detector = YOLOv5()
 
-        #self.detector = NanoDetPlus('./det/model/nanodet_car.onnx')
+        self.detector = NanoDetPlus('./det/model/nanodet_uav.onnx')
         # template
         template_dir = './det/model/template'
         template_path = [template_dir +

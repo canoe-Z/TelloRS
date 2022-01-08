@@ -49,7 +49,9 @@ def convert(xml_list, xml_dir, json_file):
     """
     json_dict = {"images": [], "type": "instances", "annotations": [],
                  "categories": []}
-    categories = {}
+    #categories = {}
+    categories = {'storage-tank': 1, 'mine': 2,
+                  'ship': 3, 'field': 4, 'plane': 5}
     bnd_id = START_BOUNDING_BOX_ID
     for line in xml_list:
         line = line.strip()
@@ -79,8 +81,9 @@ def convert(xml_list, xml_dir, json_file):
             if category in ['buliding', 'house', 'building']:
                 break
             if category not in categories:
-                new_id = len(categories) + 1
-                categories[category] = new_id
+                assert(1 == 2)
+                # new_id = len(categories) + 1
+                # categories[category] = new_id
             category_id = categories[category]
             robndbox = get_and_check(obj, 'robndbox', 1)
             bndbox = get_and_check(obj, 'bndbox', 1)
@@ -125,8 +128,8 @@ def convert(xml_list, xml_dir, json_file):
 
 
 if __name__ == '__main__':
-    xml_dir = './data/uav/val/xml'
+    xml_dir = './data/uav/train/xml'
     xml_list = [x for x in os.listdir(xml_dir) if '.xml' in x]
     dist_dir = './data/uav_COCO/annotations'
-    json_file = os.path.join(dist_dir, 'val.json')
+    json_file = os.path.join(dist_dir, 'train.json')
     convert(xml_list, xml_dir, json_file)

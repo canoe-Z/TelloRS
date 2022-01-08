@@ -6,7 +6,7 @@ import math
 
 
 class NanoDetPlus(object):
-    def __init__(self, model_pb_path, label_path, prob_threshold=0.4, iou_threshold=0.3):
+    def __init__(self, model_pb_path, label_path=None, prob_threshold=0.4, iou_threshold=0.3):
         # self.classes = list(
         #     map(lambda x: x.strip(), open(label_path, 'r').readlines()))
         self.classes = ['car']
@@ -125,8 +125,9 @@ class NanoDetPlus(object):
         confidences = np.max(mlvl_scores, axis=1)  # max_class_confidence
 
         indices = cv2.dnn.NMSBoxes(bboxes_wh.tolist(), confidences.tolist(), self.prob_threshold,
-                                   self.iou_threshold).flatten()
+                                   self.iou_threshold)#.flatten()
         if len(indices) > 0:
+            indices=indices.flatten()
             mlvl_bboxes = mlvl_bboxes[indices]
             confidences = confidences[indices]
             classIds = classIds[indices]
@@ -184,7 +185,7 @@ if __name__ == '__main__':
                         default='onnxmodel/coco.names', help="classname filepath")
     parser.add_argument('--confThreshold', default=0.4,
                         type=float, help='class confidence')
-    parser.add_argument('--nmsThreshold', default=0.6,
+    parser.add_argument('--nmsThreshold', default=0.1,
                         type=float, help='nms iou thresh')
     args = parser.parse_args()
 
@@ -192,14 +193,28 @@ if __name__ == '__main__':
 
     net = NanoDetPlus(args.modelpath, args.classfile,
                       prob_threshold=args.confThreshold, iou_threshold=args.nmsThreshold)
-    import time
-    a = time.time()
-    srcimg = net.detect(srcimg)
-    b = time.time()
-    print('waste time', b-a)
-
+    
     winName = 'Deep learning object detection in ONNXRuntime'
     cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
-    cv2.imshow(winName, srcimg)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    import time
+    # a = time.time()
+    # srcimg = net.detect(srcimg)
+    # b = time.time()
+    # print('waste time', b-a)
+    cap = cv2.VideoCapture(r"D:\tello_tracking\tello_tracking\video\video_test\tello2.mp4")
+    #cv2.namedWindow("detect")
+    while cap.isOpened():
+        _, frame = cap.read()
+        start = time.perf_counter()
+        result = net.detect(frame)
+        end = time.perf_counter()
+        time1 = (end - start) * 1000.
+        print("forward time:%fms" % time1)
+        cv2.imshow(winName, result)
+        if cv2.waitKey(30) == 27:
+            break
+        
+
+    #cv2.imshow(winName, srcimg)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
