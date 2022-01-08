@@ -67,7 +67,7 @@ class FrameThread(QThread):
     def run(self):
         while True:
             buffer = self.frame_read.frame
-            buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
+            #buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
 
             frame = cv2.flip(buffer, 0)
 
@@ -101,6 +101,7 @@ class ControlThread(QThread):
         super(ControlThread, self).__init__()
         self.tello = tello
         self.key = None
+        self.move_distance = 30
 
     def run(self):
         while True:
@@ -111,13 +112,13 @@ class ControlThread(QThread):
                 if key == Qt.Key_T:
                     self.tello.takeoff()
                 if key == Qt.Key_W:
-                    self.tello.move_forward(30)
+                    self.tello.move_forward(self.move_distance)
                 if key == Qt.Key_A:
-                    self.tello.move_left(30)
+                    self.tello.move_left(self.move_distance)
                 if key == Qt.Key_S:
-                    self.tello.move_back(30)
+                    self.tello.move_back(self.move_distance)
                 if key == Qt.Key_D:
-                    self.tello.move_right(30)
+                    self.tello.move_right(self.move_distance)
                 if key == Qt.Key_L:
                     self.tello.land()
 

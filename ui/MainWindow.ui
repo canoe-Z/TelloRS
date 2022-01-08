@@ -119,6 +119,19 @@ QTableWidget QHeaderView::section
      </widget>
     </item>
     <item>
+     <spacer name="horizontalSpacer_11">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
        <number>3</number>
@@ -506,14 +519,14 @@ QTableWidget QHeaderView::section
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_2">
+                     <widget class="QLabel" name="label_step_1">
                       <property name="text">
-                       <string>步长</string>
+                       <string>步长：30</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="ClickJumpSlider" name="horizontalSlider_2">
+                     <widget class="ClickJumpSlider" name="slider_step_1">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -533,14 +546,14 @@ QTableWidget QHeaderView::section
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_7">
+                     <widget class="QLabel" name="label_speed_1">
                       <property name="text">
-                       <string>转速</string>
+                       <string>转速：30</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="ClickJumpSlider" name="horizontalSlider_5">
+                     <widget class="ClickJumpSlider" name="slider_speed_1">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -624,7 +637,7 @@ QTableWidget QHeaderView::section
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="label_template_3">
+            <widget class="QLabel" name="label_map_2">
              <property name="minimumSize">
               <size>
                <width>400</width>
@@ -704,51 +717,31 @@ QTableWidget QHeaderView::section
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QGroupBox" name="groupBox_3">
+             <widget class="QPushButton" name="autotargetbutton">
               <property name="geometry">
                <rect>
-                <x>30</x>
-                <y>10</y>
-                <width>161</width>
-                <height>91</height>
+                <x>40</x>
+                <y>30</y>
+                <width>111</width>
+                <height>41</height>
                </rect>
               </property>
-              <property name="title">
-               <string>？？？检测数量</string>
+              <property name="text">
+               <string>自动巡检</string>
               </property>
-              <widget class="QTextBrowser" name="textBrowser">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>20</y>
-                 <width>121</width>
-                 <height>61</height>
-                </rect>
-               </property>
-              </widget>
              </widget>
-             <widget class="QGroupBox" name="groupBox_4">
+             <widget class="QPushButton" name="manualtargetbutton">
               <property name="geometry">
                <rect>
-                <x>260</x>
-                <y>10</y>
-                <width>161</width>
-                <height>91</height>
+                <x>220</x>
+                <y>30</y>
+                <width>101</width>
+                <height>41</height>
                </rect>
               </property>
-              <property name="title">
-               <string>？？？检测数量</string>
+              <property name="text">
+               <string>手动指定</string>
               </property>
-              <widget class="QTextBrowser" name="textBrowser_2">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>20</y>
-                 <width>121</width>
-                 <height>61</height>
-                </rect>
-               </property>
-              </widget>
              </widget>
             </widget>
            </item>
@@ -782,20 +775,7 @@ QTableWidget QHeaderView::section
            <property name="topMargin">
             <number>0</number>
            </property>
-           <item>
-            <spacer name="verticalSpacer_14">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
+           <item alignment="Qt::AlignHCenter">
             <widget class="QFrame" name="frame_12">
              <property name="minimumSize">
               <size>
@@ -823,7 +803,7 @@ QTableWidget QHeaderView::section
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_source_3">
+               <widget class="QLabel" name="label_template_2">
                 <property name="enabled">
                  <bool>true</bool>
                 </property>
@@ -836,13 +816,13 @@ QTableWidget QHeaderView::section
                 <property name="minimumSize">
                  <size>
                   <width>300</width>
-                  <height>250</height>
+                  <height>225</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>350</width>
-                  <height>290</height>
+                  <width>300</width>
+                  <height>225</height>
                  </size>
                 </property>
                 <property name="text">
@@ -876,58 +856,138 @@ QTableWidget QHeaderView::section
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>60</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_13">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>150</height>
-                 </size>
-                </property>
+               <widget class="QFrame" name="frame_10">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <widget class="QPushButton" name="pushButton">
-                 <property name="geometry">
-                  <rect>
-                   <x>40</x>
-                   <y>60</y>
-                   <width>111</width>
-                   <height>41</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>PushButton</string>
-                 </property>
-                </widget>
-                <widget class="QPushButton" name="pushButton_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>210</x>
-                   <y>60</y>
-                   <width>101</width>
-                   <height>41</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>PushButton</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QFrame" name="frame_14">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_9">
+                    <item>
+                     <widget class="QLabel" name="target_1">
+                      <property name="text">
+                       <string>TextLabel</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="target_2">
+                      <property name="text">
+                       <string>TextLabel</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="target_3">
+                      <property name="text">
+                       <string>TextLabel</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_13">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_8">
+                    <item>
+                     <widget class="QFrame" name="frame_16">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_10">
+                       <item>
+                        <widget class="QLabel" name="target_1_name">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="target_1_pos">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_18">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_11">
+                       <item>
+                        <widget class="QLabel" name="target_2_name">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="target_2_pos">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_15">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_15">
+                       <item>
+                        <widget class="QLabel" name="target_3_name">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="target_3_pos">
+                         <property name="text">
+                          <string>TextLabel</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -980,19 +1040,16 @@ QTableWidget QHeaderView::section
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>20</height>
+               <height>40</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="label_template_2">
+            <widget class="QLabel" name="label_template_3">
              <property name="minimumSize">
               <size>
                <width>480</width>
@@ -1006,14 +1063,52 @@ QTableWidget QHeaderView::section
               </size>
              </property>
              <property name="text">
-              <string>TextLabel</string>
+              <string>11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111111
+</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
-           <item>
+           <item alignment="Qt::AlignVCenter">
             <widget class="QFrame" name="frame_8">
              <property name="minimumSize">
               <size>
@@ -1029,7 +1124,19 @@ QTableWidget QHeaderView::section
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item alignment="Qt::AlignHCenter">
-               <widget class="QRadioButton" name="radioButton_2">
+               <widget class="QRadioButton" name="autoradioButton_2">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>自动捕捉目标</string>
                 </property>
@@ -1066,49 +1173,49 @@ QTableWidget QHeaderView::section
                   <number>4</number>
                  </property>
                  <item row="0" column="0">
-                  <widget class="QRadioButton" name="radioButton_4">
+                  <widget class="QRadioButton" name="rbtn_move_fixed_3">
                    <property name="text">
                     <string>间隔控制</string>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
-                  <widget class="QRadioButton" name="radioButton_5">
+                  <widget class="QRadioButton" name="rbtn_move_single_3">
                    <property name="text">
                     <string>单步控制</string>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLabel" name="label_11">
+                  <widget class="QLabel" name="label_step_3">
                    <property name="text">
-                    <string>步长</string>
+                    <string>步长：30</string>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QSlider" name="horizontalSlider_3">
+                  <widget class="QSlider" name="slider_step_3">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="0">
-                  <widget class="QRadioButton" name="radioButton_6">
+                  <widget class="QRadioButton" name="rbtn_move_rc_3">
                    <property name="text">
                     <string>连续控制</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QLabel" name="label_12">
+                  <widget class="QLabel" name="label_speed_3">
                    <property name="text">
-                    <string>转速</string>
+                    <string>转速：30</string>
                    </property>
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QSlider" name="horizontalSlider_4">
+                  <widget class="QSlider" name="slider_speed_3">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -1157,11 +1264,193 @@ QTableWidget QHeaderView::section
       <widget class="QWidget" name="page_4">
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QGraphicsView" name="graphicsView"/>
+         <widget class="QFrame" name="frame_20">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <spacer name="horizontalSpacer_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_pic4">
+             <property name="minimumSize">
+              <size>
+               <width>500</width>
+               <height>500</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_19">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="loadpic_4">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>加载图片</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_3">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>检测方式1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>3</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_10">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="savepic_4">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>保存图片</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
      </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_12">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

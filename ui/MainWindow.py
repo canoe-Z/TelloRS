@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,12 +17,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
-    QGraphicsView, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QLayout, QListWidget, QListWidgetItem,
-    QMainWindow, QPushButton, QRadioButton, QScrollBar,
-    QSizePolicy, QSlider, QSpacerItem, QStackedWidget,
-    QStatusBar, QTextBrowser, QToolBar, QVBoxLayout,
-    QWidget)
+    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QLayout, QListWidget, QListWidgetItem, QMainWindow,
+    QPushButton, QRadioButton, QScrollBar, QSizePolicy,
+    QSlider, QSpacerItem, QStackedWidget, QStatusBar,
+    QToolBar, QVBoxLayout, QWidget)
 
 from ui.ClickJumpSlider import ClickJumpSlider
 
@@ -118,6 +117,10 @@ class Ui_MainWindow(object):
 "}")
 
         self.horizontalLayout_6.addWidget(self.listWidget)
+
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_11)
 
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
@@ -293,16 +296,16 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.rbtn_move_single)
 
-        self.label_2 = QLabel(self.frame_21)
-        self.label_2.setObjectName(u"label_2")
+        self.label_step_1 = QLabel(self.frame_21)
+        self.label_step_1.setObjectName(u"label_step_1")
 
-        self.verticalLayout_5.addWidget(self.label_2)
+        self.verticalLayout_5.addWidget(self.label_step_1)
 
-        self.horizontalSlider_2 = ClickJumpSlider(self.frame_21)
-        self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
-        self.horizontalSlider_2.setOrientation(Qt.Horizontal)
+        self.slider_step_1 = ClickJumpSlider(self.frame_21)
+        self.slider_step_1.setObjectName(u"slider_step_1")
+        self.slider_step_1.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_5.addWidget(self.horizontalSlider_2)
+        self.verticalLayout_5.addWidget(self.slider_step_1)
 
         self.rbtn_move_rc = QRadioButton(self.frame_21)
         self.rbtn_move_rc.setObjectName(u"rbtn_move_rc")
@@ -311,16 +314,16 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.rbtn_move_rc)
 
-        self.label_7 = QLabel(self.frame_21)
-        self.label_7.setObjectName(u"label_7")
+        self.label_speed_1 = QLabel(self.frame_21)
+        self.label_speed_1.setObjectName(u"label_speed_1")
 
-        self.verticalLayout_5.addWidget(self.label_7)
+        self.verticalLayout_5.addWidget(self.label_speed_1)
 
-        self.horizontalSlider_5 = ClickJumpSlider(self.frame_21)
-        self.horizontalSlider_5.setObjectName(u"horizontalSlider_5")
-        self.horizontalSlider_5.setOrientation(Qt.Horizontal)
+        self.slider_speed_1 = ClickJumpSlider(self.frame_21)
+        self.slider_speed_1.setObjectName(u"slider_speed_1")
+        self.slider_speed_1.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_5.addWidget(self.horizontalSlider_5)
+        self.verticalLayout_5.addWidget(self.slider_speed_1)
 
 
         self.verticalLayout_7.addWidget(self.frame_21)
@@ -361,14 +364,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_12.addItem(self.verticalSpacer_9)
 
-        self.label_template_3 = QLabel(self.frame_9)
-        self.label_template_3.setObjectName(u"label_template_3")
-        self.label_template_3.setMinimumSize(QSize(400, 400))
-        self.label_template_3.setMaximumSize(QSize(16777215, 16777215))
-        self.label_template_3.setCursor(QCursor(Qt.CrossCursor))
-        self.label_template_3.setAlignment(Qt.AlignCenter)
+        self.label_map_2 = QLabel(self.frame_9)
+        self.label_map_2.setObjectName(u"label_map_2")
+        self.label_map_2.setMinimumSize(QSize(400, 400))
+        self.label_map_2.setMaximumSize(QSize(16777215, 16777215))
+        self.label_map_2.setCursor(QCursor(Qt.CrossCursor))
+        self.label_map_2.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_12.addWidget(self.label_template_3)
+        self.verticalLayout_12.addWidget(self.label_map_2)
 
         self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -379,18 +382,12 @@ class Ui_MainWindow(object):
         self.frame_17.setMinimumSize(QSize(0, 100))
         self.frame_17.setFrameShape(QFrame.StyledPanel)
         self.frame_17.setFrameShadow(QFrame.Raised)
-        self.groupBox_3 = QGroupBox(self.frame_17)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.groupBox_3.setGeometry(QRect(30, 10, 161, 91))
-        self.textBrowser = QTextBrowser(self.groupBox_3)
-        self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setGeometry(QRect(20, 20, 121, 61))
-        self.groupBox_4 = QGroupBox(self.frame_17)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.groupBox_4.setGeometry(QRect(260, 10, 161, 91))
-        self.textBrowser_2 = QTextBrowser(self.groupBox_4)
-        self.textBrowser_2.setObjectName(u"textBrowser_2")
-        self.textBrowser_2.setGeometry(QRect(20, 20, 121, 61))
+        self.autotargetbutton = QPushButton(self.frame_17)
+        self.autotargetbutton.setObjectName(u"autotargetbutton")
+        self.autotargetbutton.setGeometry(QRect(40, 30, 111, 41))
+        self.manualtargetbutton = QPushButton(self.frame_17)
+        self.manualtargetbutton.setObjectName(u"manualtargetbutton")
+        self.manualtargetbutton.setGeometry(QRect(220, 30, 101, 41))
 
         self.verticalLayout_12.addWidget(self.frame_17)
 
@@ -406,10 +403,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_13 = QVBoxLayout(self.frame_11)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.verticalLayout_13.setContentsMargins(0, 0, -1, -1)
-        self.verticalSpacer_14 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_13.addItem(self.verticalSpacer_14)
-
         self.frame_12 = QFrame(self.frame_11)
         self.frame_12.setObjectName(u"frame_12")
         self.frame_12.setMinimumSize(QSize(0, 300))
@@ -418,37 +411,118 @@ class Ui_MainWindow(object):
         self.verticalLayout_14 = QVBoxLayout(self.frame_12)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(0, 0, 0, 0)
-        self.label_source_3 = QLabel(self.frame_12)
-        self.label_source_3.setObjectName(u"label_source_3")
-        self.label_source_3.setEnabled(True)
-        sizePolicy.setHeightForWidth(self.label_source_3.sizePolicy().hasHeightForWidth())
-        self.label_source_3.setSizePolicy(sizePolicy)
-        self.label_source_3.setMinimumSize(QSize(300, 250))
-        self.label_source_3.setMaximumSize(QSize(350, 290))
-        self.label_source_3.setAlignment(Qt.AlignCenter)
+        self.label_template_2 = QLabel(self.frame_12)
+        self.label_template_2.setObjectName(u"label_template_2")
+        self.label_template_2.setEnabled(True)
+        sizePolicy.setHeightForWidth(self.label_template_2.sizePolicy().hasHeightForWidth())
+        self.label_template_2.setSizePolicy(sizePolicy)
+        self.label_template_2.setMinimumSize(QSize(300, 225))
+        self.label_template_2.setMaximumSize(QSize(300, 225))
+        self.label_template_2.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_14.addWidget(self.label_source_3)
+        self.verticalLayout_14.addWidget(self.label_template_2)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 60, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.frame_10 = QFrame(self.frame_12)
+        self.frame_10.setObjectName(u"frame_10")
+        self.frame_10.setFrameShape(QFrame.StyledPanel)
+        self.frame_10.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_5 = QHBoxLayout(self.frame_10)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.frame_14 = QFrame(self.frame_10)
+        self.frame_14.setObjectName(u"frame_14")
+        self.frame_14.setFrameShape(QFrame.StyledPanel)
+        self.frame_14.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_9 = QVBoxLayout(self.frame_14)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.target_1 = QLabel(self.frame_14)
+        self.target_1.setObjectName(u"target_1")
 
-        self.verticalLayout_14.addItem(self.verticalSpacer_4)
+        self.verticalLayout_9.addWidget(self.target_1)
 
-        self.frame_13 = QFrame(self.frame_12)
+        self.target_2 = QLabel(self.frame_14)
+        self.target_2.setObjectName(u"target_2")
+
+        self.verticalLayout_9.addWidget(self.target_2)
+
+        self.target_3 = QLabel(self.frame_14)
+        self.target_3.setObjectName(u"target_3")
+
+        self.verticalLayout_9.addWidget(self.target_3)
+
+
+        self.horizontalLayout_5.addWidget(self.frame_14)
+
+        self.frame_13 = QFrame(self.frame_10)
         self.frame_13.setObjectName(u"frame_13")
-        self.frame_13.setMinimumSize(QSize(0, 150))
         self.frame_13.setFrameShape(QFrame.StyledPanel)
         self.frame_13.setFrameShadow(QFrame.Raised)
-        self.pushButton = QPushButton(self.frame_13)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(40, 60, 111, 41))
-        self.pushButton_2 = QPushButton(self.frame_13)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setGeometry(QRect(210, 60, 101, 41))
+        self.verticalLayout_8 = QVBoxLayout(self.frame_13)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.frame_16 = QFrame(self.frame_13)
+        self.frame_16.setObjectName(u"frame_16")
+        self.frame_16.setFrameShape(QFrame.StyledPanel)
+        self.frame_16.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_10 = QVBoxLayout(self.frame_16)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.target_1_name = QLabel(self.frame_16)
+        self.target_1_name.setObjectName(u"target_1_name")
 
-        self.verticalLayout_14.addWidget(self.frame_13)
+        self.verticalLayout_10.addWidget(self.target_1_name)
+
+        self.target_1_pos = QLabel(self.frame_16)
+        self.target_1_pos.setObjectName(u"target_1_pos")
+
+        self.verticalLayout_10.addWidget(self.target_1_pos)
 
 
-        self.verticalLayout_13.addWidget(self.frame_12)
+        self.verticalLayout_8.addWidget(self.frame_16)
+
+        self.frame_18 = QFrame(self.frame_13)
+        self.frame_18.setObjectName(u"frame_18")
+        self.frame_18.setFrameShape(QFrame.StyledPanel)
+        self.frame_18.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_11 = QVBoxLayout(self.frame_18)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.target_2_name = QLabel(self.frame_18)
+        self.target_2_name.setObjectName(u"target_2_name")
+
+        self.verticalLayout_11.addWidget(self.target_2_name)
+
+        self.target_2_pos = QLabel(self.frame_18)
+        self.target_2_pos.setObjectName(u"target_2_pos")
+
+        self.verticalLayout_11.addWidget(self.target_2_pos)
+
+
+        self.verticalLayout_8.addWidget(self.frame_18)
+
+        self.frame_15 = QFrame(self.frame_13)
+        self.frame_15.setObjectName(u"frame_15")
+        self.frame_15.setFrameShape(QFrame.StyledPanel)
+        self.frame_15.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_15 = QVBoxLayout(self.frame_15)
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.target_3_name = QLabel(self.frame_15)
+        self.target_3_name.setObjectName(u"target_3_name")
+
+        self.verticalLayout_15.addWidget(self.target_3_name)
+
+        self.target_3_pos = QLabel(self.frame_15)
+        self.target_3_pos.setObjectName(u"target_3_pos")
+
+        self.verticalLayout_15.addWidget(self.target_3_pos)
+
+
+        self.verticalLayout_8.addWidget(self.frame_15)
+
+
+        self.horizontalLayout_5.addWidget(self.frame_13)
+
+
+        self.verticalLayout_14.addWidget(self.frame_10)
+
+
+        self.verticalLayout_13.addWidget(self.frame_12, 0, Qt.AlignHCenter)
 
 
         self.horizontalLayout_3.addWidget(self.frame_11)
@@ -472,17 +546,17 @@ class Ui_MainWindow(object):
         self.frame_6.setFrameShadow(QFrame.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.frame_6)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_3)
 
-        self.label_template_2 = QLabel(self.frame_6)
-        self.label_template_2.setObjectName(u"label_template_2")
-        self.label_template_2.setMinimumSize(QSize(480, 360))
-        self.label_template_2.setMaximumSize(QSize(480, 360))
-        self.label_template_2.setAlignment(Qt.AlignCenter)
+        self.label_template_3 = QLabel(self.frame_6)
+        self.label_template_3.setObjectName(u"label_template_3")
+        self.label_template_3.setMinimumSize(QSize(480, 360))
+        self.label_template_3.setMaximumSize(QSize(480, 360))
+        self.label_template_3.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_3.addWidget(self.label_template_2)
+        self.verticalLayout_3.addWidget(self.label_template_3)
 
         self.frame_8 = QFrame(self.frame_6)
         self.frame_8.setObjectName(u"frame_8")
@@ -491,10 +565,15 @@ class Ui_MainWindow(object):
         self.frame_8.setFrameShadow(QFrame.Raised)
         self.verticalLayout_6 = QVBoxLayout(self.frame_8)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.radioButton_2 = QRadioButton(self.frame_8)
-        self.radioButton_2.setObjectName(u"radioButton_2")
+        self.autoradioButton_2 = QRadioButton(self.frame_8)
+        self.autoradioButton_2.setObjectName(u"autoradioButton_2")
+        self.autoradioButton_2.setMinimumSize(QSize(0, 40))
+        font = QFont()
+        font.setPointSize(11)
+        font.setBold(False)
+        self.autoradioButton_2.setFont(font)
 
-        self.verticalLayout_6.addWidget(self.radioButton_2, 0, Qt.AlignHCenter)
+        self.verticalLayout_6.addWidget(self.autoradioButton_2, 0, Qt.AlignHCenter)
 
         self.groupBox_10 = QGroupBox(self.frame_8)
         self.groupBox_10.setObjectName(u"groupBox_10")
@@ -507,49 +586,49 @@ class Ui_MainWindow(object):
         self.formLayout_2.setHorizontalSpacing(1)
         self.formLayout_2.setVerticalSpacing(7)
         self.formLayout_2.setContentsMargins(9, -1, -1, 4)
-        self.radioButton_4 = QRadioButton(self.groupBox_10)
-        self.radioButton_4.setObjectName(u"radioButton_4")
+        self.rbtn_move_fixed_3 = QRadioButton(self.groupBox_10)
+        self.rbtn_move_fixed_3.setObjectName(u"rbtn_move_fixed_3")
 
-        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.radioButton_4)
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.rbtn_move_fixed_3)
 
-        self.radioButton_5 = QRadioButton(self.groupBox_10)
-        self.radioButton_5.setObjectName(u"radioButton_5")
+        self.rbtn_move_single_3 = QRadioButton(self.groupBox_10)
+        self.rbtn_move_single_3.setObjectName(u"rbtn_move_single_3")
 
-        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.radioButton_5)
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.rbtn_move_single_3)
 
-        self.label_11 = QLabel(self.groupBox_10)
-        self.label_11.setObjectName(u"label_11")
+        self.label_step_3 = QLabel(self.groupBox_10)
+        self.label_step_3.setObjectName(u"label_step_3")
 
-        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_11)
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_step_3)
 
-        self.horizontalSlider_3 = QSlider(self.groupBox_10)
-        self.horizontalSlider_3.setObjectName(u"horizontalSlider_3")
-        self.horizontalSlider_3.setOrientation(Qt.Horizontal)
+        self.slider_step_3 = QSlider(self.groupBox_10)
+        self.slider_step_3.setObjectName(u"slider_step_3")
+        self.slider_step_3.setOrientation(Qt.Horizontal)
 
-        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.horizontalSlider_3)
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.slider_step_3)
 
-        self.radioButton_6 = QRadioButton(self.groupBox_10)
-        self.radioButton_6.setObjectName(u"radioButton_6")
+        self.rbtn_move_rc_3 = QRadioButton(self.groupBox_10)
+        self.rbtn_move_rc_3.setObjectName(u"rbtn_move_rc_3")
 
-        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.radioButton_6)
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.rbtn_move_rc_3)
 
-        self.label_12 = QLabel(self.groupBox_10)
-        self.label_12.setObjectName(u"label_12")
+        self.label_speed_3 = QLabel(self.groupBox_10)
+        self.label_speed_3.setObjectName(u"label_speed_3")
 
-        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_12)
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_speed_3)
 
-        self.horizontalSlider_4 = QSlider(self.groupBox_10)
-        self.horizontalSlider_4.setObjectName(u"horizontalSlider_4")
-        self.horizontalSlider_4.setMinimumSize(QSize(0, 0))
-        self.horizontalSlider_4.setOrientation(Qt.Horizontal)
+        self.slider_speed_3 = QSlider(self.groupBox_10)
+        self.slider_speed_3.setObjectName(u"slider_speed_3")
+        self.slider_speed_3.setMinimumSize(QSize(0, 0))
+        self.slider_speed_3.setOrientation(Qt.Horizontal)
 
-        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.horizontalSlider_4)
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.slider_speed_3)
 
 
         self.verticalLayout_6.addWidget(self.groupBox_10)
 
 
-        self.verticalLayout_3.addWidget(self.frame_8)
+        self.verticalLayout_3.addWidget(self.frame_8, 0, Qt.AlignVCenter)
 
         self.frame_7 = QFrame(self.frame_6)
         self.frame_7.setObjectName(u"frame_7")
@@ -570,14 +649,83 @@ class Ui_MainWindow(object):
         self.page_4.setObjectName(u"page_4")
         self.verticalLayout_4 = QVBoxLayout(self.page_4)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.graphicsView = QGraphicsView(self.page_4)
-        self.graphicsView.setObjectName(u"graphicsView")
+        self.frame_20 = QFrame(self.page_4)
+        self.frame_20.setObjectName(u"frame_20")
+        self.frame_20.setFrameShape(QFrame.StyledPanel)
+        self.frame_20.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_9 = QHBoxLayout(self.frame_20)
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.horizontalSpacer_14 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.verticalLayout_4.addWidget(self.graphicsView)
+        self.horizontalLayout_9.addItem(self.horizontalSpacer_14)
+
+        self.label_pic4 = QLabel(self.frame_20)
+        self.label_pic4.setObjectName(u"label_pic4")
+        self.label_pic4.setMinimumSize(QSize(500, 500))
+
+        self.horizontalLayout_9.addWidget(self.label_pic4)
+
+        self.horizontalSpacer_13 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_9.addItem(self.horizontalSpacer_13)
+
+
+        self.verticalLayout_4.addWidget(self.frame_20)
+
+        self.frame_19 = QFrame(self.page_4)
+        self.frame_19.setObjectName(u"frame_19")
+        self.frame_19.setMinimumSize(QSize(0, 50))
+        self.frame_19.setFrameShape(QFrame.StyledPanel)
+        self.frame_19.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_8 = QHBoxLayout(self.frame_19)
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_4)
+
+        self.loadpic_4 = QPushButton(self.frame_19)
+        self.loadpic_4.setObjectName(u"loadpic_4")
+        self.loadpic_4.setMinimumSize(QSize(0, 30))
+
+        self.horizontalLayout_8.addWidget(self.loadpic_4)
+
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_9)
+
+        self.comboBox_3 = QComboBox(self.frame_19)
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.setObjectName(u"comboBox_3")
+        self.comboBox_3.setMinimumSize(QSize(0, 30))
+
+        self.horizontalLayout_8.addWidget(self.comboBox_3)
+
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_10)
+
+        self.savepic_4 = QPushButton(self.frame_19)
+        self.savepic_4.setObjectName(u"savepic_4")
+        self.savepic_4.setMinimumSize(QSize(0, 30))
+
+        self.horizontalLayout_8.addWidget(self.savepic_4)
+
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_7)
+
+
+        self.verticalLayout_4.addWidget(self.frame_19)
 
         self.stackedWidget.addWidget(self.page_4)
 
         self.horizontalLayout_6.addWidget(self.stackedWidget)
+
+        self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_12)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QStatusBar(MainWindow)
@@ -644,10 +792,10 @@ class Ui_MainWindow(object):
         self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.rbtn_move_fixed.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f", None))
+        self.label_step_1.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
         self.rbtn_move_rc.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f", None))
-        self.label_template_3.setText(QCoreApplication.translate("MainWindow", u"111111111111111111111111111111111111111111111111111111111111111111\n"
+        self.label_speed_1.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f\uff1a30", None))
+        self.label_map_2.setText(QCoreApplication.translate("MainWindow", u"111111111111111111111111111111111111111111111111111111111111111111\n"
 "111111111111111111111111111111111111111111111111111111111111111111\n"
 "111111111111111111111111111111111111111111111111111111111111111111\n"
 "111111111111111111111111111111111111111111111111111111111111111111\n"
@@ -679,9 +827,9 @@ class Ui_MainWindow(object):
 "11111111111111111111111111111111111111111111111111111111111111"
                         "1111\n"
 "", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\uff1f\uff1f\uff1f\u68c0\u6d4b\u6570\u91cf", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"\uff1f\uff1f\uff1f\u68c0\u6d4b\u6570\u91cf", None))
-        self.label_source_3.setText(QCoreApplication.translate("MainWindow", u"222222222222222222222222222222222222222222222222\n"
+        self.autotargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5de1\u68c0", None))
+        self.manualtargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u624b\u52a8\u6307\u5b9a", None))
+        self.label_template_2.setText(QCoreApplication.translate("MainWindow", u"222222222222222222222222222222222222222222222222\n"
 "222222222222222222222222222222222222222222222222\n"
 "222222222222222222222222222222222222222222222222\n"
 "222222222222222222222222222222222222222222222222\n"
@@ -705,15 +853,68 @@ class Ui_MainWindow(object):
 "222222222222222222222222222222222222222222222222\n"
 "222222222222222222222222222222222222222222222222\n"
 "", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
-        self.label_template_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
-        self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
-        self.radioButton_5.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
-        self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f", None))
-        self.radioButton_6.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
-        self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f", None))
+        self.target_1.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_3.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_1_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_1_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_2_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_2_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_3_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_3_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_template_3.setText(QCoreApplication.translate("MainWindow", u"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"1111111111111111111111111111111111111"
+                        "1111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"11111111111111111111111111111111111111111111111\n"
+"", None))
+        self.autoradioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
+        self.rbtn_move_fixed_3.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
+        self.rbtn_move_single_3.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
+        self.label_step_3.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
+        self.rbtn_move_rc_3.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
+        self.label_speed_3.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f\uff1a30", None))
+        self.label_pic4.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.loadpic_4.setText(QCoreApplication.translate("MainWindow", u"\u52a0\u8f7d\u56fe\u7247", None))
+        self.comboBox_3.setItemText(0, QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u65b9\u5f0f1", None))
+        self.comboBox_3.setItemText(1, QCoreApplication.translate("MainWindow", u"2", None))
+        self.comboBox_3.setItemText(2, QCoreApplication.translate("MainWindow", u"3", None))
+
+        self.savepic_4.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u56fe\u7247", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 
