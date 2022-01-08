@@ -19,9 +19,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
     QGridLayout, QGroupBox, QHBoxLayout, QLabel,
     QLayout, QListWidget, QListWidgetItem, QMainWindow,
-    QPushButton, QRadioButton, QScrollBar, QSizePolicy,
-    QSlider, QSpacerItem, QStackedWidget, QStatusBar,
-    QToolBar, QVBoxLayout, QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSlider,
+    QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
+    QVBoxLayout, QWidget)
 
 from ui.ClickJumpSlider import ClickJumpSlider
 
@@ -151,7 +151,7 @@ class Ui_MainWindow(object):
         self.label_template = QLabel(self.frame_2)
         self.label_template.setObjectName(u"label_template")
         self.label_template.setMinimumSize(QSize(480, 360))
-        self.label_template.setMaximumSize(QSize(480, 360))
+        self.label_template.setMaximumSize(QSize(16777215, 16777215))
         self.label_template.setStyleSheet(u"border:1px solid gray;\n"
 "background:white;")
         self.label_template.setAlignment(Qt.AlignCenter)
@@ -176,6 +176,11 @@ class Ui_MainWindow(object):
         self.gb_det.setCheckable(True)
         self.gridLayout_2 = QGridLayout(self.gb_det)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.label_conf = QLabel(self.gb_det)
+        self.label_conf.setObjectName(u"label_conf")
+
+        self.gridLayout_2.addWidget(self.label_conf, 1, 0, 1, 1)
+
         self.label_4 = QLabel(self.gb_det)
         self.label_4.setObjectName(u"label_4")
 
@@ -186,21 +191,17 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setMaximumSize(QSize(200, 16777215))
+        self.comboBox.setMinimumSize(QSize(105, 0))
+        self.comboBox.setMaximumSize(QSize(105, 16777215))
 
-        self.gridLayout_2.addWidget(self.comboBox, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.comboBox, 0, 1, 1, 1, Qt.AlignRight)
 
-        self.label_3 = QLabel(self.gb_det)
-        self.label_3.setObjectName(u"label_3")
+        self.slider_conf = QSlider(self.gb_det)
+        self.slider_conf.setObjectName(u"slider_conf")
+        self.slider_conf.setMaximumSize(QSize(130, 16777215))
+        self.slider_conf.setOrientation(Qt.Horizontal)
 
-        self.gridLayout_2.addWidget(self.label_3, 1, 0, 1, 1)
-
-        self.horizontalScrollBar = QScrollBar(self.gb_det)
-        self.horizontalScrollBar.setObjectName(u"horizontalScrollBar")
-        self.horizontalScrollBar.setMaximumSize(QSize(300, 16777215))
-        self.horizontalScrollBar.setOrientation(Qt.Horizontal)
-
-        self.gridLayout_2.addWidget(self.horizontalScrollBar, 1, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.slider_conf, 1, 1, 1, 1)
 
 
         self.horizontalLayout.addWidget(self.gb_det)
@@ -236,6 +237,8 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.gb_cls)
 
+        self.horizontalLayout.setStretch(0, 1)
+        self.horizontalLayout.setStretch(1, 1)
 
         self.verticalLayout_2.addWidget(self.frame_5, 0, Qt.AlignBottom)
 
@@ -761,7 +764,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -794,12 +797,12 @@ class Ui_MainWindow(object):
 
         self.label_template.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.gb_det.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
+        self.label_conf.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u5668", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
 
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
         self.gb_cls.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u5668", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u7ed3\u679c", None))

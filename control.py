@@ -15,27 +15,6 @@ from utils.control import HiddenPrints
 from vidgear.gears.stabilizer import Stabilizer
 
 
-class MyTello(Tello):
-    # RETRY_COUNT = 3  # number of retries after a failed command
-    # TELLO_IP = '192.168.10.1'  # Tello IP address
-
-    # def __init__(self):
-    #     super(MyTello,self).__init__(
-    #         self,
-    #         host='192.168.10.1',
-    #         retry_count=3)
-
-    def rc_control_by_key(self, key: int, move_speed: int):
-        if key == Qt.Key_W:
-            self.send_rc_control(0, move_speed, 0, 0)
-        if key == Qt.Key_A:
-            self.send_rc_control(-move_speed, 0, 0, 0)
-        if key == Qt.Key_S:
-            self.send_rc_control(0, -move_speed, 0, 0)
-        if key == Qt.Key_D:
-            self.send_rc_control(move_speed, 0, 0, 0)
-
-
 class ControlMode(Enum):
     SINGLE_MODE = 0
     RC_MODE = 1
@@ -102,28 +81,35 @@ class ControlThread(QThread):
         self.tello = tello
         self.key = None
         self.move_distance = 30
+        self.tracking = False
+        self.x_move = 0
+        self.y_move = 0
 
     def run(self):
         while True:
-            self.qmut.lock()
-            key = self.key
-            self.qmut.unlock()
-            if key:
-                if key == Qt.Key_T:
-                    self.tello.takeoff()
-                if key == Qt.Key_W:
-                    self.tello.move_forward(self.move_distance)
-                if key == Qt.Key_A:
-                    self.tello.move_left(self.move_distance)
-                if key == Qt.Key_S:
-                    self.tello.move_back(self.move_distance)
-                if key == Qt.Key_D:
-                    self.tello.move_right(self.move_distance)
-                if key == Qt.Key_L:
-                    self.tello.land()
-
-                self.finish_signal.emit(key)
+            if not self.tracking:
                 self.qmut.lock()
-                self.key = None
+                key = self.key
                 self.qmut.unlock()
-            sleep(0.01)
+                if key:
+                    if key == Qt.Key_T:
+                        self.tello.takeoff()
+                    if key == Qt.Key_W:
+                        self.tello.move_forward(self.move_distance)
+                    if key == Qt.Key_A:
+                        self.tello.move_left(self.move_distance)
+                    if key == Qt.Key_S:
+                        self.tello.move_back(self.move_distance)
+                    if key == Qt.Key_D:
+                        self.tello.move_right(self.move_distance)
+                    if key == Qt.Key_L:
+                        self.tello.land()
+
+                    self.finish_signal.emit(key)
+                    self.qmut.lock()
+                    self.key = None
+                    self.qmut.unlock()
+                sleep(0.01)
+            else:
+                self.tello.send_rc_control(self.x_move, self.y_move, 0, 0)
+                sleep(0.01)

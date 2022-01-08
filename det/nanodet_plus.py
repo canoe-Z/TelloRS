@@ -6,7 +6,7 @@ import math
 
 
 class NanoDetPlus(object):
-    def __init__(self, model_pb_path, label_path=None, prob_threshold=0.4, iou_threshold=0.3):
+    def __init__(self, model_pb_path, label_path=None, prob_threshold=0.5, iou_threshold=0.3):
         # self.classes = list(
         #     map(lambda x: x.strip(), open(label_path, 'r').readlines()))
         self.classes = ['car']
@@ -125,9 +125,9 @@ class NanoDetPlus(object):
         confidences = np.max(mlvl_scores, axis=1)  # max_class_confidence
 
         indices = cv2.dnn.NMSBoxes(bboxes_wh.tolist(), confidences.tolist(), self.prob_threshold,
-                                   self.iou_threshold)#.flatten()
+                                   self.iou_threshold)  # .flatten()
         if len(indices) > 0:
-            indices=indices.flatten()
+            indices = indices.flatten()
             mlvl_bboxes = mlvl_bboxes[indices]
             confidences = confidences[indices]
             classIds = classIds[indices]
@@ -174,6 +174,33 @@ class NanoDetPlus(object):
         #         cv2.imwrite('result.jpg', srcimg)
         return srcimg
 
+    def detect2(self, srcimg):
+        img, newh, neww, top, left = self.resize_image(
+            srcimg, keep_ratio=self.keep_ratio)
+        img = self._normalize(img)
+        blob = np.expand_dims(np.transpose(img, (2, 0, 1)), axis=0)
+
+        outs = self.net.run(None, {self.net.get_inputs()[0].name: blob})[
+            0].squeeze(axis=0)
+        det_bboxes, det_conf, det_classid = self.post_process(outs)
+        # return det_bboxes, det_conf, det_classid
+
+        num = 0
+        if(det_bboxes.shape[0] == 0):
+            return ()
+        if(det_bboxes.shape[0] != 1):
+            bb = list(det_conf)
+            num = bb.index(max(bb))
+
+        ratioh, ratiow = srcimg.shape[0] / newh, srcimg.shape[1] / neww
+        xmin = max(int((det_bboxes[0, 0] - left) * ratiow), 0)
+        ymin = max(int((det_bboxes[0, 1] - top) * ratioh), 0)
+        xmax = min(int((det_bboxes[0, 2] - left) * ratiow), srcimg.shape[1])
+        ymax = min(int((det_bboxes[0, 3] - top) * ratioh), srcimg.shape[0])
+        xmax = xmax-xmin
+        ymax = ymax-ymin
+        return (xmin, ymin, xmax, ymax)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -193,7 +220,7 @@ if __name__ == '__main__':
 
     net = NanoDetPlus(args.modelpath, args.classfile,
                       prob_threshold=args.confThreshold, iou_threshold=args.nmsThreshold)
-    
+
     winName = 'Deep learning object detection in ONNXRuntime'
     cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
     import time
@@ -201,8 +228,9 @@ if __name__ == '__main__':
     # srcimg = net.detect(srcimg)
     # b = time.time()
     # print('waste time', b-a)
-    cap = cv2.VideoCapture(r"D:\tello_tracking\tello_tracking\video\video_test\tello2.mp4")
-    #cv2.namedWindow("detect")
+    cap = cv2.VideoCapture(
+        r"D:\tello_tracking\tello_tracking\video\video_test\tello1.mp4")
+    # cv2.namedWindow("detect")
     while cap.isOpened():
         _, frame = cap.read()
         start = time.perf_counter()
@@ -213,7 +241,6 @@ if __name__ == '__main__':
         cv2.imshow(winName, result)
         if cv2.waitKey(30) == 27:
             break
-        
 
     #cv2.imshow(winName, srcimg)
     # cv2.waitKey(0)

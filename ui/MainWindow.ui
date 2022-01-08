@@ -134,7 +134,7 @@ QTableWidget QHeaderView::section
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
@@ -195,8 +195,8 @@ QTableWidget QHeaderView::section
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>480</width>
-                  <height>360</height>
+                  <width>16777215</width>
+                  <height>16777215</height>
                  </size>
                 </property>
                 <property name="styleSheet">
@@ -235,7 +235,7 @@ background:white;</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout">
+                <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
                  <property name="leftMargin">
                   <number>0</number>
                  </property>
@@ -269,6 +269,13 @@ background:white;</string>
                     <bool>true</bool>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_2">
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_conf">
+                      <property name="text">
+                       <string>阈值</string>
+                      </property>
+                     </widget>
+                    </item>
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_4">
                       <property name="text">
@@ -276,11 +283,17 @@ background:white;</string>
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="1">
+                    <item row="0" column="1" alignment="Qt::AlignRight">
                      <widget class="QComboBox" name="comboBox">
+                      <property name="minimumSize">
+                       <size>
+                        <width>105</width>
+                        <height>0</height>
+                       </size>
+                      </property>
                       <property name="maximumSize">
                        <size>
-                        <width>200</width>
+                        <width>105</width>
                         <height>16777215</height>
                        </size>
                       </property>
@@ -301,18 +314,11 @@ background:white;</string>
                       </item>
                      </widget>
                     </item>
-                    <item row="1" column="0">
-                     <widget class="QLabel" name="label_3">
-                      <property name="text">
-                       <string>阈值</string>
-                      </property>
-                     </widget>
-                    </item>
                     <item row="1" column="1">
-                     <widget class="QScrollBar" name="horizontalScrollBar">
+                     <widget class="QSlider" name="slider_conf">
                       <property name="maximumSize">
                        <size>
-                        <width>300</width>
+                        <width>130</width>
                         <height>16777215</height>
                        </size>
                       </property>
