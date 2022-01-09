@@ -76,10 +76,18 @@ class TelloRS(QMainWindow):
         self.ui.rbtn_move_fixed.setChecked(True)
         self.ui.rbtn_move_single.clicked.connect(
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
+        self.ui.rbtn_move_single.clicked.connect(
+            lambda: self.ui.rbtn_move_single_3.setChecked(True))
+    
         self.ui.rbtn_move_rc.clicked.connect(
             lambda: self.set_control_mode(ControlMode.RC_MODE))
+        self.ui.rbtn_move_rc.clicked.connect(
+            lambda: self.ui.rbtn_move_rc_3.setChecked(True))
+
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
+        self.ui.rbtn_move_fixed.clicked.connect(
+            lambda: self.ui.rbtn_move_fixed_3.setChecked(True))
         self.ui.gb_det.clicked.connect(self.process_thread.set_det_realtime)
         self.ui.gb_cls.clicked.connect(self.process_thread.set_cls_realtime)
         self.ui.cb_det.currentIndexChanged.connect(
@@ -103,12 +111,21 @@ class TelloRS(QMainWindow):
         self.ui.label_map_2.mousePressEvent = self.getPos  # 尝试获取坐标
 
         # page 3
+        self.ui.rbtn_move_fixed_3.setChecked(True)
         self.ui.rbtn_move_single_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
+        self.ui.rbtn_move_single_3.clicked.connect(
+            lambda: self.ui.rbtn_move_single.setChecked(True))
+
         self.ui.rbtn_move_rc_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.RC_MODE))
+        self.ui.rbtn_move_rc_3.clicked.connect(
+            lambda: self.ui.rbtn_move_rc.setChecked(True))
+
         self.ui.rbtn_move_fixed_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
+        self.ui.rbtn_move_fixed_3.clicked.connect(
+            lambda: self.ui.rbtn_move_fixed.setChecked(True))
 
         self.ui.slider_step_3.setValue(30)
         self.ui.slider_speed_3.setValue(self.rc_speed)
