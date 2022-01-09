@@ -5,7 +5,7 @@ from time import sleep
 
 import cv2
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal
+from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal, Slot
 
 from cls.resnet import ResNet
 from control import FrameThread, ControlThread
@@ -73,7 +73,7 @@ class ProcessThread(QThread):
         self.nanodet = NanoDetPlus('./det/model/nanodet_uav.onnx')
 
         # template
-        template_dir = './det/model/template'
+        template_dir = './det/model/template/'
         template_path = [template_dir +
                          path for path in os.listdir(template_dir)]
         templates = [cv2.imread(path) for path in template_path]
@@ -233,8 +233,17 @@ class ProcessThread(QThread):
                         if self.end_tracking:
                             break
 
-    def print_state(self, checked: bool):
+    @Slot()
+    def set_det_realtime(self, checked: bool):
         self.det_realtime = checked
+
+    @Slot()
+    def set_cls_realtime(self, checked: bool):
+        self.cls_realtime = checked
+
+    @Slot()
+    def set_det_method(self, i: int):
+        self.det_method = i
 
 
 class VideoWriter(QThread):

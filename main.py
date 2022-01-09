@@ -6,7 +6,7 @@ import cv2
 from djitellopy import Tello
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QLabel
 
 from control import ControlMode, ControlThread, FrameThread
 from nav import IMUThread, MatchingThread, autoThread, PointThread
@@ -23,16 +23,41 @@ from utils.img import cv2toQImage
 class mywindow(QMainWindow):
     def __init__(self):
         super(mywindow, self).__init__()
+
+        self.tello_connected = False
+        self.rc_speed = 30
+
+        # init tello and threads
+        nav_queue = queue.Queue()
+        nav_queue.maxsize = 1
+        auto_queue = queue.Queue()
+        auto_queue.maxsize = 1
+        self.tello = Tello()
+        self.frame_thread = FrameThread(self.tello)
+        self.cv2_map = cv2.imread('./map/newsource.png')
+        self.matching_thread = MatchingThread(
+            self.frame_thread, self.cv2_map, nav_queue)
+        self.control_thread = ControlThread(self.tello)
+        self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
+        self.video_writer = VideoWriter(self.frame_thread)
+        self.process_thread = ProcessThread(
+            self.frame_thread, self.control_thread)
+        self.auto_thread = autoThread(
+            self.tello, auto_queue, self.frame_thread)
+        self.point_thread = PointThread(self.tello, auto_queue)
+
+        # signal
+        self.control_thread.finish_signal.connect(self.command_finish)
+        self.imu_thread.sift_signal.connect(self.draw_sift_pos)
+        self.imu_thread.imu_signal.connect(self.draw_imu_pos)
+        self.process_thread.signal.connect(self.show_det)
+        self.matching_thread.finish_signal.connect(self.show_map)
+
+        # init ui
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setFocus()
-
-        self.tello_connected = False
-
-        self.cv2_map = cv2.imread('./map/newsource.png')
         self.show_map()
-
-        self.rc_speed = 30
 
         # sidebar
         self.ui.listWidget.currentRowChanged.connect(
@@ -53,9 +78,10 @@ class mywindow(QMainWindow):
             lambda: self.set_control_mode(ControlMode.RC_MODE))
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
-        self.ui.gb_det.clicked.connect(self.print_state)
-        self.ui.gb_cls.clicked.connect(self.print_state)
-        self.ui.cb_det.currentIndexChanged.connect(self.cb_det_change)
+        self.ui.gb_det.clicked.connect(self.process_thread.set_det_realtime)
+        self.ui.gb_cls.clicked.connect(self.process_thread.set_cls_realtime)
+        self.ui.cb_det.currentIndexChanged.connect(
+            self.process_thread.set_det_method)
 
         # page 3
         self.ui.rbtn_move_single_3.clicked.connect(
@@ -91,41 +117,16 @@ class mywindow(QMainWindow):
         self.ui.slider_conf.valueChanged.connect(self.change_conf)
         self.ui.slider_conf.setValue(40)
 
-        self.ui.autotargetbutton.clicked.connect(self.autoThread1)  # 自动巡检
+        self.ui.autotargetbutton.clicked.connect(self.autoThread1)
 
         # page 4
         self.ui.loadpic_4.clicked.connect(self.openpic)
         # self.ui.loadpic_4.clicked.connect(self.loadpicture)
         # self.ui.savepic_4.clicked.connect(self.savepicture)
 
-        # init tello and threads
-        nav_queue = queue.Queue()
-        nav_queue.maxsize = 1
-        auto_queue = queue.Queue()
-        auto_queue.maxsize = 1
-        self.tello = Tello()
-        self.frame_thread = FrameThread(self.tello)
-        self.matching_thread = MatchingThread(
-            self.frame_thread, self.cv2_map, nav_queue)
-        self.control_thread = ControlThread(self.tello)
-        self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
-        self.video_writer = VideoWriter(self.frame_thread)
-        self.process_thread = ProcessThread(
-            self.frame_thread, self.control_thread)
-        self.auto_thread = autoThread(
-            self.tello, auto_queue, self.frame_thread)
-        self.point_thread = PointThread(self.tello, auto_queue)
-
-        # signal
-        self.control_thread.finish_signal.connect(self.command_finish)
-        self.imu_thread.sift_signal.connect(self.draw_sift_pos)
-        self.imu_thread.imu_signal.connect(self.draw_imu_pos)
-        self.process_thread.signal.connect(self.show_det)
-        self.matching_thread.finish_signal.connect(self.show_map)
-
-    def cb_det_change(self, i):
-        self.process_thread.det_method = i
         # print(i)
+        self.ui.statusbar.addPermanentWidget(QLabel('电源剩余：'+str()), stretch=0)
+
     # 第二页自动巡检开启
 
     def autoThread1(self):
@@ -135,7 +136,6 @@ class mywindow(QMainWindow):
         self.point_thread.start()
 
     # 滑动条触发控制
-
     def movestep_1(self):
         self.ui.label_step_1.setText(
             str('步长：'+str(self.ui.slider_step_1.value())))
@@ -164,9 +164,6 @@ class mywindow(QMainWindow):
         self.ui.label_conf.setText(
             str('阈值：'+str(self.ui.slider_conf.value()/100)))
         self.process_thread.conf = self.ui.slider_conf.value()/100
-
-    def print_state(self, checked: bool):
-        self.process_thread.det_realtime = checked
 
     def start_record(self):
         self.video_writer.is_recording = True
