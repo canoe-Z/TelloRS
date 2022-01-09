@@ -1,5 +1,5 @@
 import os
-from enum import Enum
+from enum import IntEnum
 import time
 from time import sleep
 
@@ -16,13 +16,13 @@ from det.yolov5 import YOLOv5
 from simple_pid import PID
 
 
-class DetMethod(Enum):
+class DetMethod(IntEnum):
     NANODET = 0
     YOLOV5 = 1
     TEMPLATE_MATCHING = 2
 
 
-class ClsMethod(Enum):
+class ClsMethod(IntEnum):
     RESNET18 = 0
     YOLOV5 = 1
 
@@ -108,8 +108,8 @@ class ProcessThread(QThread):
             self.frame = self.frameThread.img
             self.mutex.unlock()
 
-            # if self.frame is None:
-            #     continue
+            if self.frame is None:
+                continue
             # else:
             #     i += 1
 
@@ -236,14 +236,24 @@ class ProcessThread(QThread):
     @Slot()
     def set_det_realtime(self, checked: bool):
         self.det_realtime = checked
+        if checked:
+            print('启用目标检测')
+        else:
+            print('禁用目标检测')
 
     @Slot()
     def set_cls_realtime(self, checked: bool):
         self.cls_realtime = checked
+        if checked:
+            print('启用场景分类')
+        else:
+            print('禁用场景分类')
 
     @Slot()
     def set_det_method(self, i: int):
         self.det_method = i
+        #self.det_method=DetMethod.NAN
+        print('当前检测算法为: '+str(self.det_method))
 
 
 class VideoWriter(QThread):

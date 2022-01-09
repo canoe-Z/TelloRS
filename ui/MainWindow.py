@@ -400,11 +400,11 @@ class Ui_MainWindow(object):
         self.frame_211.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_11 = QHBoxLayout(self.frame_211)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.autotargetbutton = QPushButton(self.frame_211)
-        self.autotargetbutton.setObjectName(u"autotargetbutton")
-        self.autotargetbutton.setMinimumSize(QSize(0, 30))
+        self.btn_autoflight = QPushButton(self.frame_211)
+        self.btn_autoflight.setObjectName(u"btn_autoflight")
+        self.btn_autoflight.setMinimumSize(QSize(0, 30))
 
-        self.horizontalLayout_11.addWidget(self.autotargetbutton, 0, Qt.AlignHCenter)
+        self.horizontalLayout_11.addWidget(self.btn_autoflight, 0, Qt.AlignHCenter)
 
         self.frame_22 = QFrame(self.frame_211)
         self.frame_22.setObjectName(u"frame_22")
@@ -419,11 +419,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12.addWidget(self.label_pos_2)
 
-        self.manualtargetbutton = QPushButton(self.frame_22)
-        self.manualtargetbutton.setObjectName(u"manualtargetbutton")
-        self.manualtargetbutton.setMinimumSize(QSize(0, 30))
+        self.btn_pointflight = QPushButton(self.frame_22)
+        self.btn_pointflight.setObjectName(u"btn_pointflight")
+        self.btn_pointflight.setMinimumSize(QSize(0, 30))
 
-        self.horizontalLayout_12.addWidget(self.manualtargetbutton)
+        self.horizontalLayout_12.addWidget(self.btn_pointflight)
 
 
         self.horizontalLayout_11.addWidget(self.frame_22)
@@ -485,16 +485,25 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.target_1 = QLabel(self.frame_14)
         self.target_1.setObjectName(u"target_1")
+        self.target_1.setStyleSheet(u"border:1px solid gray;\n"
+"background:white;")
+        self.target_1.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_9.addWidget(self.target_1)
 
         self.target_2 = QLabel(self.frame_14)
         self.target_2.setObjectName(u"target_2")
+        self.target_2.setStyleSheet(u"border:1px solid gray;\n"
+"background:white;")
+        self.target_2.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_9.addWidget(self.target_2)
 
         self.target_3 = QLabel(self.frame_14)
         self.target_3.setObjectName(u"target_3")
+        self.target_3.setStyleSheet(u"border:1px solid gray;\n"
+"background:white;")
+        self.target_3.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_9.addWidget(self.target_3)
 
@@ -828,7 +837,7 @@ class Ui_MainWindow(object):
         ___qlistwidgetitem3.setText(QCoreApplication.translate("MainWindow", u"\u79bb\u7ebf\u68c0\u6d4b", None));
         self.listWidget.setSortingEnabled(__sortingEnabled)
 
-        self.label_template.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_template.setText("")
         self.gb_det.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
         self.label_conf.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u5668", None))
@@ -842,58 +851,27 @@ class Ui_MainWindow(object):
         self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"ResNet18", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
 
-        self.label_cls_result.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.label_source.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_cls_result.setText(QCoreApplication.translate("MainWindow", u"\u65e0", None))
+        self.label_source.setText("")
         self.rbtn_move_fixed.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
         self.label_step_1.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
         self.rbtn_move_rc.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
         self.label_speed_1.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f\uff1a30", None))
-        self.label_map_2.setText(QCoreApplication.translate("MainWindow", u"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"1111111111111111111111111111111"
-                        "11111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"111111111111111111111111111111111111111111111111111111111111111111\n"
-"11111111111111111111111111111111111111111111111111111111111111"
-                        "1111\n"
-"", None))
-        self.autotargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5de1\u68c0", None))
-        self.label_pos_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.manualtargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u624b\u52a8\u6307\u5b9a", None))
+        self.label_map_2.setText("")
+        self.btn_autoflight.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5de1\u68c0", None))
+        self.label_pos_2.setText(QCoreApplication.translate("MainWindow", u"\u5750\u6807 : ", None))
+        self.btn_pointflight.setText(QCoreApplication.translate("MainWindow", u"\u5b9a\u70b9\u98de\u884c", None))
         self.label_template_2.setText("")
-        self.target_1.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_3.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_1_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_1_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_2_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_2_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_3_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.target_3_pos.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.target_1.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u7ed3\u679c1", None))
+        self.target_2.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u7ed3\u679c2", None))
+        self.target_3.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u7ed3\u679c3", None))
+        self.target_1_name.setText(QCoreApplication.translate("MainWindow", u"\u7c7b\u522b\uff1a\u6682\u65e0", None))
+        self.target_1_pos.setText(QCoreApplication.translate("MainWindow", u"\u5750\u6807\uff1a(0,0)", None))
+        self.target_2_name.setText(QCoreApplication.translate("MainWindow", u"\u7c7b\u522b\uff1a\u6682\u65e0", None))
+        self.target_2_pos.setText(QCoreApplication.translate("MainWindow", u"\u5750\u6807\uff1a(0,0)", None))
+        self.target_3_name.setText(QCoreApplication.translate("MainWindow", u"\u7c7b\u522b\uff1a\u6682\u65e0", None))
+        self.target_3_pos.setText(QCoreApplication.translate("MainWindow", u"\u5750\u6807\uff1a(0,0)", None))
         self.label_template_3.setText("")
         self.autoradioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
         self.rbtn_move_fixed_3.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))

@@ -204,7 +204,7 @@ QTableWidget QHeaderView::section
 background:white;</string>
                 </property>
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string/>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -376,7 +376,7 @@ background:white;</string>
                     <item row="1" column="1">
                      <widget class="QLabel" name="label_cls_result">
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>无</string>
                       </property>
                      </widget>
                     </item>
@@ -484,7 +484,7 @@ background:white;</string>
 background:white;</string>
                    </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string/>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -679,36 +679,7 @@ background:white;</string>
 background:white;</string>
              </property>
              <property name="text">
-              <string>111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-111111111111111111111111111111111111111111111111111111111111111111
-</string>
+              <string/>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -740,7 +711,7 @@ background:white;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_11">
                  <item alignment="Qt::AlignHCenter">
-                  <widget class="QPushButton" name="autotargetbutton">
+                  <widget class="QPushButton" name="btn_autoflight">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -776,12 +747,12 @@ background:white;</string>
                        </size>
                       </property>
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>坐标 : </string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="manualtargetbutton">
+                     <widget class="QPushButton" name="btn_pointflight">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -789,7 +760,7 @@ background:white;</string>
                        </size>
                       </property>
                       <property name="text">
-                       <string>手动指定</string>
+                       <string>定点飞行</string>
                       </property>
                      </widget>
                     </item>
@@ -927,22 +898,43 @@ background:white;</string>
                    <layout class="QVBoxLayout" name="verticalLayout_9">
                     <item>
                      <widget class="QLabel" name="target_1">
+                      <property name="styleSheet">
+                       <string notr="true">border:1px solid gray;
+background:white;</string>
+                      </property>
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>检测结果1</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <widget class="QLabel" name="target_2">
+                      <property name="styleSheet">
+                       <string notr="true">border:1px solid gray;
+background:white;</string>
+                      </property>
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>检测结果2</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <widget class="QLabel" name="target_3">
+                      <property name="styleSheet">
+                       <string notr="true">border:1px solid gray;
+background:white;</string>
+                      </property>
                       <property name="text">
-                       <string>TextLabel</string>
+                       <string>检测结果3</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -970,14 +962,14 @@ background:white;</string>
                        <item>
                         <widget class="QLabel" name="target_1_name">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>类别：暂无</string>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QLabel" name="target_1_pos">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>坐标：(0,0)</string>
                          </property>
                         </widget>
                        </item>
@@ -996,14 +988,14 @@ background:white;</string>
                        <item>
                         <widget class="QLabel" name="target_2_name">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>类别：暂无</string>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QLabel" name="target_2_pos">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>坐标：(0,0)</string>
                          </property>
                         </widget>
                        </item>
@@ -1022,14 +1014,14 @@ background:white;</string>
                        <item>
                         <widget class="QLabel" name="target_3_name">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>类别：暂无</string>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QLabel" name="target_3_pos">
                          <property name="text">
-                          <string>TextLabel</string>
+                          <string>坐标：(0,0)</string>
                          </property>
                         </widget>
                        </item>

@@ -83,6 +83,12 @@ class mywindow(QMainWindow):
         self.ui.cb_det.currentIndexChanged.connect(
             self.process_thread.set_det_method)
 
+        # page 2
+        self.ui.btn_autoflight.clicked.connect(self.start_auto_flight)
+        self.ui.btn_pointflight.clicked.connect(self.start_point_flight)
+        # 尝试获取坐标
+        self.ui.label_map_2.mousePressEvent = self.getPos
+
         # page 3
         self.ui.rbtn_move_single_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
@@ -117,8 +123,6 @@ class mywindow(QMainWindow):
         self.ui.slider_conf.valueChanged.connect(self.change_conf)
         self.ui.slider_conf.setValue(40)
 
-        self.ui.autotargetbutton.clicked.connect(self.autoThread1)
-
         # page 4
         self.ui.loadpic_4.clicked.connect(self.openpic)
         # self.ui.loadpic_4.clicked.connect(self.loadpicture)
@@ -129,13 +133,18 @@ class mywindow(QMainWindow):
 
     # 第二页自动巡检开启
 
-    def autoThread1(self):
-        # autoThread.start()
-        #self.point_thread.set_init_pos(0, 0)
-        self.point_thread.set_end_pos(500, 500)
+    def start_auto_flight(self):
+        self.auto_thread.start()
+        #self.point_thread.set_end_pos(500, 500)
+        # self.point_thread.start()
+
+    @Slot()
+    def start_point_flight(self):
+        self.point_thread.set_end_pos(self.x, self.y)
         self.point_thread.start()
 
     # 滑动条触发控制
+
     def movestep_1(self):
         self.ui.label_step_1.setText(
             str('步长：'+str(self.ui.slider_step_1.value())))
@@ -250,6 +259,7 @@ class mywindow(QMainWindow):
     @Slot()
     def connect_tello(self):
         self.ui.statusbar.showMessage('正在连接Tello...')
+        self.frame_thread.connect_tello()
 
         self.frame_thread.start()
         self.video_writer.start()
@@ -288,9 +298,6 @@ class mywindow(QMainWindow):
             self.ui.label_map_2.width(), self.ui.label_map_2.height())
         self.ui.label_source.setPixmap(qImg)
         self.ui.label_map_2.setPixmap(qImg2)
-
-        # 尝试获取坐标
-        self.ui.label_map_2.mousePressEvent = self.getPos
 
     def getPos(self, event):
         self.x = int(event.pos().x()*1280/400)
@@ -336,7 +343,7 @@ class mywindow(QMainWindow):
             cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
 
     @Slot()
-    def openpic(self, Filepath):
+    def openpic(self):
         directory = QtWidgets.QFileDialog.getOpenFileName(
             self, "选取图片文件", "./", "All Files (*);;jpg文件 (*.jpg);;png文件 (*.png);;bmp文件 (*.bmp)")
         qImg = cv2toQImage(cv2.imread(directory[0]))

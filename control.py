@@ -76,6 +76,8 @@ class FrameThread(QThread):
         self.tello.streamon()
         self.frame_read = self.tello.get_frame_read()
 
+        self.tello_connected = True
+
 
 class ControlThread(QThread):
     finish_signal = Signal(int)
