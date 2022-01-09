@@ -13,6 +13,7 @@ from simple_pid import PID
 from control import FrameThread
 from match.sift import SIFTMatcher
 
+flag=0
 
 class MatchingThread(QThread):
     finish_signal = Signal()
@@ -27,6 +28,7 @@ class MatchingThread(QThread):
         self.cy = 0
 
         self.nav_queue = nav_queue
+        
 
     def run(self):
         while True:
@@ -35,6 +37,8 @@ class MatchingThread(QThread):
                     match_num, rectangle_degree, center = self.sift_matcher.match(
                         self.frameThread.img)
                     if center is not None and rectangle_degree > 0.6 and match_num > 15:
+                        global flag
+                        flag+=1
                         self.cx, self.cy = center
                         self.nav_queue.put(center)
 
@@ -80,7 +84,7 @@ class IMUThread(QThread):
                 x, y = self.nav_queue.get()
                 dst = math.sqrt((self.pos[1]-(-x)) **
                                 2+(self.pos[0]-(-y+1280))**2)
-                if dst < 300:
+                if flag==1 or dst < 300:
                     self.pos[1] = -x
                     self.pos[0] = -y+1280
                 # print('2')
