@@ -13,7 +13,8 @@ from simple_pid import PID
 from control import FrameThread
 from match.sift import SIFTMatcher
 
-flag=0
+matching_flag = 0
+
 
 class MatchingThread(QThread):
     finish_signal = Signal()
@@ -28,7 +29,6 @@ class MatchingThread(QThread):
         self.cy = 0
 
         self.nav_queue = nav_queue
-        
 
     def run(self):
         while True:
@@ -37,8 +37,8 @@ class MatchingThread(QThread):
                     match_num, rectangle_degree, center = self.sift_matcher.match(
                         self.frameThread.img)
                     if center is not None and rectangle_degree > 0.6 and match_num > 15:
-                        global flag
-                        flag+=1
+                        global matching_flag
+                        matching_flag += 1
                         self.cx, self.cy = center
                         self.nav_queue.put(center)
 
@@ -84,7 +84,7 @@ class IMUThread(QThread):
                 x, y = self.nav_queue.get()
                 dst = math.sqrt((self.pos[1]-(-x)) **
                                 2+(self.pos[0]-(-y+1280))**2)
-                if flag==1 or dst < 300:
+                if matching_flag == 1 or dst < 300:
                     self.pos[1] = -x
                     self.pos[0] = -y+1280
                 # print('2')
@@ -96,12 +96,18 @@ class IMUThread(QThread):
 
             sleep(0.01)
 
+    # def imu2img(self, x, y):
+    #     return -y+1280, -x
 
-class autoThread(QThread):
+    # def img2imu(self, x, y):
+    #     return -x, -y+1280
+
+
+class AutoFlightThread(QThread):
     finish_signal = Signal(int)
 
     def __init__(self, tello: Tello, auto_queue: Queue, frameThread: FrameThread):
-        super(autoThread, self).__init__()
+        super(AutoFlightThread, self).__init__()
         self.tello = tello
         self.auto_queue = auto_queue
         self.frame_thread = frameThread
@@ -140,11 +146,11 @@ class autoThread(QThread):
             sleep(1)
 
 
-class PointThread(QThread):
+class PointFlightThread(QThread):
     finish_signal = Signal(int)
 
     def __init__(self, tello: Tello, auto_queue: Queue):
-        super(PointThread, self).__init__()
+        super(PointFlightThread, self).__init__()
         self.tello = tello
         self.auto_queue = auto_queue
 
@@ -166,11 +172,16 @@ class PointThread(QThread):
     def run(self):
         x, y = self.auto_queue.get()
         while True:
-            vx = self.pid_x(x)
-            vy = self.pid_y(y)
-            print(x, y, vx, vy)
-            x, y = self.update(vx, vy)
             radius = 15
             if abs(x-self.setpoint_x) <= radius and abs(y-self.setpoint_y) <= radius:
+                for _ in range(5):
+                    self.tello.send_rc_control(0, 0, 0, 0)
+                print("定点飞行结束")
                 break
+            else:
+                vx = self.pid_x(x)
+                vy = self.pid_y(y)
+                print(x, y, vx, vy)
+                x, y = self.update(vx, vy)
+
             sleep(0.02)

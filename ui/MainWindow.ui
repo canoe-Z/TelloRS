@@ -134,7 +134,7 @@ QTableWidget QHeaderView::section
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
@@ -315,7 +315,7 @@ background:white;</string>
                      </widget>
                     </item>
                     <item row="1" column="1">
-                     <widget class="QSlider" name="slider_conf">
+                     <widget class="ClickJumpSlider" name="slider_conf">
                       <property name="maximumSize">
                        <size>
                         <width>130</width>
@@ -354,7 +354,7 @@ background:white;</string>
                      </widget>
                     </item>
                     <item row="0" column="1">
-                     <widget class="QComboBox" name="comboBox_2">
+                     <widget class="QComboBox" name="cb_cls">
                       <property name="maximumSize">
                        <size>
                         <width>200</width>
@@ -368,7 +368,12 @@ background:white;</string>
                       </item>
                       <item>
                        <property name="text">
-                        <string>YOLOv5</string>
+                        <string>ShuffleNetV2_x1.0</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>MobilenetV3-Small</string>
                        </property>
                       </item>
                      </widget>
@@ -565,17 +570,34 @@ background:white;</string>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_5">
                     <item>
-                     <widget class="QRadioButton" name="rbtn_move_fixed">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>间隔控制</string>
-                      </property>
-                     </widget>
+                     <layout class="QHBoxLayout" name="horizontalLayout_13">
+                      <item>
+                       <widget class="QRadioButton" name="rbtn_move_fixed">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>间隔控制</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QCheckBox" name="cb_autocap">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>悬停自动拍照</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </item>
                     <item>
                      <widget class="QRadioButton" name="rbtn_move_single">
@@ -591,18 +613,22 @@ background:white;</string>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_step_1">
-                      <property name="text">
-                       <string>步长：30</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="ClickJumpSlider" name="slider_step_1">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
+                     <layout class="QHBoxLayout" name="horizontalLayout_14">
+                      <item>
+                       <widget class="QLabel" name="label_step_1">
+                        <property name="text">
+                         <string>步长：30</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="ClickJumpSlider" name="slider_step_1">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </item>
                     <item>
                      <widget class="QRadioButton" name="rbtn_move_rc">
@@ -618,18 +644,22 @@ background:white;</string>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLabel" name="label_speed_1">
-                      <property name="text">
-                       <string>转速：30</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="ClickJumpSlider" name="slider_speed_1">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QLabel" name="label_speed_1">
+                        <property name="text">
+                         <string>转速：30</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="ClickJumpSlider" name="slider_speed_1">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </item>
                    </layout>
                   </widget>
@@ -1255,7 +1285,7 @@ background:white;</string>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QSlider" name="slider_step_3">
+                  <widget class="ClickJumpSlider" name="slider_step_3">
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
@@ -1276,7 +1306,7 @@ background:white;</string>
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QSlider" name="slider_speed_3">
+                  <widget class="ClickJumpSlider" name="slider_speed_3">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -1359,7 +1389,7 @@ background:white;</string>
 background:white;</string>
              </property>
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
              </property>
             </widget>
            </item>

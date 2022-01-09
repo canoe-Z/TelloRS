@@ -3,6 +3,7 @@ import os
 import sys
 
 from PySide6.QtCore import Qt
+from djitellopy import Tello
 
 
 class HiddenPrints:
@@ -29,3 +30,22 @@ def lut_key(key: int) -> str:
     if key == Qt.Key_L:
         method = 'land'
     return method
+
+
+def send_rc_control_by_key(tello: Tello, key: int, rc_speed: int):
+    if key == Qt.Key_W:
+        tello.send_rc_control(0, rc_speed, 0, 0)
+    if key == Qt.Key_A:
+        tello.send_rc_control(-rc_speed, 0, 0, 0)
+    if key == Qt.Key_S:
+        tello.send_rc_control(0, -rc_speed, 0, 0)
+    if key == Qt.Key_D:
+        tello.send_rc_control(rc_speed, 0, 0, 0)
+    if key == Qt.Key_E:
+        tello.send_rc_control(0, 0, 0, -rc_speed)
+    if key == Qt.Key_Q:
+        tello.send_rc_control(0, 0, 0, rc_speed)
+    if key == Qt.Key_R:
+        tello.send_rc_control(0, 0, -rc_speed, 0)
+    if key == Qt.Key_F:
+        tello.send_rc_control(0, 0, rc_speed, 0)

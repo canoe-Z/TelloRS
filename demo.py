@@ -2,7 +2,6 @@ import time
 import cv2
 import sys
 
-from numpy import NaN
 from det.nanodet_plus import NanoDetPlus
 
 

@@ -20,8 +20,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
     QFrame, QGridLayout, QGroupBox, QHBoxLayout,
     QLabel, QLayout, QListWidget, QListWidgetItem,
     QMainWindow, QPushButton, QRadioButton, QSizePolicy,
-    QSlider, QSpacerItem, QStackedWidget, QStatusBar,
-    QToolBar, QVBoxLayout, QWidget)
+    QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
+    QVBoxLayout, QWidget)
 
 from ui.ClickJumpSlider import ClickJumpSlider
 
@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.cb_det, 0, 1, 1, 1, Qt.AlignRight)
 
-        self.slider_conf = QSlider(self.gb_det)
+        self.slider_conf = ClickJumpSlider(self.gb_det)
         self.slider_conf.setObjectName(u"slider_conf")
         self.slider_conf.setMaximumSize(QSize(130, 16777215))
         self.slider_conf.setOrientation(Qt.Horizontal)
@@ -221,13 +221,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.label_6, 1, 0, 1, 1)
 
-        self.comboBox_2 = QComboBox(self.gb_cls)
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.setObjectName(u"comboBox_2")
-        self.comboBox_2.setMaximumSize(QSize(200, 16777215))
+        self.cb_cls = QComboBox(self.gb_cls)
+        self.cb_cls.addItem("")
+        self.cb_cls.addItem("")
+        self.cb_cls.addItem("")
+        self.cb_cls.setObjectName(u"cb_cls")
+        self.cb_cls.setMaximumSize(QSize(200, 16777215))
 
-        self.gridLayout_3.addWidget(self.comboBox_2, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.cb_cls, 0, 1, 1, 1)
 
         self.label_cls_result = QLabel(self.gb_cls)
         self.label_cls_result.setObjectName(u"label_cls_result")
@@ -307,6 +308,8 @@ class Ui_MainWindow(object):
         self.frame_21.setMinimumSize(QSize(0, 100))
         self.verticalLayout_5 = QVBoxLayout(self.frame_21)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.horizontalLayout_13 = QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.rbtn_move_fixed = QRadioButton(self.frame_21)
         self.rbtn_move_fixed.setObjectName(u"rbtn_move_fixed")
         sizePolicy1 = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
@@ -315,7 +318,16 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.rbtn_move_fixed.sizePolicy().hasHeightForWidth())
         self.rbtn_move_fixed.setSizePolicy(sizePolicy1)
 
-        self.verticalLayout_5.addWidget(self.rbtn_move_fixed)
+        self.horizontalLayout_13.addWidget(self.rbtn_move_fixed)
+
+        self.cb_autocap = QCheckBox(self.frame_21)
+        self.cb_autocap.setObjectName(u"cb_autocap")
+        self.cb_autocap.setMinimumSize(QSize(0, 0))
+
+        self.horizontalLayout_13.addWidget(self.cb_autocap)
+
+
+        self.verticalLayout_5.addLayout(self.horizontalLayout_13)
 
         self.rbtn_move_single = QRadioButton(self.frame_21)
         self.rbtn_move_single.setObjectName(u"rbtn_move_single")
@@ -324,16 +336,21 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.rbtn_move_single)
 
+        self.horizontalLayout_14 = QHBoxLayout()
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
         self.label_step_1 = QLabel(self.frame_21)
         self.label_step_1.setObjectName(u"label_step_1")
 
-        self.verticalLayout_5.addWidget(self.label_step_1)
+        self.horizontalLayout_14.addWidget(self.label_step_1)
 
         self.slider_step_1 = ClickJumpSlider(self.frame_21)
         self.slider_step_1.setObjectName(u"slider_step_1")
         self.slider_step_1.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_5.addWidget(self.slider_step_1)
+        self.horizontalLayout_14.addWidget(self.slider_step_1)
+
+
+        self.verticalLayout_5.addLayout(self.horizontalLayout_14)
 
         self.rbtn_move_rc = QRadioButton(self.frame_21)
         self.rbtn_move_rc.setObjectName(u"rbtn_move_rc")
@@ -342,16 +359,21 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.rbtn_move_rc)
 
+        self.horizontalLayout_15 = QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
         self.label_speed_1 = QLabel(self.frame_21)
         self.label_speed_1.setObjectName(u"label_speed_1")
 
-        self.verticalLayout_5.addWidget(self.label_speed_1)
+        self.horizontalLayout_15.addWidget(self.label_speed_1)
 
         self.slider_speed_1 = ClickJumpSlider(self.frame_21)
         self.slider_speed_1.setObjectName(u"slider_speed_1")
         self.slider_speed_1.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_5.addWidget(self.slider_speed_1)
+        self.horizontalLayout_15.addWidget(self.slider_speed_1)
+
+
+        self.verticalLayout_5.addLayout(self.horizontalLayout_15)
 
 
         self.verticalLayout_7.addWidget(self.frame_21)
@@ -677,7 +699,7 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_step_3)
 
-        self.slider_step_3 = QSlider(self.groupBox_10)
+        self.slider_step_3 = ClickJumpSlider(self.groupBox_10)
         self.slider_step_3.setObjectName(u"slider_step_3")
         self.slider_step_3.setOrientation(Qt.Horizontal)
 
@@ -693,7 +715,7 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_speed_3)
 
-        self.slider_speed_3 = QSlider(self.groupBox_10)
+        self.slider_speed_3 = ClickJumpSlider(self.groupBox_10)
         self.slider_speed_3.setObjectName(u"slider_speed_3")
         self.slider_speed_3.setMinimumSize(QSize(0, 0))
         self.slider_speed_3.setOrientation(Qt.Horizontal)
@@ -822,7 +844,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -864,14 +886,16 @@ class Ui_MainWindow(object):
         self.gb_cls.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u5668", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u7ed3\u679c", None))
-        self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"ResNet18", None))
-        self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
+        self.cb_cls.setItemText(0, QCoreApplication.translate("MainWindow", u"ResNet18", None))
+        self.cb_cls.setItemText(1, QCoreApplication.translate("MainWindow", u"ShuffleNetV2_x1.0", None))
+        self.cb_cls.setItemText(2, QCoreApplication.translate("MainWindow", u"MobilenetV3-Small", None))
 
         self.label_cls_result.setText(QCoreApplication.translate("MainWindow", u"\u65e0", None))
         self.label_source.setText("")
         self.btn_clean_nav.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u7f6e", None))
         self.cb_show_nav.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u5b9e\u65f6\u4f4d\u7f6e", None))
         self.rbtn_move_fixed.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
+        self.cb_autocap.setText(QCoreApplication.translate("MainWindow", u"\u60ac\u505c\u81ea\u52a8\u62cd\u7167", None))
         self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
         self.label_step_1.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
         self.rbtn_move_rc.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
@@ -897,7 +921,7 @@ class Ui_MainWindow(object):
         self.label_step_3.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
         self.rbtn_move_rc_3.setText(QCoreApplication.translate("MainWindow", u"\u8fde\u7eed\u63a7\u5236", None))
         self.label_speed_3.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u901f\uff1a30", None))
-        self.label_pic4.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_pic4.setText("")
         self.loadpic_4.setText(QCoreApplication.translate("MainWindow", u"\u52a0\u8f7d\u56fe\u7247", None))
         self.comboBox_3.setItemText(0, QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u65b9\u5f0f1", None))
         self.comboBox_3.setItemText(1, QCoreApplication.translate("MainWindow", u"2", None))

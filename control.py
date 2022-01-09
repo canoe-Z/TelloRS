@@ -1,17 +1,12 @@
 import time
 from enum import Enum
 from queue import Queue
-from time import sleep
 
 import cv2
 import numpy as np
 from djitellopy import Tello
-from numpy import ndarray
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QMutex, QSemaphore
+from PySide6.QtCore import Qt, QThread, Signal, QMutex
 
-from match.sift import SIFTMatcher
-from utils.control import HiddenPrints
 from vidgear.gears.stabilizer import Stabilizer
 
 
@@ -39,7 +34,7 @@ class FrameThread(QThread):
     def run(self):
         while True:
             if not self.tello_connected:
-                sleep(0.01)
+                time.sleep(0.01)
                 continue
 
             buffer = self.frame_read.frame
@@ -68,7 +63,7 @@ class FrameThread(QThread):
 
             self.tello_battery = self.tello.get_battery()
             self.signal.emit()
-            sleep(0.01)
+            time.sleep(0.01)
 
     def connect_tello(self):
         self.tello.connect()
@@ -104,14 +99,22 @@ class ControlThread(QThread):
                 if key:
                     if key == Qt.Key_T:
                         self.tello.takeoff()
-                    if key == Qt.Key_W:
+                    elif key == Qt.Key_W:
                         self.tello.move_forward(self.move_distance)
-                    if key == Qt.Key_A:
+                    elif key == Qt.Key_A:
                         self.tello.move_left(self.move_distance)
-                    if key == Qt.Key_S:
+                    elif key == Qt.Key_S:
                         self.tello.move_back(self.move_distance)
-                    if key == Qt.Key_D:
+                    elif key == Qt.Key_D:
                         self.tello.move_right(self.move_distance)
+                    elif key == Qt.Key_E:
+                        self.tello.rotate_clockwise(self.move_distance)
+                    elif key == Qt.Key_Q:
+                        self.tello.rotate_counter_clockwise(self.move_distance)
+                    elif key == Qt.Key_R:
+                        self.tello.move_up(self.move_distance)
+                    elif key == Qt.Key_F:
+                        self.tello.move_down(self.move_distance)
                     if key == Qt.Key_L:
                         self.tello.land()
 
@@ -119,7 +122,7 @@ class ControlThread(QThread):
                     self.qmut.lock()
                     self.key = None
                     self.qmut.unlock()
-                sleep(0.01)
+                time.sleep(0.01)
             else:
                 self.tello.send_rc_control(self.x_move, self.y_move, 0, 0)
-                sleep(0.01)
+                time.sleep(0.01)

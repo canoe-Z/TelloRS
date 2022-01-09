@@ -277,7 +277,7 @@ class ProcessThread(QThread):
         self.nanodet.prob_threshold = conf
         self.yolo.prob_threshold = conf
 
-    @Slot()
+    @Slot(bool)
     def set_tracking_state(self, checked: bool):
         self.enable_tracking = checked
         if checked:
