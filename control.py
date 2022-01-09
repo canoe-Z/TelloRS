@@ -32,19 +32,15 @@ class FrameThread(QThread):
 
         self.tello = tello
         self.img = None
-
-        self.tello.connect()
-        tello.set_video_bitrate(Tello.BITRATE_3MBPS)
-        tello.set_video_resolution(Tello.RESOLUTION_720P)
-        tello.set_video_fps(Tello.FPS_30)
-
-        self.tello.streamon()
-        self.frame_read = self.tello.get_frame_read()
-
         self.stab_on = False
+        self.tello_connected = False
 
     def run(self):
         while True:
+            if not self.tello_connected:
+                sleep(0.01)
+                continue
+
             buffer = self.frame_read.frame
             buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
 
@@ -70,6 +66,15 @@ class FrameThread(QThread):
             self.qmut.unlock()
             self.signal.emit()
             sleep(0.01)
+
+    def connect_tello(self):
+        self.tello.connect()
+        self.tello.set_video_bitrate(Tello.BITRATE_3MBPS)
+        self.tello.set_video_resolution(Tello.RESOLUTION_720P)
+        self.tello.set_video_fps(Tello.FPS_30)
+
+        self.tello.streamon()
+        self.frame_read = self.tello.get_frame_read()
 
 
 class ControlThread(QThread):

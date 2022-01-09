@@ -186,15 +186,15 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
 
-        self.comboBox = QComboBox(self.gb_det)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setMinimumSize(QSize(105, 0))
-        self.comboBox.setMaximumSize(QSize(105, 16777215))
+        self.cb_det = QComboBox(self.gb_det)
+        self.cb_det.addItem("")
+        self.cb_det.addItem("")
+        self.cb_det.addItem("")
+        self.cb_det.setObjectName(u"cb_det")
+        self.cb_det.setMinimumSize(QSize(105, 0))
+        self.cb_det.setMaximumSize(QSize(105, 16777215))
 
-        self.gridLayout_2.addWidget(self.comboBox, 0, 1, 1, 1, Qt.AlignRight)
+        self.gridLayout_2.addWidget(self.cb_det, 0, 1, 1, 1, Qt.AlignRight)
 
         self.slider_conf = QSlider(self.gb_det)
         self.slider_conf.setObjectName(u"slider_conf")
@@ -799,9 +799,9 @@ class Ui_MainWindow(object):
         self.gb_det.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u68c0\u6d4b", None))
         self.label_conf.setText(QCoreApplication.translate("MainWindow", u"\u9608\u503c", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u6d4b\u5668", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
+        self.cb_det.setItemText(0, QCoreApplication.translate("MainWindow", u"NanoDet", None))
+        self.cb_det.setItemText(1, QCoreApplication.translate("MainWindow", u"YOLOv5", None))
+        self.cb_det.setItemText(2, QCoreApplication.translate("MainWindow", u"\u6a21\u677f\u5339\u914d", None))
 
         self.gb_cls.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u573a\u666f\u5206\u7c7b", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u5206\u7c7b\u5668", None))

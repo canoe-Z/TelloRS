@@ -9,12 +9,12 @@ from det.utils.yolov5_utils import *
 
 
 class YOLOv5(object):
-    def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
+    def __init__(self, model_pb_path, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
         stride, names = 64, [
             f'class{i}' for i in range(1000)]  # assign defaults
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
-        self.session = onnxruntime.InferenceSession('./det/model/best4.onnx')
+        self.session = onnxruntime.InferenceSession(model_pb_path)
 
     def detect(self, img):
         im = img.copy().astype('float32')
@@ -60,7 +60,7 @@ if __name__ == '__main__':
                  prob_threshold=args.confThreshold, iou_threshold=args.nmsThreshold)
 
     import time
-    #while True:
+    # while True:
     a = time.time()
     result = net.detect(srcimg)
     b = time.time()

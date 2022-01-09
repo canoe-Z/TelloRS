@@ -11,7 +11,6 @@ from PySide6.QtWidgets import QMainWindow
 from control import ControlMode, ControlThread, FrameThread
 from nav import IMUThread, MatchingThread, autoThread, PointThread
 from process import ProcessThread, VideoWriter
-from ui.ClickJumpSlider import ClickJumpSlider
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key
 from utils.img import cv2toQImage
@@ -33,27 +32,32 @@ class mywindow(QMainWindow):
         self.cv2_map = cv2.imread('./map/newsource.png')
         self.show_map()
 
-        self.is_autocap = 0
-
         self.rc_speed = 30
-        #self.move_distance = 30
 
-        self.ui.action_connect.triggered.connect(self.connect_tello)
-        self.ui.action_takephoto.triggered.connect(self.take_photo)
-
+        # sidebar
         self.ui.listWidget.currentRowChanged.connect(
             self.ui.stackedWidget.setCurrentIndex)
 
+        # toolbar
+        self.ui.action_connect.triggered.connect(self.connect_tello)
+        self.ui.action_takephoto.triggered.connect(self.take_photo)
+        self.ui.action_record.triggered.connect(self.start_record)
+        self.ui.action_stoprecord.triggered.connect(self.stop_record)
+
+        # page 1
         self.control_mode = ControlMode.FIXED_MODE
         self.ui.rbtn_move_fixed.setChecked(True)
-        # self.ui.rbtn_move_fixed_3.setChecked(True)
         self.ui.rbtn_move_single.clicked.connect(
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
         self.ui.rbtn_move_rc.clicked.connect(
             lambda: self.set_control_mode(ControlMode.RC_MODE))
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
-        # 第三页的控制模块
+        self.ui.gb_det.clicked.connect(self.print_state)
+        self.ui.gb_cls.clicked.connect(self.print_state)
+        self.ui.cb_det.currentIndexChanged.connect(self.cb_det_change)
+
+        # page 3
         self.ui.rbtn_move_single_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
         self.ui.rbtn_move_rc_3.clicked.connect(
@@ -89,20 +93,39 @@ class mywindow(QMainWindow):
 
         self.ui.autotargetbutton.clicked.connect(self.autoThread1)  # 自动巡检
 
-        self.ui.action_record.triggered.connect(self.start_record)
-        self.ui.action_stoprecord.triggered.connect(self.stop_record)
-
+        # page 4
         self.ui.loadpic_4.clicked.connect(self.openpic)
-
-        # self.ui.pushButton.clicked.connect(self.start_record)
-        # self.ui.pushButton_2.clicked.connect(self.stop_record)
-        # self.ui.pushButton_3.clicked.connect(self.auto)self.start_record
-
-        # self.ui.gb_det.clicked.connect(self.print_state)
-
         # self.ui.loadpic_4.clicked.connect(self.loadpicture)
         # self.ui.savepic_4.clicked.connect(self.savepicture)
 
+        # init tello and threads
+        nav_queue = queue.Queue()
+        nav_queue.maxsize = 1
+        auto_queue = queue.Queue()
+        auto_queue.maxsize = 1
+        self.tello = Tello()
+        self.frame_thread = FrameThread(self.tello)
+        self.matching_thread = MatchingThread(
+            self.frame_thread, self.cv2_map, nav_queue)
+        self.control_thread = ControlThread(self.tello)
+        self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
+        self.video_writer = VideoWriter(self.frame_thread)
+        self.process_thread = ProcessThread(
+            self.frame_thread, self.control_thread)
+        self.auto_thread = autoThread(
+            self.tello, auto_queue, self.frame_thread)
+        self.point_thread = PointThread(self.tello, auto_queue)
+
+        # signal
+        self.control_thread.finish_signal.connect(self.command_finish)
+        self.imu_thread.sift_signal.connect(self.draw_sift_pos)
+        self.imu_thread.imu_signal.connect(self.draw_imu_pos)
+        self.process_thread.signal.connect(self.show_det)
+        self.matching_thread.finish_signal.connect(self.show_map)
+
+    def cb_det_change(self, i):
+        self.process_thread.det_method = i
+        # print(i)
     # 第二页自动巡检开启
 
     def autoThread1(self):
@@ -178,7 +201,6 @@ class mywindow(QMainWindow):
             return
 
         key = event.key()
-
         if event.isAutoRepeat():
             # 键盘按下反复执行
             if self.control_mode == ControlMode.FIXED_MODE:
@@ -232,40 +254,12 @@ class mywindow(QMainWindow):
     def connect_tello(self):
         self.ui.statusbar.showMessage('正在连接Tello...')
 
-        nav_queue = queue.Queue()
-        nav_queue.maxsize = 1
-        auto_queue = queue.Queue()
-        auto_queue.maxsize = 1
-        self.tello = Tello()
-        self.frame_thread = FrameThread(self.tello)
-        self.matching_thread = MatchingThread(
-            self.frame_thread, self.cv2_map, nav_queue)
-        self.control_thread = ControlThread(self.tello)
-        self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
-        self.auto_thread = autoThread(
-            self.tello, auto_queue, self.frame_thread)
-        self.point_thread = PointThread(self.tello, auto_queue)
-
-        # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()
-
-        self.video_writer = VideoWriter(self.frame_thread)
         self.video_writer.start()
-
-        self.process_thread = ProcessThread(
-            self.frame_thread, self.control_thread)
         self.process_thread.start()
-        self.process_thread.signal.connect(self.show_det)
-
         self.matching_thread.start()
-        self.matching_thread.finish_signal.connect(self.show_map)
-
         self.control_thread.start()
-        self.control_thread.finish_signal.connect(self.command_finish)
-
         self.imu_thread.start()
-        self.imu_thread.sift_signal.connect(self.draw_sift_pos)
-        self.imu_thread.imu_signal.connect(self.draw_imu_pos)
 
         self.ui.statusbar.showMessage('连接成功!')
         self.tello_connected = True

@@ -66,15 +66,12 @@ class ProcessThread(QThread):
         self.controlThread = controlThread
         self.frame = None
 
-        # nanodet
+        # detection
         self.det_realtime = True
         self.det_method = DetMethod.NANODET
-        #self.detector = NanoDet()
+        self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx')
+        self.nanodet = NanoDetPlus('./det/model/nanodet_uav.onnx')
 
-        # YOLOV5
-        #self.detector = YOLOv5()
-
-        self.detector = NanoDetPlus('./det/model/nanodet_uav.onnx')
         # template
         template_dir = './det/model/template'
         template_path = [template_dir +
@@ -97,9 +94,9 @@ class ProcessThread(QThread):
         self.track_flag = 0
 
     def run(self):
-        i = 0
-        minsize = 7000
-        model = NanoDetPlus('./det/model/nanodet_car.onnx')
+        # i = 0
+        # minsize = 7000
+        # model = NanoDetPlus('./det/model/nanodet_car.onnx')
         #start_time = time.time()
         #last_time = start_time
         # x_model = XModel(self.x_distance)
@@ -110,6 +107,7 @@ class ProcessThread(QThread):
             self.mutex.lock()
             self.frame = self.frameThread.img
             self.mutex.unlock()
+
             # if self.frame is None:
             #     continue
             # else:
@@ -150,7 +148,6 @@ class ProcessThread(QThread):
             # x_distance = centerx - self.frame.shape[1] / 2
             # y_distance = centery - self.frame.shape[0] / 2
 
-
             # x_model = XModel(x_distance)
             # y_model = YModel(y_distance)
             # x_pid = PID(0.0001, 0.01, 0.005, setpoint=1)
@@ -173,20 +170,19 @@ class ProcessThread(QThread):
             #         break
             # break
 
-            # cls
-            # if self.cls_realtime:
-            #     self.cls_result = self.classifier.test(self.frame)
-            #     # print(result)
+            # classification
+            if self.cls_realtime:
+                self.cls_result = self.classifier.infer(self.frame)
 
-            # # det
-            # if self.det_realtime:
-            #     if self.det_method == DetMethod.NANODET:
-            #         self.detector.prob_threshold = self.conf
-            #         self.frame = self.detector.detect(self.frame)
-            #     elif self.det_method == DetMethod.YOLOV5:
-            #         pass
-            #     elif self.det_method == DetMethod.TEMPLATE_MATCHING:
-            #         self.frame = self.template_matcher.detect(self.frame)
+            # detection
+            if self.det_realtime:
+                if self.det_method == DetMethod.NANODET:
+                    #self.detector.prob_threshold = self.conf
+                    self.frame = self.nanodet.detect(self.frame)
+                elif self.det_method == DetMethod.YOLOV5:
+                    self.frame = self.yolo.detect(self.frame)
+                elif self.det_method == DetMethod.TEMPLATE_MATCHING:
+                    self.frame = self.template_matcher.detect(self.frame)
 
             # else:
             #     pass
@@ -236,6 +232,9 @@ class ProcessThread(QThread):
                             break
                         if self.end_tracking:
                             break
+
+    def print_state(self, checked: bool):
+        self.det_realtime = checked
 
 
 class VideoWriter(QThread):

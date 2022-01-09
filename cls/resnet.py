@@ -16,7 +16,7 @@ class ResNet(object):
         self.resnet_session = onnxruntime.InferenceSession(
             "./cls/model/resnet18.onnx")
 
-    def test(self, img):
+    def infer(self, img):
         class_names = ['airport', 'building', 'forest', 'other', 'overpass',
                        'rectangular_farmland', 'sea', 'storage_tank']
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     import time
     a = time.time()
     img = cv2.imread('./data/18_21_39_2021_12_14.png')
-    result = model.test(img)
+    result = model.infer(img)
     b = time.time()
     print('waste time', b-a)
     print(result)
