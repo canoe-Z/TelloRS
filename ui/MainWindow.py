@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.1
+## Created by: Qt User Interface Compiler version 6.2.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -379,7 +379,7 @@ class Ui_MainWindow(object):
         self.label_map_2 = QLabel(self.frame_9)
         self.label_map_2.setObjectName(u"label_map_2")
         self.label_map_2.setMinimumSize(QSize(400, 400))
-        self.label_map_2.setMaximumSize(QSize(16777215, 16777215))
+        self.label_map_2.setMaximumSize(QSize(400, 400))
         self.label_map_2.setCursor(QCursor(Qt.CrossCursor))
         self.label_map_2.setStyleSheet(u"border:1px solid gray;\n"
 "background:white;")
@@ -387,23 +387,56 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_12.addWidget(self.label_map_2)
 
-        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_12.addItem(self.verticalSpacer_6)
-
         self.frame_17 = QFrame(self.frame_9)
         self.frame_17.setObjectName(u"frame_17")
         self.frame_17.setMinimumSize(QSize(0, 100))
         self.frame_17.setFrameShape(QFrame.StyledPanel)
         self.frame_17.setFrameShadow(QFrame.Raised)
-        self.autotargetbutton = QPushButton(self.frame_17)
+        self.horizontalLayout_10 = QHBoxLayout(self.frame_17)
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.frame_211 = QFrame(self.frame_17)
+        self.frame_211.setObjectName(u"frame_211")
+        self.frame_211.setFrameShape(QFrame.StyledPanel)
+        self.frame_211.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_11 = QHBoxLayout(self.frame_211)
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.autotargetbutton = QPushButton(self.frame_211)
         self.autotargetbutton.setObjectName(u"autotargetbutton")
-        self.autotargetbutton.setGeometry(QRect(40, 30, 111, 41))
-        self.manualtargetbutton = QPushButton(self.frame_17)
+        self.autotargetbutton.setMinimumSize(QSize(0, 30))
+
+        self.horizontalLayout_11.addWidget(self.autotargetbutton, 0, Qt.AlignHCenter)
+
+        self.frame_22 = QFrame(self.frame_211)
+        self.frame_22.setObjectName(u"frame_22")
+        self.frame_22.setMinimumSize(QSize(0, 60))
+        self.frame_22.setFrameShape(QFrame.StyledPanel)
+        self.frame_22.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_12 = QHBoxLayout(self.frame_22)
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.label_pos_2 = QLabel(self.frame_22)
+        self.label_pos_2.setObjectName(u"label_pos_2")
+        self.label_pos_2.setMinimumSize(QSize(0, 20))
+
+        self.horizontalLayout_12.addWidget(self.label_pos_2)
+
+        self.manualtargetbutton = QPushButton(self.frame_22)
         self.manualtargetbutton.setObjectName(u"manualtargetbutton")
-        self.manualtargetbutton.setGeometry(QRect(220, 30, 101, 41))
+        self.manualtargetbutton.setMinimumSize(QSize(0, 30))
+
+        self.horizontalLayout_12.addWidget(self.manualtargetbutton)
+
+
+        self.horizontalLayout_11.addWidget(self.frame_22)
+
+
+        self.horizontalLayout_10.addWidget(self.frame_211)
+
 
         self.verticalLayout_12.addWidget(self.frame_17)
+
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_12.addItem(self.verticalSpacer_6)
 
 
         self.horizontalLayout_3.addWidget(self.frame_9)
@@ -764,7 +797,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -849,6 +882,7 @@ class Ui_MainWindow(object):
                         "1111\n"
 "", None))
         self.autotargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5de1\u68c0", None))
+        self.label_pos_2.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.manualtargetbutton.setText(QCoreApplication.translate("MainWindow", u"\u624b\u52a8\u6307\u5b9a", None))
         self.label_template_2.setText("")
         self.target_1.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))

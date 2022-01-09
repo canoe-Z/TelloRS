@@ -296,9 +296,12 @@ class mywindow(QMainWindow):
         self.ui.label_map_2.mousePressEvent = self.getPos
 
     def getPos(self, event):
-        x = event.pos().x()
-        y = event.pos().y()
-        print(x, y)
+        self.x = int(event.pos().x()*1280/400)
+        self.y = int((400-event.pos().y())*1280/400)
+
+        print(self.x, self.y)
+        self.ui.label_pos_2.setText(
+            str('坐标：'+str(self.x)+' '+str(self.y))+' ')
 
     @Slot()
     def show_det(self):
