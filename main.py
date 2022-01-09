@@ -9,7 +9,7 @@ from PySide6.QtCore import QDateTime, Qt, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow
 
 from control import ControlMode, ControlThread, FrameThread
-from nav import IMUThread, MatchingThread, autoThread
+from nav import IMUThread, MatchingThread, autoThread, PointThread
 from process import ProcessThread, VideoWriter
 from ui.ClickJumpSlider import ClickJumpSlider
 from ui.MainWindow import Ui_MainWindow
@@ -106,7 +106,11 @@ class mywindow(QMainWindow):
     # 第二页自动巡检开启
 
     def autoThread1(self):
-        autoThread.start
+        # autoThread.start()
+        #self.point_thread.set_init_pos(0, 0)
+        self.point_thread.set_end_pos(500, 500)
+        self.point_thread.start()
+
     # 滑动条触发控制
 
     def movestep_1(self):
@@ -174,7 +178,6 @@ class mywindow(QMainWindow):
             return
 
         key = event.key()
-        print(key)
 
         if event.isAutoRepeat():
             # 键盘按下反复执行
@@ -241,6 +244,7 @@ class mywindow(QMainWindow):
         self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
         self.auto_thread = autoThread(
             self.tello, auto_queue, self.frame_thread)
+        self.point_thread = PointThread(self.tello, auto_queue)
 
         # self.frame_thread.signal.connect(self.show_tello_frame)
         self.frame_thread.start()

@@ -46,7 +46,7 @@ class FrameThread(QThread):
     def run(self):
         while True:
             buffer = self.frame_read.frame
-            #buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
+            buffer = cv2.cvtColor(buffer, cv2.COLOR_BGR2RGB)
 
             frame = cv2.flip(buffer, 0)
 

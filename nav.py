@@ -1,3 +1,5 @@
+from simple_pid import PID
+from re import X
 import time
 from enum import Enum
 from queue import Queue
@@ -86,9 +88,9 @@ class IMUThread(QThread):
                 if dst < 300:
                     self.pos[1] = -x
                     self.pos[0] = -y+1280
-                    # print('2')
-                    # print(self.pos[0], self.pos[1])
-                    self.sift_signal.emit()
+                # print('2')
+                # print(self.pos[0], self.pos[1])
+                self.sift_signal.emit()
             if not self.auto_queue.empty():
                 self.auto_queue.get()
             self.auto_queue.put([-int(self.pos[1]), -int(self.pos[0])+1280])
@@ -137,3 +139,36 @@ class autoThread(QThread):
             else:
                 self.tello.land
             sleep(1)
+
+
+class PointThread(QThread):
+    finish_signal = Signal(int)
+
+    def __init__(self, tello: Tello, auto_queue: Queue):
+        super(PointThread, self).__init__()
+        self.tello = tello
+        self.auto_queue = auto_queue
+
+    def set_end_pos(self, x, y):
+        self.setpoint_x = x
+        self.setpoint_y = y
+        self.pid_x = PID(1, 0.01, 0.1, setpoint=x)
+        self.pid_y = PID(1, 0.01, 0.1, setpoint=y)
+        self.pid_x.output_limits = (-10, 10)
+        self.pid_y.output_limits = (-10, 10)
+
+    def update(self, vx, vy):
+        self.tello.send_rc_control(int(vx), int(vy), 0, 0)
+        img_x, img_y = self.auto_queue.get()
+        y = 1280-img_y
+        x = img_x
+        return x, y
+
+    def run(self):
+        x, y = self.auto_queue.get()
+        while True:
+            vx = self.pid_x(x)
+            vy = self.pid_y(y)
+            print(x, y, vx, vy)
+            x, y = self.update(vx, vy)
+            sleep(0.02)

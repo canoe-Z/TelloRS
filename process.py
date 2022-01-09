@@ -110,45 +110,45 @@ class ProcessThread(QThread):
             self.mutex.lock()
             self.frame = self.frameThread.img
             self.mutex.unlock()
-            if self.frame is None:
-                continue
-            else:
-                i += 1
+            # if self.frame is None:
+            #     continue
+            # else:
+            #     i += 1
 
-            #frame = self.frame.copy()
-            if i == 1:
-                box = model.detect2(self.frame)
-                if(len(box) == 0):
-                    i = 0
-                    cv2.putText(self.frame, "Tracking failure detected", (100, 80),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
-                    self.signal.emit()
-                    sleep(0.01)
-                    continue
-                ok = self.tracker.init(self.frame, box)
-                if not ok:
-                    self.signal.emit()
-                    sleep(0.01)
-                    continue
-            success, bbox = self.tracker.update(self.frame)
+            # #frame = self.frame.copy()
+            # if i == 1:
+            #     box = model.detect2(self.frame)
+            #     if(len(box) == 0):
+            #         i = 0
+            #         cv2.putText(self.frame, "Tracking failure detected", (100, 80),
+            #                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
+            #         self.signal.emit()
+            #         sleep(0.01)
+            #         continue
+            #     ok = self.tracker.init(self.frame, box)
+            #     if not ok:
+            #         self.signal.emit()
+            #         sleep(0.01)
+            #         continue
+            # success, bbox = self.tracker.update(self.frame)
 
-            centerx = int(bbox[0]+(bbox[2])/2)
-            centery = int(bbox[1]+(bbox[3])/2)
-            if(self.frame[centery, centerx, 0] <= 150 and self.frame[centery, centerx, 1] <= 150 and self.frame[centery, centerx, 2] <= 150):
-                success = 0
+            # centerx = int(bbox[0]+(bbox[2])/2)
+            # centery = int(bbox[1]+(bbox[3])/2)
+            # if(self.frame[centery, centerx, 0] <= 150 and self.frame[centery, centerx, 1] <= 150 and self.frame[centery, centerx, 2] <= 150):
+            #     success = 0
 
-            if success:
-                p1 = (int(bbox[0]), int(bbox[1]))
-                p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-                cv2.rectangle(self.frame, p1, p2, (255, 0, 0), 2, 1)
-            else:
-                i = 0
-            # if(box[2]*box[3] < minsize):
-            #     print("框较小")
+            # if success:
+            #     p1 = (int(bbox[0]), int(bbox[1]))
+            #     p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+            #     cv2.rectangle(self.frame, p1, p2, (255, 0, 0), 2, 1)
+            # else:
             #     i = 0
+            # # if(box[2]*box[3] < minsize):
+            # #     print("框较小")
+            # #     i = 0
 
-            x_distance = centerx - self.frame.shape[1] / 2
-            y_distance = centery - self.frame.shape[0] / 2
+            # x_distance = centerx - self.frame.shape[1] / 2
+            # y_distance = centery - self.frame.shape[0] / 2
 
 
             # x_model = XModel(x_distance)
