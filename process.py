@@ -63,20 +63,18 @@ class ProcessThread(QThread):
     def __init__(self, tello: Tello, frameThread: FrameThread, controlThread: ControlThread):
         super(ProcessThread, self).__init__()
 
-        self.conf = 0.4
-
         self.frameThread = frameThread
         self.controlThread = controlThread
         self.frame = None
 
         # detection
-        # self.["storage-tank", "mine", "ship","field","plane"]
-        self.classes = ["storage-tank", "mine", "ship", "field", "plane"]
+        self.conf = 0.4
         self.det_realtime = True
         self.det_method = DetMethod.NANODET
-        self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx')
+        self.classes = ["storage-tank", "mine", "ship", "field", "plane"]
         self.nanodet = NanoDetPlus(
             './det/model/nanodet_uav.onnx', self.classes)
+        self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx')
 
         # template
         template_dir = './det/model/template/'
@@ -92,13 +90,10 @@ class ProcessThread(QThread):
         self.classifier = ResNet()
 
         # Track
+        self.tello = tello
         self.enable_tracking = False
-        self.end_tracking = False
         self.start_tracking = False
         self.tracker = Tracker()
-
-        self.track_flag = 0
-        self.tello = tello
         # self.pid
 
     def run(self):
@@ -118,65 +113,6 @@ class ProcessThread(QThread):
 
             if self.frame is None:
                 continue
-            # else:
-            #     i += 1
-
-            # #frame = self.frame.copy()
-            # if i == 1:
-            #     box = model.detect2(self.frame)
-            #     if(len(box) == 0):
-            #         i = 0
-            #         cv2.putText(self.frame, "Tracking failure detected", (100, 80),
-            #                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
-            #         self.signal.emit()
-            #         sleep(0.01)
-            #         continue
-            #     ok = self.tracker.init(self.frame, box)
-            #     if not ok:
-            #         self.signal.emit()
-            #         sleep(0.01)
-            #         continue
-            # success, bbox = self.tracker.update(self.frame)
-
-            # centerx = int(bbox[0]+(bbox[2])/2)
-            # centery = int(bbox[1]+(bbox[3])/2)
-            # if(self.frame[centery, centerx, 0] <= 150 and self.frame[centery, centerx, 1] <= 150 and self.frame[centery, centerx, 2] <= 150):
-            #     success = 0
-
-            # if success:
-            #     p1 = (int(bbox[0]), int(bbox[1]))
-            #     p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-            #     cv2.rectangle(self.frame, p1, p2, (255, 0, 0), 2, 1)
-            # else:
-            #     i = 0
-            # # if(box[2]*box[3] < minsize):
-            # #     print("框较小")
-            # #     i = 0
-
-            # x_distance = centerx - self.frame.shape[1] / 2
-            # y_distance = centery - self.frame.shape[0] / 2
-
-            # x_model = XModel(x_distance)
-            # y_model = YModel(y_distance)
-            # x_pid = PID(0.0001, 0.01, 0.005, setpoint=1)
-            # y_pid = PID(0.0001, 0.005, 0.001, setpoint=1)
-            # start_time = time.time()
-            # last_time = start_time
-            # while True:
-            #     current_time = time.time()
-            #     dt = current_time - last_time
-            #     last_time = current_time
-
-            #     x_move = x_pid(x_distance)
-            #     y_move = y_pid(y_distance)
-            #     x_distance = x_model.update(x_move, dt)
-            #     #print('x_distance: ', self.x_distance)
-            #     y_distance = y_model.update(y_move, dt)
-            #     print(x_move, y_move, x_distance, y_distance)
-            #     #print('y_distance: ', self.y_distance)
-            #     if x_distance <= 4 and y_distance <= 4:
-            #         break
-            # break
 
             # classification
             if self.cls_realtime:
@@ -185,23 +121,24 @@ class ProcessThread(QThread):
             # detection
             if self.det_realtime:
                 if self.det_method == DetMethod.NANODET:
-                    #self.detector.prob_threshold = self.conf
                     self.frame = self.nanodet.detect(self.frame)
                 elif self.det_method == DetMethod.YOLOV5:
                     self.frame = self.yolo.detect(self.frame)
                 elif self.det_method == DetMethod.TEMPLATE_MATCHING:
                     self.frame = self.template_matcher.detect(self.frame)
 
-            # if self.enable_tracking:
-            self.frame, success_flag, x, y = self.tracker.update(self.frame)
+            # tracking
             if self.enable_tracking:
-                if success_flag:
-                    y = self.frame.shape[0]-y
-                    dx = x-self.frame.shape[1]/2
-                    dy = y-self.frame.shape[0]/2
-                    print(dx, dy)
-                    self.tello.send_rc_control(
-                        int(dx*0.07), int(dy*0.07), 0, 0)
+                self.frame, success_flag, x, y = self.tracker.update(
+                    self.frame)
+                if self.start_tracking:
+                    if success_flag:
+                        y = self.frame.shape[0]-y
+                        dx = x-self.frame.shape[1]/2
+                        dy = y-self.frame.shape[0]/2
+                        print(dx, dy)
+                        self.tello.send_rc_control(
+                            int(dx*0.07), int(dy*0.07), 0, 0)
             # else:
             #     pass
             #self.frame = frame
@@ -279,11 +216,11 @@ class ProcessThread(QThread):
 
     @Slot(bool)
     def set_tracking_state(self, checked: bool):
-        self.enable_tracking = checked
+        self.start_tracking = checked
         if checked:
-            print('启用追踪')
+            print('开始追踪目标')
         else:
-            print('禁用追踪')
+            print('停止追踪目标')
 
 
 class VideoWriter(QThread):

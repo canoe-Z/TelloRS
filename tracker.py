@@ -6,11 +6,6 @@ from det.nanodet_plus import NanoDetPlus
 class Tracker(object):
     def __init__(self):
         self.tracker = cv2.TrackerCSRT_create()
-        # video = cv2.VideoCapture(
-        #     r'C:\Users\Ryuhiu\Desktop\TelloRS-main\tello2_Trim_Trim.mp4')
-        # if not video.isOpened():
-        #     print("Could not open video")
-        #     sys.exit()
         self.model = NanoDetPlus('./det/model/nanodet_car.onnx', ['car'])
         self.model.prob_threshold = 0.6
 
@@ -59,18 +54,23 @@ class Tracker(object):
         return frame, success_flag, centerx, centery
 
 
-# video = cv2.VideoCapture(
-#     r'D:\tello_tracking\tello_tracking\video\video_test\tello2.mp4')
-# if not video.isOpened():
-#     print("Could not open video")
-#     sys.exit()
-# tracker = Tracker()
-# while True:
-#     ok, frame = video.read()
-#     if ok is None or frame is None:
-#         break
-#     output, _, _, _ = tracker.update(frame)
-#     cv2.imshow("Frame", output)
-#     key = cv2.waitKey(1) & 0xFF
-#     if cv2.getWindowProperty('Frame', cv2.WND_PROP_VISIBLE) < 1:
-#         break
+def main():
+    video = cv2.VideoCapture(
+        r'D:\tello_tracking\tello_tracking\video\video_test\tello2.mp4')
+    if not video.isOpened():
+        print("Could not open video")
+        sys.exit()
+    tracker = Tracker()
+    while True:
+        ok, frame = video.read()
+        if ok is None or frame is None:
+            break
+        output, _, _, _ = tracker.update(frame)
+        cv2.imshow("Frame", output)
+        key = cv2.waitKey(1) & 0xFF
+        if cv2.getWindowProperty('Frame', cv2.WND_PROP_VISIBLE) < 1:
+            break
+
+
+if __name__ == '__main__':
+    main()

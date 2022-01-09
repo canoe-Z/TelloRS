@@ -61,8 +61,9 @@ class TelloRS(QMainWindow):
         self.set_map(self.map)
 
         # sidebar
+        self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.listWidget.currentRowChanged.connect(
-            self.ui.stackedWidget.setCurrentIndex)
+            self.set_page)
 
         # toolbar
         self.ui.action_connect.triggered.connect(self.connect_tello)
@@ -92,8 +93,8 @@ class TelloRS(QMainWindow):
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
         self.ui.rbtn_move_fixed.clicked.connect(
             lambda: self.ui.rbtn_move_fixed_3.setChecked(True))
-        self.ui.gb_det.clicked.connect(self.process_thread.set_det_realtime)
-        self.ui.gb_cls.clicked.connect(self.process_thread.set_cls_realtime)
+        self.ui.gb_det.toggled.connect(self.process_thread.set_det_realtime)
+        self.ui.gb_cls.toggled.connect(self.process_thread.set_cls_realtime)
         self.ui.cb_det.currentIndexChanged.connect(
             self.process_thread.set_det_method)
         self.ui.slider_step_1.setValue(30)
@@ -109,8 +110,6 @@ class TelloRS(QMainWindow):
         self.ui.slider_conf.valueChanged.connect(self.change_det_conf)
         self.ui.slider_conf.setValue(35)
 
-        # self.ui.cb_autocap.clicked.connect(
-        # self.ui.pushButton.connect()
         self.ui.btn_clean_nav.clicked.connect(self.reset_map)
         self.ui.cb_show_nav.clicked.connect(self.set_autocap)
         self.ui.cb_autocap.clicked.connect(self.set_shownav)
@@ -142,7 +141,7 @@ class TelloRS(QMainWindow):
         self.ui.slider_speed_3.setMinimum(10)  # 最小值
         self.ui.slider_speed_3.setMaximum(50)  # 最大值
         self.ui.slider_speed_3.valueChanged.connect(self.change_movespeed_p3)
-        self.ui.cb_tracking.clicked.connect(
+        self.ui.cb_tracking.toggled.connect(
             self.process_thread.set_tracking_state)
 
         # page 4
@@ -159,11 +158,34 @@ class TelloRS(QMainWindow):
         self.ui.label_map_2.setPixmap(qImg2)
 
     def get_map_pos(self, event):
-        self.map_x = int(event.pos().x()*1280/400)
-        self.map_y = int((400-event.pos().y())*1280/400)
+        self.map_x = int(event.position().x()*1280/400)
+        self.map_y = int((400-event.position().y())*1280/400)
 
         self.ui.label_pos_2.setText(
-            str('坐标: '+str(self.map_x)+' '+str(self.map_y))+' ')
+            str('坐标: ('+str(self.map_x)+','+str(self.map_y))+')')
+
+    @Slot()
+    def set_page(self, page: int):
+        if self.ui.stackedWidget.currentIndex() == 0:
+            self.last_cls_state = self.process_thread.cls_realtime
+            self.last_det_state = self.process_thread.det_realtime
+
+        self.ui.stackedWidget.setCurrentIndex(page)
+        if page == 0:
+            self.ui.gb_cls.setChecked(self.last_cls_state)
+            self.ui.gb_det.setChecked(self.last_det_state)
+        elif page == 1:
+            self.ui.gb_cls.setChecked(False)
+            self.ui.gb_det.setChecked(True)
+        else:
+            self.ui.gb_cls.setChecked(False)
+            self.ui.gb_det.setChecked(False)
+
+        if page == 3:
+            self.process_thread.enable_tracking = True
+        else:
+            self.process_thread.enable_tracking = False
+            self.ui.cb_tracking.setChecked(False)
 
     @Slot()
     def show_battery(self):
