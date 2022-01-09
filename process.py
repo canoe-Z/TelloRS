@@ -252,8 +252,12 @@ class ProcessThread(QThread):
     @Slot()
     def set_det_method(self, i: int):
         self.det_method = i
-        #self.det_method=DetMethod.NAN
+        # self.det_method=DetMethod.NAN
         print('当前检测算法为: '+str(self.det_method))
+
+    def set_conf_th(self, conf):
+        self.nanodet.prob_threshold = conf
+        self.yolo.prob_threshold = conf
 
 
 class VideoWriter(QThread):
@@ -287,5 +291,12 @@ class VideoWriter(QThread):
                         print("录像结束")
                         break
                     sleep(1 / self.fps)
-
             sleep(0.01)
+
+    @Slot()
+    def start_record(self):
+        self.is_recording = True
+
+    @Slot()
+    def stop_record(self):
+        self.is_recording = False

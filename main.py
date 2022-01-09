@@ -20,9 +20,9 @@ from utils.img import cv2toQImage
 # os.environ["QT_SCALE_FACTOR"] = "1.5"
 
 
-class mywindow(QMainWindow):
+class TelloRS(QMainWindow):
     def __init__(self):
-        super(mywindow, self).__init__()
+        super(TelloRS, self).__init__()
 
         self.tello_connected = False
         self.rc_speed = 30
@@ -47,6 +47,7 @@ class mywindow(QMainWindow):
         self.point_thread = PointThread(self.tello, auto_queue)
 
         # signal
+        self.frame_thread.signal.connect(self.show_battery)
         self.control_thread.finish_signal.connect(self.command_finish)
         self.imu_thread.sift_signal.connect(self.draw_sift_pos)
         self.imu_thread.imu_signal.connect(self.draw_imu_pos)
@@ -66,8 +67,9 @@ class mywindow(QMainWindow):
         # toolbar
         self.ui.action_connect.triggered.connect(self.connect_tello)
         self.ui.action_takephoto.triggered.connect(self.take_photo)
-        self.ui.action_record.triggered.connect(self.start_record)
-        self.ui.action_stoprecord.triggered.connect(self.stop_record)
+        self.ui.action_record.triggered.connect(self.video_writer.start_record)
+        self.ui.action_stoprecord.triggered.connect(
+            self.video_writer.stop_record)
 
         # page 1
         self.control_mode = ControlMode.FIXED_MODE
@@ -82,12 +84,23 @@ class mywindow(QMainWindow):
         self.ui.gb_cls.clicked.connect(self.process_thread.set_cls_realtime)
         self.ui.cb_det.currentIndexChanged.connect(
             self.process_thread.set_det_method)
+        self.ui.slider_step_1.setValue(30)
+        self.ui.slider_speed_1.setValue(self.rc_speed)
+        self.ui.slider_step_1.setMinimum(20)  # 最小值
+        self.ui.slider_step_1.setMaximum(100)  # 最大值
+        self.ui.slider_step_1.valueChanged.connect(self.movestep_1)
+        self.ui.slider_speed_1.setMinimum(10)  # 最小值
+        self.ui.slider_speed_1.setMaximum(50)  # 最大值
+        self.ui.slider_speed_1.valueChanged.connect(self.movespeed_1)
+        self.ui.slider_conf.setMinimum(1)
+        self.ui.slider_conf.setMaximum(100)
+        self.ui.slider_conf.valueChanged.connect(self.change_conf)
+        self.ui.slider_conf.setValue(35)
 
         # page 2
         self.ui.btn_autoflight.clicked.connect(self.start_auto_flight)
         self.ui.btn_pointflight.clicked.connect(self.start_point_flight)
-        # 尝试获取坐标
-        self.ui.label_map_2.mousePressEvent = self.getPos
+        self.ui.label_map_2.mousePressEvent = self.getPos  # 尝试获取坐标
 
         # page 3
         self.ui.rbtn_move_single_3.clicked.connect(
@@ -97,46 +110,33 @@ class mywindow(QMainWindow):
         self.ui.rbtn_move_fixed_3.clicked.connect(
             lambda: self.set_control_mode(ControlMode.FIXED_MODE))
 
-        # self.ui.chk_autocap.stateChanged.connect(self.chk_autocap)
-
-        # 滑动条连接
-        self.ui.slider_step_1.setValue(30)
         self.ui.slider_step_3.setValue(30)
-        self.ui.slider_speed_1.setValue(self.rc_speed)
         self.ui.slider_speed_3.setValue(self.rc_speed)
-        self.ui.slider_step_1.setMinimum(20)  # 最小值
-        self.ui.slider_step_1.setMaximum(100)  # 最大值
-        self.ui.slider_step_1.valueChanged.connect(self.movestep_1)
         self.ui.slider_step_3.setMinimum(20)  # 最小值
         self.ui.slider_step_3.setMaximum(100)  # 最大值
         self.ui.slider_step_3.valueChanged.connect(self.movestep_3)
-
-        self.ui.slider_speed_1.setMinimum(10)  # 最小值
-        self.ui.slider_speed_1.setMaximum(50)  # 最大值
-        self.ui.slider_speed_1.valueChanged.connect(self.movespeed_1)
         self.ui.slider_speed_3.setMinimum(10)  # 最小值
         self.ui.slider_speed_3.setMaximum(50)  # 最大值
         self.ui.slider_speed_3.valueChanged.connect(self.movespeed_3)
 
-        self.ui.slider_conf.setMinimum(1)
-        self.ui.slider_conf.setMaximum(100)
-        self.ui.slider_conf.valueChanged.connect(self.change_conf)
-        self.ui.slider_conf.setValue(40)
-
         # page 4
         self.ui.loadpic_4.clicked.connect(self.openpic)
+        self.ui.savepic_4.clicked.connect(self.savepic)
         # self.ui.loadpic_4.clicked.connect(self.loadpicture)
         # self.ui.savepic_4.clicked.connect(self.savepicture)
 
         # print(i)
-        self.ui.statusbar.addPermanentWidget(QLabel('电源剩余：'+str()), stretch=0)
+        self.label_battery = QLabel('电源剩余: '+str())
+        self.ui.statusbar.addPermanentWidget(self.label_battery, stretch=0)
 
-    # 第二页自动巡检开启
+    @Slot()
+    def show_battery(self):
+        self.label_battery.setText(
+            '电源剩余: '+str(self.frame_thread.tello_battery))
 
+    @Slot()
     def start_auto_flight(self):
         self.auto_thread.start()
-        #self.point_thread.set_end_pos(500, 500)
-        # self.point_thread.start()
 
     @Slot()
     def start_point_flight(self):
@@ -144,45 +144,36 @@ class mywindow(QMainWindow):
         self.point_thread.start()
 
     # 滑动条触发控制
-
     def movestep_1(self):
         self.ui.label_step_1.setText(
-            str('步长：'+str(self.ui.slider_step_1.value())))
+            str('步长: '+str(self.ui.slider_step_1.value())))
         self.ui.slider_step_3.setValue(self.ui.slider_step_1.value())
         self.control_thread.move_distance = self.ui.slider_step_1.value()
 
     def movestep_3(self):
         self.ui.label_step_3.setText(
-            str('步长：'+str(self.ui.slider_step_3.value())))
+            str('步长: '+str(self.ui.slider_step_3.value())))
         self.ui.slider_step_1.setValue(self.ui.slider_step_3.value())
         self.control_thread.move_distance = self.ui.slider_step_3.value()
 
     def movespeed_1(self):
         self.ui.label_speed_1.setText(
-            str('转速：'+str(self.ui.slider_speed_1.value())))
+            str('转速: '+str(self.ui.slider_speed_1.value())))
         self.ui.slider_speed_3.setValue(self.ui.slider_speed_1.value())
         self.rc_speed = self.ui.slider_speed_1.value()
 
     def movespeed_3(self):
         self.ui.label_speed_3.setText(
-            str('转速：'+str(self.ui.slider_speed_3.value())))
+            str('转速: '+str(self.ui.slider_speed_3.value())))
         self.ui.slider_speed_1.setValue(self.ui.slider_speed_3.value())
         self.rc_speed = self.ui.slider_speed_3.value()
 
-    def change_conf(self):
-        self.ui.label_conf.setText(
-            str('阈值：'+str(self.ui.slider_conf.value()/100)))
-        self.process_thread.conf = self.ui.slider_conf.value()/100
-
-    def start_record(self):
-        self.video_writer.is_recording = True
-
-    def stop_record(self):
-        self.video_writer.is_recording = False
-
     @Slot()
-    def auto(self):
-        self.auto_thread.start()
+    def change_conf(self):
+        conf_th = self.ui.slider_conf.value()/100
+        self.ui.label_conf.setText(
+            str('阈值: '+str(conf_th)))
+        self.set_conf_th(conf_th)
 
     @Slot()
     def chk_autocap(self):
@@ -342,19 +333,26 @@ class mywindow(QMainWindow):
         if self.is_autocap:
             cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
 
-    @Slot()
+    @ Slot()
     def openpic(self):
         directory = QtWidgets.QFileDialog.getOpenFileName(
             self, "选取图片文件", "./", "All Files (*);;jpg文件 (*.jpg);;png文件 (*.png);;bmp文件 (*.bmp)")
-        qImg = cv2toQImage(cv2.imread(directory[0]))
+        self.pic_4 = cv2.imread(directory[0])
+        qImg = cv2toQImage(self.pic_4)
         qImg = QtGui.QPixmap(qImg).scaled(
             self.ui.label_pic4.width(), self.ui.label_pic4.height())
         self.ui.label_pic4.setPixmap(qImg)
 
+    @ Slot()
+    def savepic(self):
+        directory = QtWidgets.QFileDialog.getSaveFileName(
+            self, "选择保存路径", "./", "jpg文件 (*.jpg);;png文件 (*.png);;bmp文件 (*.bmp);;All Files (*)")
+        cv2.imwrite(directory[0], self.pic_4)
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    window = mywindow()
+    window = TelloRS()
     window.show()
 
     sys.exit(app.exec())

@@ -137,7 +137,7 @@ class autoThread(QThread):
                 cv2.imwrite('output/'+curDataTime +
                             '.png', self.frame_thread.img)
             else:
-                self.tello.land
+                self.tello.land()
             sleep(1)
 
 
@@ -171,4 +171,7 @@ class PointThread(QThread):
             vy = self.pid_y(y)
             print(x, y, vx, vy)
             x, y = self.update(vx, vy)
+            radius = 15
+            if abs(x-self.setpoint_x) <= radius and abs(y-self.setpoint_y) <= radius:
+                break
             sleep(0.02)

@@ -9,9 +9,8 @@ from det.utils.yolov5_utils import *
 
 
 class YOLOv5(object):
-    def __init__(self, model_pb_path, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
-        stride, names = 64, [
-            f'class{i}' for i in range(1000)]  # assign defaults
+    def __init__(self, model_pb_path, input_shape=320, prob_threshold=0.35, iou_threshold=0.2):
+        self.input_shape = input_shape
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
         self.session = onnxruntime.InferenceSession(model_pb_path)
@@ -20,7 +19,8 @@ class YOLOv5(object):
         im = img.copy().astype('float32')
 
         # Padded resize
-        im = letterbox(im, 320, stride=32, auto=False, scaleFill=False)[0]
+        im = letterbox(im, self.input_shape, stride=32,
+                       auto=False, scaleFill=False)[0]
         im = im.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
 
         im /= 255  # 0 - 255 to 0.0 - 1.0

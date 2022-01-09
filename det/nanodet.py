@@ -5,7 +5,7 @@ import onnxruntime as ort
 
 
 class NanoDet(object):
-    def __init__(self, input_shape=320, prob_threshold=0.4, iou_threshold=0.3):
+    def __init__(self, input_shape=320, prob_threshold=0.35, iou_threshold=0.2):
         with open('./det/model/coco.names', 'rt') as f:
             self.classes = f.read().rstrip('\n').split('\n')
         self.num_classes = len(self.classes)

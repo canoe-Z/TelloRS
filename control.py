@@ -34,6 +34,7 @@ class FrameThread(QThread):
         self.img = None
         self.stab_on = False
         self.tello_connected = False
+        self.tello_battery = 0
 
     def run(self):
         while True:
@@ -64,6 +65,8 @@ class FrameThread(QThread):
             a = self.img*2
 
             self.qmut.unlock()
+
+            self.tello_battery = self.tello.get_battery()
             self.signal.emit()
             sleep(0.01)
 
