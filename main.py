@@ -40,8 +40,8 @@ class TelloRS(QMainWindow):
         self.control_thread = ControlThread(self.tello)
         self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
         self.video_writer = VideoWriter(self.frame_thread)
-        self.process_thread = ProcessThread(
-            self.frame_thread, self.control_thread)
+        self.process_thread = ProcessThread(self.tello,
+                                            self.frame_thread, self.control_thread)
         self.auto_thread = autoThread(
             self.tello, auto_queue, self.frame_thread)
         self.point_thread = PointThread(self.tello, auto_queue)
@@ -78,7 +78,7 @@ class TelloRS(QMainWindow):
             lambda: self.set_control_mode(ControlMode.SINGLE_MODE))
         self.ui.rbtn_move_single.clicked.connect(
             lambda: self.ui.rbtn_move_single_3.setChecked(True))
-    
+
         self.ui.rbtn_move_rc.clicked.connect(
             lambda: self.set_control_mode(ControlMode.RC_MODE))
         self.ui.rbtn_move_rc.clicked.connect(
@@ -104,7 +104,7 @@ class TelloRS(QMainWindow):
         self.ui.slider_conf.setMaximum(100)
         self.ui.slider_conf.valueChanged.connect(self.change_conf)
         self.ui.slider_conf.setValue(35)
-
+        self.ui.pushButton.connect()
         # page 2
         self.ui.btn_autoflight.clicked.connect(self.start_auto_flight)
         self.ui.btn_pointflight.clicked.connect(self.start_point_flight)
@@ -136,6 +136,9 @@ class TelloRS(QMainWindow):
         self.ui.slider_speed_3.setMaximum(50)  # 最大值
         self.ui.slider_speed_3.valueChanged.connect(self.movespeed_3)
 
+        self.ui.cb_tracking.clicked.connect(
+            self.process_thread.set_tracking_state)
+
         # page 4
         self.ui.loadpic_4.clicked.connect(self.openpic)
         self.ui.savepic_4.clicked.connect(self.savepic)
@@ -150,9 +153,6 @@ class TelloRS(QMainWindow):
         self.label_battery.setText(
             '电源剩余: '+str(self.frame_thread.tello_battery))
 
-    # @Slot()
-    # def show_battery(self):
-        
     @Slot()
     def start_auto_flight(self):
         self.auto_thread.start()

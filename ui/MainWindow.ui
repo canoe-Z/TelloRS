@@ -134,7 +134,7 @@ QTableWidget QHeaderView::section
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
@@ -489,6 +489,57 @@ background:white;</string>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_23">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>25</height>
+                    </size>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <widget class="QPushButton" name="btn_clean_nav">
+                    <property name="geometry">
+                     <rect>
+                      <x>200</x>
+                      <y>0</y>
+                      <width>75</width>
+                      <height>24</height>
+                     </rect>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>90</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="text">
+                     <string>重置</string>
+                    </property>
+                   </widget>
+                   <widget class="QCheckBox" name="cb_show_nav">
+                    <property name="geometry">
+                     <rect>
+                      <x>50</x>
+                      <y>0</y>
+                      <width>111</width>
+                      <height>24</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>显示实时位置</string>
+                    </property>
+                   </widget>
                   </widget>
                  </item>
                  <item>
@@ -1134,7 +1185,7 @@ background:white;</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item alignment="Qt::AlignHCenter">
-               <widget class="QRadioButton" name="autoradioButton_2">
+               <widget class="QCheckBox" name="cb_tracking">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>

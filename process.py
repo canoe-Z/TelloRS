@@ -6,6 +6,7 @@ from time import sleep
 import cv2
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal, Slot
+from cv2 import imwrite
 
 from cls.resnet import ResNet
 from control import FrameThread, ControlThread
@@ -14,6 +15,8 @@ from det.nanodet_plus import NanoDetPlus
 from det.template import TemplateMatcher
 from det.yolov5 import YOLOv5
 from simple_pid import PID
+from tracker import Tracker
+from djitellopy import Tello
 
 
 class DetMethod(IntEnum):
@@ -57,7 +60,7 @@ class ProcessThread(QThread):
     signal = Signal()
     mutex = QMutex()
 
-    def __init__(self, frameThread: FrameThread, controlThread: ControlThread):
+    def __init__(self, tello: Tello, frameThread: FrameThread, controlThread: ControlThread):
         super(ProcessThread, self).__init__()
 
         self.conf = 0.4
@@ -67,10 +70,13 @@ class ProcessThread(QThread):
         self.frame = None
 
         # detection
+        # self.["storage-tank", "mine", "ship","field","plane"]
+        self.classes = ["storage-tank", "mine", "ship", "field", "plane"]
         self.det_realtime = True
         self.det_method = DetMethod.NANODET
         self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx')
-        self.nanodet = NanoDetPlus('./det/model/nanodet_uav.onnx')
+        self.nanodet = NanoDetPlus(
+            './det/model/nanodet_uav.onnx', self.classes)
 
         # template
         template_dir = './det/model/template/'
@@ -89,9 +95,11 @@ class ProcessThread(QThread):
         self.enable_tracking = False
         self.end_tracking = False
         self.start_tracking = False
-        self.tracker = cv2.TrackerCSRT_create()
+        self.tracker = Tracker()
 
         self.track_flag = 0
+        self.tello = tello
+        # self.pid
 
     def run(self):
         # i = 0
@@ -184,6 +192,16 @@ class ProcessThread(QThread):
                 elif self.det_method == DetMethod.TEMPLATE_MATCHING:
                     self.frame = self.template_matcher.detect(self.frame)
 
+            # if self.enable_tracking:
+            self.frame, success_flag, x, y = self.tracker.update(self.frame)
+            if self.enable_tracking:
+                if success_flag:
+                    y = self.frame.shape[0]-y
+                    dx = x-self.frame.shape[1]/2
+                    dy = y-self.frame.shape[0]/2
+                    print(dx, dy)
+                    self.tello.send_rc_control(
+                        int(dx*0.07), int(dy*0.07), 0, 0)
             # else:
             #     pass
             #self.frame = frame
@@ -258,6 +276,14 @@ class ProcessThread(QThread):
     def set_conf_th(self, conf):
         self.nanodet.prob_threshold = conf
         self.yolo.prob_threshold = conf
+
+    @Slot()
+    def set_tracking_state(self, checked: bool):
+        self.enable_tracking = checked
+        if checked:
+            print('启用追踪')
+        else:
+            print('禁用追踪')
 
 
 class VideoWriter(QThread):

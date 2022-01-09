@@ -1,7 +1,5 @@
-from simple_pid import PID
-from re import X
+import math
 import time
-from enum import Enum
 from queue import Queue
 from time import sleep
 
@@ -9,13 +7,11 @@ import cv2
 import numpy as np
 from djitellopy import Tello
 from numpy import ndarray
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, QThread, Signal, QMutex, QDateTime
+from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal
+from simple_pid import PID
 
-from match.sift import SIFTMatcher
-from utils.control import HiddenPrints
 from control import FrameThread
-import math
+from match.sift import SIFTMatcher
 
 
 class MatchingThread(QThread):
@@ -76,7 +72,6 @@ class IMUThread(QThread):
 
             ds = -v*dt
             self.pos += ds*2.8*10
-            #print(self.pos[0], self.pos[1], self.pos[2])
             if self.nav_queue.empty():
                 # print('empty')
                 # print(self.pos[0], self.pos[1], self.pos[2])

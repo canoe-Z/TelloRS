@@ -6,13 +6,13 @@ import math
 
 
 class NanoDetPlus(object):
-    def __init__(self, model_pb_path, label_path=None, prob_threshold=0.5, iou_threshold=0.3):
+    def __init__(self, model_pb_path, classes, label_path=None, prob_threshold=0.5, iou_threshold=0.3):
         # self.classes = list(
         #     map(lambda x: x.strip(), open(label_path, 'r').readlines()))
-        self.classes = ['car']
-        with open('./det/model/coco.names', 'rt') as f:
-            self.classes = f.read().rstrip('\n').split('\n')
-        self.num_classes = len(self.classes)
+        self.classes = classes
+        # with open('./det/model/coco.names', 'rt') as f:
+        #     self.classes = f.read().rstrip('\n').split('\n')
+        # self.num_classes = len(self.classes)
         self.num_classes = len(self.classes)
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
@@ -136,7 +136,7 @@ class NanoDetPlus(object):
             classIds = classIds[indices]
             return mlvl_bboxes, confidences, classIds
         else:
-            print('nothing detect')
+            #print('nothing detect')
             return np.array([]), np.array([]), np.array([])
 
     def distance2bbox(self, points, distance, max_shape=None):

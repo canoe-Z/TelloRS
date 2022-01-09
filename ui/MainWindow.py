@@ -16,12 +16,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QFrame,
-    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-    QLayout, QListWidget, QListWidgetItem, QMainWindow,
-    QPushButton, QRadioButton, QSizePolicy, QSlider,
-    QSpacerItem, QStackedWidget, QStatusBar, QToolBar,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFormLayout,
+    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
+    QLabel, QLayout, QListWidget, QListWidgetItem,
+    QMainWindow, QPushButton, QRadioButton, QSizePolicy,
+    QSlider, QSpacerItem, QStackedWidget, QStatusBar,
+    QToolBar, QVBoxLayout, QWidget)
 
 from ui.ClickJumpSlider import ClickJumpSlider
 
@@ -281,6 +281,22 @@ class Ui_MainWindow(object):
         self.label_source.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_7.addWidget(self.label_source)
+
+        self.frame_23 = QFrame(self.frame_4)
+        self.frame_23.setObjectName(u"frame_23")
+        self.frame_23.setMinimumSize(QSize(0, 25))
+        self.frame_23.setFrameShape(QFrame.StyledPanel)
+        self.frame_23.setFrameShadow(QFrame.Raised)
+        self.btn_clean_nav = QPushButton(self.frame_23)
+        self.btn_clean_nav.setObjectName(u"btn_clean_nav")
+        self.btn_clean_nav.setGeometry(QRect(200, 0, 75, 24))
+        self.btn_clean_nav.setMaximumSize(QSize(90, 16777215))
+        self.btn_clean_nav.setLayoutDirection(Qt.LeftToRight)
+        self.cb_show_nav = QCheckBox(self.frame_23)
+        self.cb_show_nav.setObjectName(u"cb_show_nav")
+        self.cb_show_nav.setGeometry(QRect(50, 0, 111, 24))
+
+        self.verticalLayout_7.addWidget(self.frame_23)
 
         self.verticalSpacer_8 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -625,15 +641,15 @@ class Ui_MainWindow(object):
         self.frame_8.setFrameShadow(QFrame.Raised)
         self.verticalLayout_6 = QVBoxLayout(self.frame_8)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.autoradioButton_2 = QRadioButton(self.frame_8)
-        self.autoradioButton_2.setObjectName(u"autoradioButton_2")
-        self.autoradioButton_2.setMinimumSize(QSize(0, 40))
+        self.cb_tracking = QCheckBox(self.frame_8)
+        self.cb_tracking.setObjectName(u"cb_tracking")
+        self.cb_tracking.setMinimumSize(QSize(0, 40))
         font = QFont()
         font.setPointSize(11)
         font.setBold(False)
-        self.autoradioButton_2.setFont(font)
+        self.cb_tracking.setFont(font)
 
-        self.verticalLayout_6.addWidget(self.autoradioButton_2, 0, Qt.AlignHCenter)
+        self.verticalLayout_6.addWidget(self.cb_tracking, 0, Qt.AlignHCenter)
 
         self.groupBox_10 = QGroupBox(self.frame_8)
         self.groupBox_10.setObjectName(u"groupBox_10")
@@ -806,7 +822,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -853,6 +869,8 @@ class Ui_MainWindow(object):
 
         self.label_cls_result.setText(QCoreApplication.translate("MainWindow", u"\u65e0", None))
         self.label_source.setText("")
+        self.btn_clean_nav.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u7f6e", None))
+        self.cb_show_nav.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u5b9e\u65f6\u4f4d\u7f6e", None))
         self.rbtn_move_fixed.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.rbtn_move_single.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
         self.label_step_1.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
@@ -873,7 +891,7 @@ class Ui_MainWindow(object):
         self.target_3_name.setText(QCoreApplication.translate("MainWindow", u"\u7c7b\u522b\uff1a\u6682\u65e0", None))
         self.target_3_pos.setText(QCoreApplication.translate("MainWindow", u"\u5750\u6807\uff1a(0,0)", None))
         self.label_template_3.setText("")
-        self.autoradioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
+        self.cb_tracking.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u6355\u6349\u76ee\u6807", None))
         self.rbtn_move_fixed_3.setText(QCoreApplication.translate("MainWindow", u"\u95f4\u9694\u63a7\u5236", None))
         self.rbtn_move_single_3.setText(QCoreApplication.translate("MainWindow", u"\u5355\u6b65\u63a7\u5236", None))
         self.label_step_3.setText(QCoreApplication.translate("MainWindow", u"\u6b65\u957f\uff1a30", None))
