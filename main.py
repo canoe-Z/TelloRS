@@ -125,7 +125,6 @@ class TelloRS(QMainWindow):
         # self.ui.loadpic_4.clicked.connect(self.loadpicture)
         # self.ui.savepic_4.clicked.connect(self.savepicture)
 
-        # print(i)
         self.label_battery = QLabel('电源剩余: '+str())
         self.ui.statusbar.addPermanentWidget(self.label_battery, stretch=0)
 
@@ -134,6 +133,9 @@ class TelloRS(QMainWindow):
         self.label_battery.setText(
             '电源剩余: '+str(self.frame_thread.tello_battery))
 
+    # @Slot()
+    # def show_battery(self):
+        
     @Slot()
     def start_auto_flight(self):
         self.auto_thread.start()
@@ -173,7 +175,7 @@ class TelloRS(QMainWindow):
         conf_th = self.ui.slider_conf.value()/100
         self.ui.label_conf.setText(
             str('阈值: '+str(conf_th)))
-        self.set_conf_th(conf_th)
+        self.process_thread.set_conf_th(conf_th)
 
     @Slot()
     def chk_autocap(self):
@@ -330,10 +332,10 @@ class TelloRS(QMainWindow):
     def command_finish(self, key: int):
         self.ui.statusbar.showMessage(lut_key(key)+' OK', 2000)
         curDataTime = QDateTime.currentDateTime().toString('hh_mm_ss_yyyy_MM_dd')
-        if self.is_autocap:
-            cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
+        # if self.is_autocap:
+        #     cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
 
-    @ Slot()
+    @Slot()
     def openpic(self):
         directory = QtWidgets.QFileDialog.getOpenFileName(
             self, "选取图片文件", "./", "All Files (*);;jpg文件 (*.jpg);;png文件 (*.png);;bmp文件 (*.bmp)")
@@ -343,7 +345,7 @@ class TelloRS(QMainWindow):
             self.ui.label_pic4.width(), self.ui.label_pic4.height())
         self.ui.label_pic4.setPixmap(qImg)
 
-    @ Slot()
+    @Slot()
     def savepic(self):
         directory = QtWidgets.QFileDialog.getSaveFileName(
             self, "选择保存路径", "./", "jpg文件 (*.jpg);;png文件 (*.png);;bmp文件 (*.bmp);;All Files (*)")

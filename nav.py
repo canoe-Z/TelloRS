@@ -74,7 +74,7 @@ class IMUThread(QThread):
             dt = currnet_time-self.last_time
             self.last_time = currnet_time
 
-            ds = v*dt
+            ds = -v*dt
             self.pos += ds*2.8*10
             #print(self.pos[0], self.pos[1], self.pos[2])
             if self.nav_queue.empty():

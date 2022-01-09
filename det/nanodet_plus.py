@@ -10,6 +10,9 @@ class NanoDetPlus(object):
         # self.classes = list(
         #     map(lambda x: x.strip(), open(label_path, 'r').readlines()))
         self.classes = ['car']
+        with open('./det/model/coco.names', 'rt') as f:
+            self.classes = f.read().rstrip('\n').split('\n')
+        self.num_classes = len(self.classes)
         self.num_classes = len(self.classes)
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
