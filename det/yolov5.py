@@ -3,7 +3,6 @@ import onnxruntime
 import cv2
 import torch
 import time
-import numpy as np
 import argparse
 from det.utils.yolov5_utils import *
 
@@ -41,7 +40,7 @@ class YOLOv5(object):
                 bx, by, bw, bh, det_conf, det_classid = bbox
                 #c1, c2 = ((int(bx), int(by)), (int(bw), int(bh)))
                 results.append((int(bx), int(by), int(bw), int(
-                    bh), det_classid, det_conf))
+                    bh), int(det_classid), det_conf))
                 # cv2.rectangle(img, c1, c2, (0, 0, 255),
                 #               5, cv2.LINE_AA)  # filled
         return results

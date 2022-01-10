@@ -81,6 +81,12 @@ class ProcessThread(QThread):
         self.enable_tracking = False
         self.start_tracking = False
         self.tracker = Tracker()
+
+        # PID
+        self.pid_x = PID(0.085, 0.01, 0.01, setpoint=0)
+        self.pid_y = PID(0.085, 0.01, 0.01, setpoint=0)
+        self.pid_x.output_limits = (-30, 30)
+        self.pid_y.output_limits = (-30, 30)
         # self.pid
 
     def run(self):
@@ -168,9 +174,14 @@ class ProcessThread(QThread):
                         y = self.frame.shape[0]-y
                         dx = x-self.frame.shape[1]/2
                         dy = y-self.frame.shape[0]/2
-                        print(dx, dy)
+
+                        vx = self.pid_x(-dx)
+                        vy = self.pid_y(-dy)
+                        print(dx, dy, vx, vy)
                         self.tello.send_rc_control(
-                            int(dx*0.07), int(dy*0.07), 0, 0)
+                            int(vx), int(vy), 0, 0)
+                        # self.tello.send_rc_control(
+                        #     int(dx*0.07), int(dy*0.07), 0, 0)
             # else:
             #     pass
             # self.frame = frame
