@@ -11,6 +11,7 @@ from matplotlib.pyplot import cla
 
 from cls.resnet import ResNet
 from control import FrameThread, ControlThread
+from nav import IMUThread
 from det.nanodet import NanoDet
 from det.nanodet_plus import NanoDetPlus
 from det.template import TemplateMatcher
@@ -39,11 +40,12 @@ class ProcessThread(QThread):
     recent_signal = Signal()
     mutex = QMutex()
 
-    def __init__(self, tello: Tello, frameThread: FrameThread, controlThread: ControlThread):
+    def __init__(self, tello: Tello, frame_thread: FrameThread, control_thread: ControlThread, IMU_thread: IMUThread):
         super(ProcessThread, self).__init__()
 
-        self.frameThread = frameThread
-        self.controlThread = controlThread
+        self.frame_thread = frame_thread
+        self.control_thread = control_thread
+        self.IMU_thread = IMU_thread
         self.frame = None
 
         # detection
@@ -82,8 +84,8 @@ class ProcessThread(QThread):
         # i = 0
         # minsize = 7000
         # model = NanoDetPlus('./det/model/nanodet_car.onnx')
-        #start_time = time.time()
-        #last_time = start_time
+        # start_time = time.time()
+        # last_time = start_time
         # x_model = XModel(self.x_distance)
         # y_model = YModel(self.y_distance)
         # x_pid = PID(0.001, 0.1, 0.05, setpoint=1)
@@ -91,7 +93,7 @@ class ProcessThread(QThread):
         frame_num = 0
         while True:
             self.mutex.lock()
-            self.frame = self.frameThread.img
+            self.frame = self.frame_thread.img
             self.mutex.unlock()
 
             if self.frame is None:
@@ -114,6 +116,22 @@ class ProcessThread(QThread):
                     if frame_num % 20 == 0:
                         for i in range(min(len(dets), 3)):
                             xmin, ymin, xmax, ymax, classid, conf = dets[i]
+
+                            # 求相对位移
+                            x = (xmin+xmax)/2
+                            y = (ymin+ymax)/2
+                            y = self.frame.shape[0]-y
+                            dx = x-self.frame.shape[1]/2
+                            dy = y-self.frame.shape[0]/2
+
+                            # tello坐标,平面坐标系
+                            tello_x = -self.IMU_thread.pos[1]
+                            tello_y = self.IMU_thread.pos[0]
+
+                            # 目标真实坐标
+                            x = int(dx*0.1 + tello_x)
+                            y = int(dy*0.1 + tello_y)
+
                             bbox_img = None
                             try:
                                 bbox_img, _, _ = letterbox(
@@ -123,7 +141,7 @@ class ProcessThread(QThread):
 
                             if bbox_img is not None:
                                 self.recent_dets.append(
-                                    (bbox_img, self.classes_cn[classid], conf))
+                                    (bbox_img, self.classes_cn[classid], (x, y)))
 
                         while len(self.recent_dets) > 3:
                             self.recent_dets.popleft()
@@ -147,7 +165,7 @@ class ProcessThread(QThread):
                             int(dx*0.07), int(dy*0.07), 0, 0)
             # else:
             #     pass
-            #self.frame = frame
+            # self.frame = frame
             frame_num += 1
             self.signal.emit()
             sleep(0.01)

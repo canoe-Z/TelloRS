@@ -147,7 +147,7 @@ class AutoFlightThread(QThread):
 
 
 class PointFlightThread(QThread):
-    finish_signal = Signal(int)
+    message_signal = Signal(str)
 
     def __init__(self, tello: Tello, auto_queue: Queue):
         super(PointFlightThread, self).__init__()
@@ -157,10 +157,10 @@ class PointFlightThread(QThread):
     def set_end_pos(self, x, y):
         self.setpoint_x = x
         self.setpoint_y = y
-        self.pid_x = PID(3, 0.01, 0.001, setpoint=x)
-        self.pid_y = PID(3, 0.01, 0.001, setpoint=y)
-        self.pid_x.output_limits = (-12, 12)
-        self.pid_y.output_limits = (-12, 12)
+        self.pid_x = PID(3, 0.01, 0.01, setpoint=x)
+        self.pid_y = PID(3, 0.01, 0.01, setpoint=y)
+        self.pid_x.output_limits = (-15, 15)
+        self.pid_y.output_limits = (-15, 15)
 
     def update(self, vx, vy):
         self.tello.send_rc_control(int(vx), int(vy), 0, 0)
@@ -177,11 +177,13 @@ class PointFlightThread(QThread):
                 for _ in range(5):
                     self.tello.send_rc_control(0, 0, 0, 0)
                 print("定点飞行结束")
+                self.message_signal.emit("定点飞行结束")
                 break
             else:
                 vx = self.pid_x(x)
                 vy = self.pid_y(y)
                 print(x, y, vx, vy)
                 x, y = self.update(vx, vy)
+                self.message_signal.emit('{} {} {} {}'.format(x, y, vx, vy))
 
             sleep(0.02)

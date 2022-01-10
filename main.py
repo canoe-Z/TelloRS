@@ -41,7 +41,7 @@ class TelloRS(QMainWindow):
         self.imu_thread = IMUThread(self.tello, nav_queue, auto_queue)
         self.video_writer = VideoWriter(self.frame_thread)
         self.process_thread = ProcessThread(self.tello,
-                                            self.frame_thread, self.control_thread)
+                                            self.frame_thread, self.control_thread, self.imu_thread)
         self.auto_thread = AutoFlightThread(
             self.tello, auto_queue, self.frame_thread)
         self.point_thread = PointFlightThread(self.tello, auto_queue)
@@ -53,6 +53,7 @@ class TelloRS(QMainWindow):
         self.imu_thread.imu_signal.connect(self.draw_imu_pos)
         self.process_thread.signal.connect(self.show_det)
         self.process_thread.recent_signal.connect(self.show_recent_det)
+        self.point_thread.message_signal.connect(self.show_message)
         # self.matching_thread.finish_signal.connect(self.show_map)
 
         # init ui
@@ -201,6 +202,10 @@ class TelloRS(QMainWindow):
             self.process_thread.enable_tracking = False
             self.ui.cb_tracking.setChecked(False)
 
+    @Slot(str)
+    def show_message(self, message: str):
+        self.ui.statusbar.showMessage(message)
+
     @Slot()
     def show_battery(self):
         self.label_battery.setText(
@@ -329,6 +334,8 @@ class TelloRS(QMainWindow):
                     self.ui_targets_img[i].width(), self.ui_targets_img[i].height())
                 self.ui_targets_img[i].setPixmap(qImg)
                 self.ui_targets_cls[i].setText(det[1])
+                self.ui_targets_pos[i].setText(
+                    '({},{})'.format(det[2][0], det[2][1]))
                 # self.ui.label_template.setPixmap()
 
     @Slot()
