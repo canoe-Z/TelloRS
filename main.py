@@ -99,6 +99,8 @@ class TelloRS(QMainWindow):
         self.ui.gb_cls.toggled.connect(self.process_thread.set_cls_realtime)
         self.ui.cb_det.currentIndexChanged.connect(
             self.process_thread.set_det_method)
+        self.ui.cb_cls.currentIndexChanged.connect(
+            self.process_thread.set_cls_method)
         self.ui.slider_step_1.setValue(30)
         self.ui.slider_speed_1.setValue(self.rc_speed)
         self.ui.slider_step_1.setMinimum(20)

@@ -9,7 +9,7 @@ from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal, Slot
 from cv2 import imwrite
 from matplotlib.pyplot import cla
 
-from cls.resnet import ResNet
+from cls.classfier import Classfier
 from control import FrameThread, ControlThread
 from nav import IMUThread
 from det.nanodet import NanoDet
@@ -31,8 +31,9 @@ class DetMethod(IntEnum):
 
 
 class ClsMethod(IntEnum):
-    RESNET18 = 0
-    YOLOV5 = 1
+    RESNET = 0
+    SHUFFLENET = 1
+    MOBILENET = 2
 
 
 class ProcessThread(QThread):
@@ -70,8 +71,10 @@ class ProcessThread(QThread):
         # cls
         self.cls_realtime = True
         self.cls_result = ''
-        self.cls_method = ClsMethod.RESNET18
-        self.classifier = ResNet()
+        self.cls_method = ClsMethod.RESNET
+        self.resnet = Classfier('./cls/model/resnet18.onnx')
+        self.shufflenet = Classfier('./cls/model/shufflenet_v2_x1_0.onnx')
+        self.mobilenet = Classfier('./cls/model/mobilenet_v3_small.onnx')
 
         # Track
         self.tello = tello
@@ -101,7 +104,12 @@ class ProcessThread(QThread):
 
             # classification
             if self.cls_realtime:
-                self.cls_result = self.classifier.infer(self.frame)
+                if self.cls_method == ClsMethod.RESNET:
+                    self.cls_result = self.resnet.infer(self.frame)
+                elif self.cls_method == ClsMethod.SHUFFLENET:
+                    self.cls_result = self.shufflenet.infer(self.frame)
+                elif self.cls_method == ClsMethod.MOBILENET:
+                    self.cls_result = self.mobilenet.infer(self.frame)
 
             # detection
             if self.det_realtime:
@@ -198,8 +206,12 @@ class ProcessThread(QThread):
     @Slot()
     def set_det_method(self, i: int):
         self.det_method = i
-        # self.det_method=DetMethod.NAN
         print('当前检测算法为: '+str(self.det_method))
+
+    @Slot()
+    def set_cls_method(self, i: int):
+        self.cls_method = i
+        print('当前分类算法为: '+str(self.cls_method))
 
     def set_conf_th(self, conf):
         self.nanodet.prob_threshold = conf
