@@ -74,7 +74,7 @@ class IMUThread(QThread):
             dt = currnet_time-self.last_time
             self.last_time = currnet_time
 
-            ds = -v*dt
+            ds = v*dt
             self.pos += ds*2.8*10
             if self.nav_queue.empty():
                 # print('empty')
@@ -157,10 +157,10 @@ class PointFlightThread(QThread):
     def set_end_pos(self, x, y):
         self.setpoint_x = x
         self.setpoint_y = y
-        self.pid_x = PID(1, 0.01, 0.1, setpoint=x)
-        self.pid_y = PID(1, 0.01, 0.1, setpoint=y)
-        self.pid_x.output_limits = (-10, 10)
-        self.pid_y.output_limits = (-10, 10)
+        self.pid_x = PID(3, 0.01, 0.001, setpoint=x)
+        self.pid_y = PID(3, 0.01, 0.001, setpoint=y)
+        self.pid_x.output_limits = (-12, 12)
+        self.pid_y.output_limits = (-12, 12)
 
     def update(self, vx, vy):
         self.tello.send_rc_control(int(vx), int(vy), 0, 0)

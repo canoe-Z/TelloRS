@@ -9,8 +9,9 @@ from det.utils.yolov5_utils import *
 
 
 class YOLOv5(object):
-    def __init__(self, model_pb_path, input_shape=320, prob_threshold=0.35, iou_threshold=0.2):
+    def __init__(self, model_pb_path, classes, input_shape=320, prob_threshold=0.35, iou_threshold=0.2):
         self.input_shape = input_shape
+        self.classes = classes
         self.prob_threshold = prob_threshold
         self.iou_threshold = iou_threshold
         self.session = onnxruntime.InferenceSession(model_pb_path)
@@ -31,16 +32,19 @@ class YOLOv5(object):
         y = torch.tensor(y)
 
         pred = non_max_suppression(y, self.prob_threshold, self.iou_threshold)
+        results = []
         for i, det in enumerate(pred):
             det[:, :4] = scale_coords(
                 im.shape[2:], det[:, :4], img.shape).round()
             det = det.cpu().numpy()
             for bbox in det:
-                bx, by, bw, bh, conf, _ = bbox
-                c1, c2 = ((int(bx), int(by)), (int(bw), int(bh)))
-                cv2.rectangle(img, c1, c2, (0, 0, 255),
-                              5, cv2.LINE_AA)  # filled
-        return img
+                bx, by, bw, bh, det_conf, det_classid = bbox
+                #c1, c2 = ((int(bx), int(by)), (int(bw), int(bh)))
+                results.append((int(bx), int(by), int(bw), int(
+                    bh), det_classid, det_conf))
+                # cv2.rectangle(img, c1, c2, (0, 0, 255),
+                #               5, cv2.LINE_AA)  # filled
+        return results
 
 
 if __name__ == '__main__':

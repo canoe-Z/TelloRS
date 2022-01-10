@@ -52,6 +52,7 @@ class TelloRS(QMainWindow):
         self.imu_thread.sift_signal.connect(self.draw_sift_pos)
         self.imu_thread.imu_signal.connect(self.draw_imu_pos)
         self.process_thread.signal.connect(self.show_det)
+        self.process_thread.recent_signal.connect(self.show_recent_det)
         # self.matching_thread.finish_signal.connect(self.show_map)
 
         # init ui
@@ -112,12 +113,20 @@ class TelloRS(QMainWindow):
 
         self.ui.btn_clean_nav.clicked.connect(self.reset_map)
         self.ui.cb_show_nav.clicked.connect(self.set_autocap)
+        self.ui.cb_show_nav.setChecked(True)
         self.ui.cb_autocap.clicked.connect(self.set_shownav)
+        self.ui.cb_autocap.setChecked(True)
 
         # page 2
         self.ui.btn_autoflight.clicked.connect(self.start_auto_flight)
         self.ui.btn_pointflight.clicked.connect(self.start_point_flight)
         self.ui.label_map_2.mousePressEvent = self.get_map_pos  # 尝试获取坐标
+        self.ui_targets_img = [self.ui.target_1,
+                               self.ui.target_2, self.ui.target_3]
+        self.ui_targets_cls = [self.ui.target_1_name,
+                               self.ui.target_2_name, self.ui.target_3_name]
+        self.ui_targets_pos = [self.ui.target_1_pos,
+                               self.ui.target_2_pos, self.ui.target_3_pos]
 
         # page 3
         self.ui.rbtn_move_fixed_3.setChecked(True)
@@ -181,7 +190,12 @@ class TelloRS(QMainWindow):
             self.ui.gb_cls.setChecked(False)
             self.ui.gb_det.setChecked(False)
 
-        if page == 3:
+        if page == 1:
+            self.process_thread.show_recent_dets = True
+        else:
+            self.process_thread.show_recent_dets = False
+
+        if page == 2:
             self.process_thread.enable_tracking = True
         else:
             self.process_thread.enable_tracking = False
@@ -305,6 +319,17 @@ class TelloRS(QMainWindow):
         self.ui.label_template_2.setPixmap(qImg2)
         self.ui.label_template_3.setPixmap(qImg3)
         self.ui.label_cls_result.setText(self.process_thread.cls_result)
+
+    @Slot()
+    def show_recent_det(self):
+        for i, det in enumerate(self.process_thread.recent_dets):
+            if i < 3:
+                qImg = cv2toQImage(det[0])
+                qImg = QtGui.QPixmap(qImg).scaled(
+                    self.ui_targets_img[i].width(), self.ui_targets_img[i].height())
+                self.ui_targets_img[i].setPixmap(qImg)
+                self.ui_targets_cls[i].setText(det[1])
+                # self.ui.label_template.setPixmap()
 
     @Slot()
     def take_photo(self):

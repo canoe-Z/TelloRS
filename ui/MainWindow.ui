@@ -979,6 +979,18 @@ background:white;</string>
                    <layout class="QVBoxLayout" name="verticalLayout_9">
                     <item>
                      <widget class="QLabel" name="target_1">
+                      <property name="minimumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">border:1px solid gray;
 background:white;</string>
@@ -993,6 +1005,18 @@ background:white;</string>
                     </item>
                     <item>
                      <widget class="QLabel" name="target_2">
+                      <property name="minimumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">border:1px solid gray;
 background:white;</string>
@@ -1007,6 +1031,18 @@ background:white;</string>
                     </item>
                     <item>
                      <widget class="QLabel" name="target_3">
+                      <property name="minimumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>117</width>
+                        <height>95</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">border:1px solid gray;
 background:white;</string>

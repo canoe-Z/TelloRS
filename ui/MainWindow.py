@@ -523,6 +523,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.target_1 = QLabel(self.frame_14)
         self.target_1.setObjectName(u"target_1")
+        self.target_1.setMinimumSize(QSize(117, 95))
+        self.target_1.setMaximumSize(QSize(117, 95))
         self.target_1.setStyleSheet(u"border:1px solid gray;\n"
 "background:white;")
         self.target_1.setAlignment(Qt.AlignCenter)
@@ -531,6 +533,8 @@ class Ui_MainWindow(object):
 
         self.target_2 = QLabel(self.frame_14)
         self.target_2.setObjectName(u"target_2")
+        self.target_2.setMinimumSize(QSize(117, 95))
+        self.target_2.setMaximumSize(QSize(117, 95))
         self.target_2.setStyleSheet(u"border:1px solid gray;\n"
 "background:white;")
         self.target_2.setAlignment(Qt.AlignCenter)
@@ -539,6 +543,8 @@ class Ui_MainWindow(object):
 
         self.target_3 = QLabel(self.frame_14)
         self.target_3.setObjectName(u"target_3")
+        self.target_3.setMinimumSize(QSize(117, 95))
+        self.target_3.setMaximumSize(QSize(117, 95))
         self.target_3.setStyleSheet(u"border:1px solid gray;\n"
 "background:white;")
         self.target_3.setAlignment(Qt.AlignCenter)

@@ -7,6 +7,7 @@ import cv2
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal, Slot
 from cv2 import imwrite
+from matplotlib.pyplot import cla
 
 from cls.resnet import ResNet
 from control import FrameThread, ControlThread
@@ -14,9 +15,12 @@ from det.nanodet import NanoDet
 from det.nanodet_plus import NanoDetPlus
 from det.template import TemplateMatcher
 from det.yolov5 import YOLOv5
+from det.utils.yolov5_utils import letterbox
 from simple_pid import PID
 from tracker import Tracker
 from djitellopy import Tello
+
+from collections import deque
 
 
 class DetMethod(IntEnum):
@@ -30,34 +34,9 @@ class ClsMethod(IntEnum):
     YOLOV5 = 1
 
 
-class XModel(object):
-    def __init__(self, distance):
-        self.distance = distance
-        self.scale = 0.37
-
-    def update(self, x_move, dt):
-        if x_move >= 0:
-            self.distance -= self.scale * x_move * dt
-        else:
-            self.distance += self.scale * x_move * dt
-        return self.distance
-
-
-class YModel(object):
-    def __init__(self, distance):
-        self.distance = distance
-        self.scale = 0.37
-
-    def update(self, y_move, dt):
-        if y_move >= 0:
-            self.distance -= self.scale * y_move * dt
-        else:
-            self.distance += self.scale * y_move * dt
-        return self.distance
-
-
 class ProcessThread(QThread):
     signal = Signal()
+    recent_signal = Signal()
     mutex = QMutex()
 
     def __init__(self, tello: Tello, frameThread: FrameThread, controlThread: ControlThread):
@@ -70,11 +49,14 @@ class ProcessThread(QThread):
         # detection
         self.conf = 0.4
         self.det_realtime = True
+        self.show_recent_dets = False
+        self.recent_dets = deque()
         self.det_method = DetMethod.NANODET
         self.classes = ["storage-tank", "mine", "ship", "field", "plane"]
+        self.classes_cn = ["油罐", "矿井", "舰船", "农田", "飞机"]
         self.nanodet = NanoDetPlus(
             './det/model/nanodet_uav.onnx', self.classes)
-        self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx')
+        self.yolo = YOLOv5('./det/model/yolov5n_uav.onnx', self.classes)
 
         # template
         template_dir = './det/model/template/'
@@ -106,6 +88,7 @@ class ProcessThread(QThread):
         # y_model = YModel(self.y_distance)
         # x_pid = PID(0.001, 0.1, 0.05, setpoint=1)
         # y_pid = PID(0.001, 0.05, 0.01, setpoint=1)
+        frame_num = 0
         while True:
             self.mutex.lock()
             self.frame = self.frameThread.img
@@ -121,11 +104,34 @@ class ProcessThread(QThread):
             # detection
             if self.det_realtime:
                 if self.det_method == DetMethod.NANODET:
-                    self.frame = self.nanodet.detect(self.frame)
+                    dets = self.nanodet.detect(self.frame)
                 elif self.det_method == DetMethod.YOLOV5:
-                    self.frame = self.yolo.detect(self.frame)
+                    dets = self.yolo.detect(self.frame)
                 elif self.det_method == DetMethod.TEMPLATE_MATCHING:
-                    self.frame = self.template_matcher.detect(self.frame)
+                    dets = self.template_matcher.detect(self.frame)
+
+                if self.show_recent_dets:
+                    if frame_num % 20 == 0:
+                        for i in range(min(len(dets), 3)):
+                            xmin, ymin, xmax, ymax, classid, conf = dets[i]
+                            bbox_img = None
+                            try:
+                                bbox_img, _, _ = letterbox(
+                                    self.frame[ymin:ymax, xmin:xmax], (117, 95), (0, 0, 0), False, False)
+                            except:
+                                pass
+
+                            if bbox_img is not None:
+                                self.recent_dets.append(
+                                    (bbox_img, self.classes_cn[classid], conf))
+
+                        while len(self.recent_dets) > 3:
+                            self.recent_dets.popleft()
+
+                        self.recent_signal.emit()
+                        frame_num = 0
+
+                self.frame = self.draw_bbox(self.frame, dets)
 
             # tracking
             if self.enable_tracking:
@@ -142,51 +148,18 @@ class ProcessThread(QThread):
             # else:
             #     pass
             #self.frame = frame
+            frame_num += 1
             self.signal.emit()
             sleep(0.01)
 
-    def zheshishenme(self):
-        if self.enable_tracking:
-            while not self.end_tracking:
-                if self.init_rect is not None:
-                    # TODO bbox(x,y,w,h)
-                    # x, y, w, h = tuple(np.array(self.init_rect).astype(np.int64))
-                    x, y, w, h = 0
-                    self.x_distance = x + w / 2 - self.frame.shape[1] / 2
-                    self.y_distance = y + h / 2 - self.frame.shape[0] / 2
-                    x_model = XModel(self.x_distance)
-                    y_model = YModel(self.y_distance)
-                    x_pid = PID(0.00001, 0.001, 0.0005, setpoint=1)
-                    y_pid = PID(0.00001, 0.0005, 0.0001, setpoint=1)
-                    start_time = time.time()
-                    last_time = start_time
-                    while not self.end_tracking:
-                        current_time = time.time()
-                        dt = current_time - last_time
-                        last_time = current_time
-
-                        x_move = x_pid(self.x_distance)
-                        y_move = y_pid(self.y_distance)
-                        self.x_distance = x_model.update(x_move, dt)
-                        print('x_distance: ', self.x_distance)
-                        self.y_distance = y_model.update(y_move, dt)
-                        print('y_distance: ', self.y_distance)
-                        self.controlThread.x_move = x_move
-                        self.controlThread.y_move = y_move
-
-                        # if x_move <= 0:
-                        #     self.drone.send_command('right' + ' ' + str(-x_move))
-                        # else:
-                        #     self.drone.send_command('left' + ' ' + str(x_move))
-                        # if y_move >= 0:
-                        #     self.drone.send_command('back' + ' ' + str(y_move))
-                        # else:
-                        #     self.drone.send_command('forward' + ' ' + str(-y_move))
-
-                        if self.x_distance <= 4 and self.y_distance <= 4:
-                            break
-                        if self.end_tracking:
-                            break
+    def draw_bbox(self, frame, dets):
+        for det in dets:
+            xmin, ymin, xmax, ymax, class_id, conf = det
+            cv2.rectangle(frame, (xmin, ymin), (xmax, ymax),
+                          (0, 0, 255), thickness=3)
+            cv2.putText(frame, self.classes[class_id] + ': ' + str(round(conf, 3)), (xmin, ymin - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), thickness=1)
+        return frame
 
     @Slot()
     def set_det_realtime(self, checked: bool):

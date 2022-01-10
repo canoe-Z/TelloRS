@@ -161,21 +161,23 @@ class NanoDetPlus(object):
             0].squeeze(axis=0)
         det_bboxes, det_conf, det_classid = self.post_process(outs)
 
-        # results = []
+        results = []
         ratioh, ratiow = srcimg.shape[0] / newh, srcimg.shape[1] / neww
         for i in range(det_bboxes.shape[0]):
             xmin, ymin, xmax, ymax = max(int((det_bboxes[i, 0] - left) * ratiow), 0), max(
                 int((det_bboxes[i, 1] - top) * ratioh), 0), min(
                 int((det_bboxes[i, 2] - left) * ratiow), srcimg.shape[1]), min(int((det_bboxes[i, 3] - top) * ratioh),
                                                                                srcimg.shape[0])
-            # results.append((xmin, ymin, xmax, ymax, self.classes[det_classid[i]], det_conf[i]))
-            cv2.rectangle(srcimg, (xmin, ymin), (xmax, ymax),
-                          (0, 0, 255), thickness=3)
+            results.append(
+                (xmin, ymin, xmax, ymax, det_classid[i], det_conf[i]))
+            # cv2.rectangle(srcimg, (xmin, ymin), (xmax, ymax),
+            #               (0, 0, 255), thickness=3)
             #print(self.classes[det_classid[i]] + ': ' + str(round(det_conf[i], 3)))
-            cv2.putText(srcimg, self.classes[det_classid[i]] + ': ' + str(round(det_conf[i], 3)), (xmin, ymin - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), thickness=1)
+            # cv2.putText(srcimg, self.classes[det_classid[i]] + ': ' + str(round(det_conf[i], 3)), (xmin, ymin - 10),
+            #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), thickness=1)
         #         cv2.imwrite('result.jpg', srcimg)
-        return srcimg
+        return results
+        # return srcimg
 
     def detect2(self, srcimg):
         img, newh, neww, top, left = self.resize_image(
@@ -200,9 +202,9 @@ class NanoDetPlus(object):
         ymin = max(int((det_bboxes[0, 1] - top) * ratioh), 0)
         xmax = min(int((det_bboxes[0, 2] - left) * ratiow), srcimg.shape[1])
         ymax = min(int((det_bboxes[0, 3] - top) * ratioh), srcimg.shape[0])
-        xmax = xmax-xmin
-        ymax = ymax-ymin
-        return (xmin, ymin, xmax, ymax)
+        w = xmax-xmin
+        h = ymax-ymin
+        return (xmin, ymin, w, h)
 
 
 if __name__ == '__main__':
