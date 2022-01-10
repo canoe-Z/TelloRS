@@ -74,7 +74,7 @@ class IMUThread(QThread):
             dt = currnet_time-self.last_time
             self.last_time = currnet_time
 
-            ds = v*dt
+            ds = -v*dt
             self.pos += ds*2.8*10
             if self.nav_queue.empty():
                 # print('empty')
@@ -141,8 +141,8 @@ class AutoFlightThread(QThread):
                 curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
                 cv2.imwrite('output/'+curDataTime +
                             '.png', self.frame_thread.img)
-            else:
-                self.tello.land()
+            # else:
+            #     self.tello.land()
             sleep(1)
 
 
