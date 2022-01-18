@@ -1,27 +1,21 @@
 import os
-from enum import IntEnum
 import time
-from time import sleep
+from collections import deque
+from enum import IntEnum
 
 import cv2
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal, Slot
-from cv2 import imwrite
-from matplotlib.pyplot import cla
+from djitellopy import Tello
+from PySide6.QtCore import QDateTime, QMutex, QThread, Signal, Slot
+from simple_pid import PID
 
 from cls.classfier import Classfier
-from control import FrameThread, ControlThread
-from nav import IMUThread
-from det.nanodet import NanoDet
+from control import ControlThread, FrameThread
 from det.nanodet_plus import NanoDetPlus
 from det.template import TemplateMatcher
-from det.yolov5 import YOLOv5
 from det.utils.yolov5_utils import letterbox
-from simple_pid import PID
+from det.yolov5 import YOLOv5
+from nav import IMUThread
 from tracker import Tracker
-from djitellopy import Tello
-
-from collections import deque
 
 
 class DetMethod(IntEnum):
@@ -87,18 +81,8 @@ class ProcessThread(QThread):
         self.pid_y = PID(0.085, 0.01, 0.01, setpoint=0)
         self.pid_x.output_limits = (-30, 30)
         self.pid_y.output_limits = (-30, 30)
-        # self.pid
 
     def run(self):
-        # i = 0
-        # minsize = 7000
-        # model = NanoDetPlus('./det/model/nanodet_car.onnx')
-        # start_time = time.time()
-        # last_time = start_time
-        # x_model = XModel(self.x_distance)
-        # y_model = YModel(self.y_distance)
-        # x_pid = PID(0.001, 0.1, 0.05, setpoint=1)
-        # y_pid = PID(0.001, 0.05, 0.01, setpoint=1)
         frame_num = 0
         while True:
             self.mutex.lock()
@@ -129,7 +113,7 @@ class ProcessThread(QThread):
                 if self.show_recent_dets:
                     if frame_num % 20 == 0:
                         for i in range(min(len(dets), 3)):
-                            xmin, ymin, xmax, ymax, classid, conf = dets[i]
+                            xmin, ymin, xmax, ymax, classid, _ = dets[i]
 
                             # 求相对位移
                             x = (xmin+xmax)/2
@@ -172,22 +156,17 @@ class ProcessThread(QThread):
                 if self.start_tracking:
                     if success_flag:
                         y = self.frame.shape[0]-y
-                        dx = x-self.frame.shape[1]/2
-                        dy = y-self.frame.shape[0]/2
+                        dx = self.frame.shape[1]/2-x
+                        dy = self.frame.shape[0]/2-y
 
-                        vx = self.pid_x(-dx)
-                        vy = self.pid_y(-dy)
+                        vx = int(self.pid_x(dx))
+                        vy = int(self.pid_y(dy))
                         print(dx, dy, vx, vy)
-                        self.tello.send_rc_control(
-                            int(vx), int(vy), 0, 0)
-                        # self.tello.send_rc_control(
-                        #     int(dx*0.07), int(dy*0.07), 0, 0)
-            # else:
-            #     pass
-            # self.frame = frame
+                        self.tello.send_rc_control(vx, vy, 0, 0)
+
             frame_num += 1
             self.signal.emit()
-            sleep(0.01)
+            time.sleep(0.01)
 
     def draw_bbox(self, frame, dets):
         for det in dets:
@@ -267,8 +246,8 @@ class VideoWriter(QThread):
                         out.release()
                         print("录像结束")
                         break
-                    sleep(1 / self.fps)
-            sleep(0.01)
+                    time.sleep(1 / self.fps)
+            time.sleep(0.01)
 
     @Slot()
     def start_record(self):

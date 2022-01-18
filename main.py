@@ -5,10 +5,10 @@ import cv2
 from djitellopy import Tello
 from PySide6 import QtGui, QtWidgets
 from PySide6.QtCore import QDateTime, Qt, Slot
-from PySide6.QtWidgets import QMainWindow, QLabel
+from PySide6.QtWidgets import QLabel, QMainWindow
 
 from control import ControlMode, ControlThread, FrameThread
-from nav import IMUThread, MatchingThread, AutoFlightThread, PointFlightThread
+from nav import AutoFlightThread, IMUThread, MatchingThread, PointFlightThread
 from process import ProcessThread, VideoWriter
 from ui.MainWindow import Ui_MainWindow
 from utils.control import lut_key, send_rc_control_by_key
@@ -54,7 +54,6 @@ class TelloRS(QMainWindow):
         self.process_thread.signal.connect(self.show_det)
         self.process_thread.recent_signal.connect(self.show_recent_det)
         self.point_thread.message_signal.connect(self.show_message)
-        # self.matching_thread.finish_signal.connect(self.show_map)
 
         # init ui
         self.ui = Ui_MainWindow()
@@ -123,7 +122,7 @@ class TelloRS(QMainWindow):
         # page 2
         self.ui.btn_autoflight.clicked.connect(self.start_auto_flight)
         self.ui.btn_pointflight.clicked.connect(self.start_point_flight)
-        self.ui.label_map_2.mousePressEvent = self.get_map_pos  # 尝试获取坐标
+        self.ui.label_map_2.mousePressEvent = self.get_map_pos
         self.ui_targets_img = [self.ui.target_1,
                                self.ui.target_2, self.ui.target_3]
         self.ui_targets_cls = [self.ui.target_1_name,
@@ -147,11 +146,11 @@ class TelloRS(QMainWindow):
             lambda: self.ui.rbtn_move_fixed.setChecked(True))
         self.ui.slider_step_3.setValue(30)
         self.ui.slider_speed_3.setValue(self.rc_speed)
-        self.ui.slider_step_3.setMinimum(20)  # 最小值
-        self.ui.slider_step_3.setMaximum(100)  # 最大值
+        self.ui.slider_step_3.setMinimum(20)
+        self.ui.slider_step_3.setMaximum(100)
         self.ui.slider_step_3.valueChanged.connect(self.change_movestep_p3)
-        self.ui.slider_speed_3.setMinimum(10)  # 最小值
-        self.ui.slider_speed_3.setMaximum(50)  # 最大值
+        self.ui.slider_speed_3.setMinimum(10)
+        self.ui.slider_speed_3.setMaximum(50)
         self.ui.slider_speed_3.valueChanged.connect(self.change_movespeed_p3)
         self.ui.cb_tracking.toggled.connect(
             self.process_thread.set_tracking_state)
@@ -213,7 +212,6 @@ class TelloRS(QMainWindow):
         self.label_battery.setText(
             'Tello已连接! 电源剩余: '+str(self.frame_thread.tello_battery))
 
-    # TODO 自动巡检
     @Slot()
     def start_auto_flight(self):
         self.auto_thread.start()
@@ -358,8 +356,8 @@ class TelloRS(QMainWindow):
     def command_finish(self, key: int):
         self.ui.statusbar.showMessage(lut_key(key)+' OK', 2000)
         curDataTime = QDateTime.currentDateTime().toString('hh_mm_ss_yyyy_MM_dd')
-        # if self.is_autocap:
-        #     cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
+        if self.is_autocap:
+            cv2.imwrite('./output/'+curDataTime+'.png', self.frame_thread.img)
 
     @Slot()
     def openpic(self):

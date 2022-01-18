@@ -1,13 +1,12 @@
 import math
 import time
 from queue import Queue
-from time import sleep
 
 import cv2
 import numpy as np
 from djitellopy import Tello
 from numpy import ndarray
-from PySide6.QtCore import QDateTime, QMutex, Qt, QThread, Signal
+from PySide6.QtCore import QDateTime, QThread, Signal
 from simple_pid import PID
 
 from control import FrameThread
@@ -46,7 +45,7 @@ class MatchingThread(QThread):
                 except:
                     pass
                     # print('定位失败')
-            sleep(0.05)
+            time.sleep(0.05)
 
 
 class IMUThread(QThread):
@@ -94,13 +93,7 @@ class IMUThread(QThread):
                 self.auto_queue.get()
             self.auto_queue.put([-int(self.pos[1]), -int(self.pos[0])+1280])
 
-            sleep(0.01)
-
-    # def imu2img(self, x, y):
-    #     return -y+1280, -x
-
-    # def img2imu(self, x, y):
-    #     return -x, -y+1280
+            time.sleep(0.01)
 
 
 class AutoFlightThread(QThread):
@@ -141,9 +134,7 @@ class AutoFlightThread(QThread):
                 curDataTime = QDateTime.currentDateTime().toString('hh-mm-ss-yyyy-MM-dd')
                 cv2.imwrite('output/'+curDataTime +
                             '.png', self.frame_thread.img)
-            # else:
-            #     self.tello.land()
-            sleep(1)
+            time.sleep(1)
 
 
 class PointFlightThread(QThread):
@@ -186,4 +177,4 @@ class PointFlightThread(QThread):
                 x, y = self.update(vx, vy)
                 self.message_signal.emit('{} {} {} {}'.format(x, y, vx, vy))
 
-            sleep(0.02)
+            time.sleep(0.02)

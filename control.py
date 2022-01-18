@@ -1,12 +1,9 @@
 import time
 from enum import Enum
-from queue import Queue
 
 import cv2
-import numpy as np
 from djitellopy import Tello
-from PySide6.QtCore import Qt, QThread, Signal, QMutex
-
+from PySide6.QtCore import QMutex, Qt, QThread, Signal
 from vidgear.gears.stabilizer import Stabilizer
 
 
@@ -56,7 +53,7 @@ class FrameThread(QThread):
             else:
                 self.img = frame
 
-            # 虽然不知道有什么用，但是千万不要删这行代码
+            # magic code
             a = self.img*2
 
             self.qmut.unlock()
